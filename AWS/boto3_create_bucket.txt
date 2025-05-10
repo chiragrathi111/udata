@@ -1,0 +1,10 @@
+import boto3
+## create s3 bucket
+#
+# s3= boto3.client('s3')
+# s3.create_bucket(Bucket='cndjnchi')
+
+
+##upload object successfully
+# s3 = boto3.resource('s3')
+# s3.meta.client.upload_file("C:/Users/lenovo/trees.csv", 'cndjnchic', 'today')

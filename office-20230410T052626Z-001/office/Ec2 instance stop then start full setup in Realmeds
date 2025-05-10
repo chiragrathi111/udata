@@ -1,0 +1,39 @@
+///// Ec2 instance stop then start full setup in Realmeds \\\\\\\\\
+
+1. if Ec2 ins. stop
+2. start Ec2 ins.
+3. check forever logs running or not
+	#forever logs (not show logs)
+	#docker ps (not show any container)
+4. go to realmeds and setup our container
+	#cd realmeds/network/setup
+	#docker-compose -f docker-compose.yml up -d ca.realmeds.io orderer.realmeds.io peer0.org1.realmeds.io couchdb cli
+	#cd ../..
+	#cd script/network
+	#vi upgrade.sh (upgrade existing version)
+	#./upgrade.sh
+5. realmeds forever command run 
+	#cd ../..
+	#cd network/api
+	#forever start server/server.js
+6. realmeds-selfcare forever command run
+	#cd ../../..
+	#cd realmeds-selfcare/apiserver/
+	#forever start server/server.js
+	#cd ..
+	#cd realmeds-selfcare/microsite/
+	#forever start dist/microsite/server/main.js
+7. check forever logs
+	#forever logs
+	#forever logs 0
+	#forever logs 1
+	#forever logs 2
+8. copy ec2 ip add and :3001 and run browser
+   ip:3001	
+9. Addition volume not show please check
+	#df -h (not show)
+	#lsblk (show but mount command is important)
+	#sudo mount volume_Path directory_Path
+	#df -h
+	// Volume all data show in your directory please check and give me Smile
+	  				

@@ -1,0 +1,43 @@
+services:
+  idempiere:
+    image: idempiereofficial/idempiere:${IDEMPIERE_VERSION}
+    container_name: idempiere
+    ports:
+      - "${IDEMPIERE_WEB_PORT}:8443"
+    networks:
+      - app-network
+    depends_on:
+      - db
+    environment:
+      IDEMPIERE_DB_HOST: db
+      IDEMPIERE_DB_PORT: ${IDEMPIERE_DB_PORT}
+      IDEMPIERE_DB_NAME: ${IDEMPIERE_DB_NAME}
+      IDEMPIERE_DB_USER: ${IDEMPIERE_USER}
+      IDEMPIERE_DB_PASSWORD: ${IDEMPIERE_DB_PASSWORD}
+    volumes:
+      - idempiere_config:/opt/idempiere/configuration
+      - idempiere_plugins:/opt/idempiere/plugins
+
+  db:
+    image: postgres:${PG_VERSION}
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${IDEMPIERE_DB_NAME}
+      POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
+    ports:
+      - "${IDEMPIERE_DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  idempiere_plugins:
+  idempiere_config:
+
+networks:
+  app-network:
+    driver: bridge

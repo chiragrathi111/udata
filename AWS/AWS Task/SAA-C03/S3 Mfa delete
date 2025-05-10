@@ -1,0 +1,27 @@
+AWS s3 not possible direct mfa delete using through console this process do using cli.
+
+aws configure --profile <any_profile_name>
+acces key
+secret key
+region
+format
+
+aws s3 ls
+
+Step : Enable MFA Delete using AWS CLI
+Enable MFA Delete by executing the below command on your terminal.
+bucket_name: enter the bucket name for which you want the MFADelete to be enabled.
+arn-of-mfa-device: enter the arn for the MFA device from Step 2.
+mfa-code: enter the MFA code from your Authenticator app.
+profile_name: enter the profile name which you've configured previously.
+
+aws s3api put-bucket-versioning --bucket <bucket_name> --versioning-configuration Status=Enabled,MFADelete=Enabled
+--mfa <arn-of-mfa-device  mfa-code> --profile <profile_name>
+-----------------------------------------------------------------------------
+
+Step : Disable MFA Delete using AWS CLI
+To disable MFADelete, execute the below command.
+Here, as you can see MFADelete=Disabled.
+
+aws s3api put-bucket-versioning --bucket <bucket_name> --versioning-configuration Status=Enabled,MFADelete=Disabled
+--mfa <arn-of-mfa-device  mfa-code> --profile <profile_name>

@@ -1,0 +1,8 @@
+ssh pipra_3@192.168.0.134
+sudo apt install python3-pip
+pip install bleak
+If above command not support then run below command
+pip install bleak --break-system-packages
+
+From RPI to copy any linux system
+scp pipra_3@192.168.0.134:/home/pipra_3/Desktop/demo_TS/mac_find.py /home/chirag/

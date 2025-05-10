@@ -1,0 +1,55 @@
+QA Query:-
+
+WITH subquery AS (SELECT ps.codeno || ' ' || v.codeno || ' ' || cl.parentcultureline || ' ' || TO_CHAR(cl.culturedate, 'DD-MM-YY') || ' ' || ns.codeno AS cultureCode,
+cs.name || ' - ' || cl.cycleno AS cycle,DATE(cl.updated) AS updatedDate,DATE(cl.created + (cs.period::int * INTERVAL '1 day')) AS expiryDate,l.x AS room,l.y AS rack,l.z AS columns,cs.period AS period,
+(SELECT COUNT(*) FROM adempiere.tc_culturelabel cll WHERE cll.parentuuid = cl.c_uuid LIMIT 1) AS subquery_column FROM adempiere.tc_culturelabel cl 
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id 
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_variety_id JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id 
+JOIN adempiere.tc_in i ON i.tc_in_id = cl.tc_in_id JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id 
+JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id 
+WHERE cl.ad_client_id = 1000002 AND cl.isdiscarded = 'Y' AND cl.c_uuid IS NOT NULL AND cl.parentuuid IS NOT NULL)
+SELECT cultureCode,cycle,updatedDate,expiryDate,room,rack,columns,COUNT(*) AS count,period
+FROM subquery WHERE updatedDate = current_date
+GROUP BY cycle,room,rack,columns,cultureCode,updatedDate,expiryDate,period ORDER BY expiryDate,cycle,room,rack,columns
+
+update Query
+WITH subquery AS (SELECT ps.codeno || ' ' || v.codeno || ' ' || cl.parentcultureline || ' ' || TO_CHAR(cl.culturedate, 'DD-MM-YY') || ' ' || ns.codeno AS cultureCode,
+cs.name || ' - ' || cl.cycleno AS cycle,DATE(cl.updated) AS updatedDate,DATE(cl.created + (cs.period::int * INTERVAL '1 day')) AS expiryDate,l.x AS room,l.y AS rack,l.z AS columns,cs.period AS period,
+(SELECT COUNT(*) FROM adempiere.tc_culturelabel cll WHERE cll.parentuuid = cl.c_uuid LIMIT 1) AS subquery_column FROM adempiere.tc_culturelabel cl 
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id 
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_variety_id JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id 
+JOIN adempiere.tc_in i ON i.tc_in_id = cl.tc_in_id JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id 
+JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id 
+WHERE cl.ad_client_id = 1000002 AND cl.isdiscarded = 'Y' AND cl.c_uuid IS NOT NULL AND cl.parentuuid IS NOT NULL)
+SELECT cultureCode,cycle,updatedDate,expiryDate,room,rack,columns,COUNT(*) AS count,period
+FROM subquery WHERE updatedDate = current_date
+GROUP BY cycle,room,rack,columns,cultureCode,updatedDate,expiryDate,period ORDER BY expiryDate,cycle,room,rack,columns
+
+
+Query:-
+WITH subquery AS (SELECT ps.codeno || ' ' || v.codeno || ' ' || cl.parentcultureline || ' ' || TO_CHAR(cl.culturedate, 'DD-MM-YY') || ' ' || ns.codeno AS cultureCode,
+cs.name || ' - ' || cl.cycleno AS cycle,DATE(cl.created) AS manufacturingDate,
+DATE(cl.created + (cs.period::int * INTERVAL '1 day')) AS expiryDate,l.x AS room,l.y AS rack,l.z AS columns,
+cs.period AS period,(SELECT COUNT(*) FROM adempiere.tc_culturelabel cll WHERE cll.parentuuid = cl.c_uuid LIMIT 1) AS subquery_column
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id 
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_variety_id JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id 
+JOIN adempiere.tc_in i ON i.tc_in_id = cl.tc_in_id JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id 
+WHERE cl.ad_client_id = 1000002 AND cl.isdiscarded = 'N' AND cl.tosubculturecheck = 'N' AND cl.c_uuid IS NOT NULL AND cl.parentuuid IS NOT NULL)
+SELECT cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns,COUNT(*) AS count,period
+FROM subquery WHERE subquery_column = 0 AND expiryDate = current_date
+GROUP BY cycle,room,rack,columns,cultureCode,manufacturingDate,expiryDate,period ORDER BY expiryDate,cycle,room,rack,columns
+
+WITH subquery AS (SELECT ps.codeno || ' ' || v.codeno || ' ' || cl.parentcultureline || ' ' || TO_CHAR(cl.culturedate, 'DD-MM-YY') || ' ' || ns.codeno AS cultureCode,
+cs.name || ' - ' || cl.cycleno AS cycle,DATE(cl.created) AS manufacturingDate,
+DATE(cl.created + (cs.period::int * INTERVAL '1 day')) AS expiryDate,l.x AS room,l.y AS rack,l.z AS columns,
+cs.period AS period,(SELECT COUNT(*) FROM adempiere.tc_culturelabel cll WHERE cll.parentuuid = cl.c_uuid LIMIT 1) AS subquery_column
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id 
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_variety_id JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id 
+JOIN adempiere.tc_in i ON i.tc_in_id = cl.tc_in_id JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id 
+WHERE cl.ad_client_id = 1000002 AND cl.isdiscarded = 'N' AND cl.tosubculturecheck = 'N' AND cl.c_uuid IS NOT NULL AND cl.parentuuid IS NOT NULL),
+aggregated AS (SELECT cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns,COUNT(*) AS count,period FROM subquery
+WHERE subquery_column = 0 AND expiryDate = current_date GROUP BY cycle, room, rack, columns, cultureCode, manufacturingDate, expiryDate, period)
+SELECT cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns,count,SUM(count) OVER () AS totalCount,period
+FROM aggregated ORDER BY expiryDate, cycle, room, rack, columns 

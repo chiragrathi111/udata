@@ -1,0 +1,35 @@
+Java Code for parent to child
+means order to orderline
+
+public TCIn[] getTcInLines ()
+    {
+
+        List<TCIn> list = new Query(getCtx(), TCIn.Table_Name, "TCC_in_ID=?", get_TrxName())
+        .setParameters(getTCC_order_ID())
+        .setOrderBy(TCIn.COLUMNNAME_TCC_in_ID)
+        .list();
+        //
+        TCIn[] tccInArray = new TCIn[list.size()];
+        list.toArray(tccInArray);
+        return tccInArray;
+    }
+    
+    
+    
+    public TCOrder[] getTcOutLines ()
+    {
+
+        List<TCOrder> list = new Query(getCtx(), TCIn.Table_Name, "TCC_out_ID=?", get_TrxName())
+        .setParameters(getTCC_order_ID())
+        .setOrderBy(TCOrder.COLUMNNAME_TCC_out_ID)
+        .list();
+        //
+        TCOrder[] tccInArray = new TCOrder[list.size()];
+        list.toArray(tccInArray);
+        return tccInArray;
+    }
+
+    TCCOrder tccorder = new TCCOrder(getCtx(),getTCC_order_ID(),get_TrxName());
+		
+		TCIn[] tccInArray  = tccorder.getTcInLines();
+		 TCOrder[] tccOutArray = tccorder.getTcOutLines();

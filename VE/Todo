@@ -1,0 +1,16 @@
+Docker chaincode:-
+
+1 api/server npm i (remove 27,28 line)
+
+2 If ./stopFabric then channel exit and you create new channel then throw error
+then first you see volume list and remove all running volume
+eg. docker volume rm net_data-orderer.realmeds.io
+	docker volume rm net_data-peer.realmeds.io 
+
+3. If new setup then remove wallet user like admin and user3
+   after remove Wallet user then go to common/model folder and open network.js file	and comment out Authorization 
+   Required method
+   you comment this method and go to link
+   http://localhost:3000/explorer
+   and go to network model and create admin and user3 and 
+   realmeds/network/api again run node . command everything is working fine 

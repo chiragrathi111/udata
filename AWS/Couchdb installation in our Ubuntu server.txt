@@ -1,0 +1,48 @@
+//Couchdb installation in our Ubuntu server :-
+
+// This code is not working in ec2 user data & Putti ka aperance mai Font ka size nahi badana hai
+
+#sudo apt update && sudo apt install -y curl apt-transport-https gnupg
+
+#curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | sudo tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
+
+#source /etc/os-release
+
+#echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" | sudo tee /etc/apt/sources.list.d/couchdb.list >/dev/null
+
+#sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8756C4F765C9AC3CB6B85D62379CE192D401AB61
+
+// This five line code is fine setup our couchdb Installation part
+// Enter Couchdb installation code
+
+#sudo apt update
+
+#sudo apt install -y couchdb
+
+#sudo systemctl status couchdb.service
+// Check Couchdb status, If not enable please start and enable our Couchdb
+
+#ps -ef 
+// Check Couchdb install or not
+
+#curl localhost:5984
+// 127.0.0.1 or localhost (dono mai kuch bhi use kar sakte hai)
+// Couchdb WELCOME show hoga matlab sara process sahi huwa hai
+
+#curl -X PUT http://127.0.0.1:5984/my_database -u 'admin:chirag0606'
+// Password jo banaye us time use dalna hai
+
+#curl -X GET http://127.0.0.1:5984/_all_dbs -u 'admin:chirag0606'
+// Show all Database
+
+#curl -X GET http://127.0.0.1:5984/my_database -u 'admin:chirag0606'
+// Show my_database details
+
+#curl -X DELETE http://127.0.0.1:5984/my_database -u 'admin:chirag0606'
+// Delete existing database
+
+#sudo apt-get remove couchdb -y
+// If task complete remove your database
+
+
+

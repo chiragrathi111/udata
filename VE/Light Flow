@@ -1,0 +1,26 @@
+Light Flow:-
+
+1 Product have configure qty
+2 Product have not configure qty
+3 Sales 
+if not need then select No packaging is not need
+But if need Packaging then few scenario added:-
+1 Eco 60 qty means 3 label
+2 high volt 5 qty 5 label
+
+carton send Eco 40 qty and rest 20 qty and highvolt 2 label and send carton and last high volt 3 qty send another carton means this all product send 3 carton.
+
+query = "SELECT a.qtyentered as totalQnty, (a.qtyentered - COALESCE(SUM(c.qtyentered), 0)) AS outstanding_qty, e.m_product_id as productId, a.c_order_id, a.c_uom_id, a.c_orderline_id, e.name AS product_name\n"
+					+ "FROM c_orderline a \n" + "JOIN c_order d ON d.c_order_id = a.c_order_id \n"
+					+ "LEFT JOIN m_inout b ON a.c_order_id = b.c_order_id \n"
+					+ "LEFT JOIN m_inoutline c ON c.m_inout_id = b.m_inout_id AND c.c_orderline_id = a.c_orderline_id\n"
+					+ "JOIN m_product e ON e.m_product_id = a.m_product_id \n" + "WHERE d.documentno = '" + documentNo
+					+ "' AND d.ad_client_id = '" + client_ID + "' AND a.c_order_id = (\n"
+					+ "  SELECT c_order_id FROM c_order WHERE documentno = '" + documentNo + "' AND ad_client_id = '"
+					+ client_ID + "'\n" + ")\n"
+					+ "GROUP BY e.m_product_id, e.name, a.qtyordered, a.c_orderline_id, a.c_uom_id, a.c_order_id ORDER BY a.c_orderline_id;\n"
+					+ "";
+
+							PO po = new Query(ctx, Table_Name, "labeluuid =? AND issotrx = ? AND pi_paorder_id is null", trxName).setParameters(labelUUID, issotrx).firstOnly();
+
+

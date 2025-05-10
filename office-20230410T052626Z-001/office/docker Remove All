@@ -1,0 +1,33 @@
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+docker rmi $(docker images -q --filter "reference=hyperledger/*")
+docker volume prune -f
+docker network prune -f
+
+
+Old Realmeds Setup :-
+
+Need Peer version 1.4.6 and Orderer version also 1.4.6
+
+and docker-compose up i fault if docker image tag not show latest then every time pulling latest image and create this is facing issue so if you use old version so change tag name then your problem resolve
+
+docker pull hyperledger/fabric-peer:1.4.6
+docker pull hyperledger/fabric-orderer:1.4.6
+
+docker tag hyperledger/fabric-peer:1.4.6 hyperledger/fabric-peer:latest
+docker tag hyperledger/fabric-orderer:1.4.6 hyperledger/fabric-orderer:latest
+
+If Docker cli latest then upgrade problem so pull:-
+docker pull hyperledger/fabric-tools:1.4
+docker pull hyperledger/fabric-tools:1.4.6
+docker tag hyperledger/fabric-tools:1.4.6 hyperledger/fabric-tools:latest
+
+=========================================================================
+If i observe that if you volumn prune but your peer and orderer some volumn is available so you facing issue
+
+docker volume prune -f
+(after this command some volumn available then you indivisul remove)
+docker volume rm net_data-orderer.realmeds.io
+docker volume rm net_data-peer.realmeds.io  
+(If any other volumn available then first remove and use ./startfabric.sh script)
+

@@ -1,0 +1,742 @@
+package org.adempiere.webui.dashboard;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.theme.ITheme;
+import org.adempiere.webui.util.ServerPushTemplate;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zul.Div;
+
+public class DPVisitStates extends DashboardPanel implements EventListener<Event>{
+
+	private Label labelCompleted;
+	private String completeText;
+	private Label labelCompletedCount;
+	private Label labelBorder;
+
+	private Label labelCancel;
+	private String cancelText;
+	private Label labelCancelCount;
+
+	private Label labelInProgress;
+	private Label labelInProgressCount;
+	private String inProgressText;
+
+	private int CompletedCount;
+	private int cancelCount;
+	private int inProgressCount;
+
+	private static final long serialVersionUID = 1L;
+
+	public DPVisitStates() {
+		super();
+		this.setSclass("activities-box");
+		initOptions();
+		this.appendChild(createActivitiesPanel());
+	}
+	
+
+	private Div createActivitiesPanel() {
+		Div div = new Div();
+		
+		Div childDivFirst = new Div();
+		Div subChildFirst = new Div();
+
+		labelCompleted = new Label();
+		labelCompleted.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		completeText = "Completed";
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_PURPLE);
+		labelCompleted.setValue(completeText);
+
+		subChildFirst.appendChild(labelBorder);
+		subChildFirst.appendChild(labelCompleted);
+
+		childDivFirst.appendChild(subChildFirst);
+		labelCompletedCount = new Label();
+		labelCompletedCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelCompletedCount.setValue(" " + CompletedCount);
+		childDivFirst.appendChild(labelCompletedCount);
+		childDivFirst.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivFirst);
+
+		Div childDivThird = new Div();
+		Div subChildThird = new Div();
+
+		labelCancel = new Label();
+		labelCancel.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		cancelText = "Cancel";
+		labelCancel.setValue(cancelText);
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_ORANGE);
+
+		subChildThird.appendChild(labelBorder);
+		subChildThird.appendChild(labelCancel);
+		childDivThird.appendChild(subChildThird);
+		labelCancelCount = new Label();
+		labelCancelCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelCancelCount.setValue("  " + cancelCount);
+		childDivThird.appendChild(labelCancelCount);
+		childDivThird.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivThird);
+
+		Div childDivFour = new Div();
+		Div subChildFour = new Div();
+
+		labelInProgress = new Label();
+		labelInProgress.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		inProgressText = "In Progress";
+		labelInProgress.setValue(inProgressText);
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_LIGHT_BLUE);
+
+		subChildFour.appendChild(labelBorder);
+		subChildFour.appendChild(labelInProgress);
+		childDivFour.appendChild(subChildFour);
+
+		labelInProgressCount = new Label();
+		labelInProgressCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivFour.appendChild(labelInProgressCount);
+		labelInProgressCount.setValue(" " + inProgressCount);
+		childDivFour.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivFour);
+
+		return div;
+	}
+
+	private void initOptions() {
+		Properties ctx = Env.getCtx();
+		int clientId = Env.getAD_Client_ID(ctx);
+		PreparedStatement pstmt = null;
+		ResultSet RS = null;
+		try {
+			String visitSql = null;
+			
+			visitSql = "SELECT\n"
+					+ "    COUNT(CASE WHEN v.description = 'completed' THEN 1 END) AS Completed_Count,\n"
+					+ "    COUNT(CASE WHEN v.description = 'cancel' THEN 1 END) AS Cancelled_Count,\n"
+					+ "    COUNT(CASE WHEN v.description is null THEN 1 END) AS InProgress_Count\n"
+					+ "FROM adempiere.tc_visit v\n"
+					+ "JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id\n"
+					+ "WHERE v.ad_client_id = "+clientId+";";
+			
+			pstmt = DB.prepareStatement(visitSql.toString(), null);// get_TrxName());
+			RS = pstmt.executeQuery();
+			while (RS.next()) {
+				CompletedCount = 0;cancelCount = 0;inProgressCount = 0;
+				CompletedCount = RS.getInt("Completed_Count");
+				cancelCount = RS.getInt("Cancelled_Count");
+				inProgressCount = RS.getInt("InProgress_Count");
+			}
+			DB.close(RS, pstmt);
+			RS = null;pstmt = null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void refresh(ServerPushTemplate template) {
+		initOptions();
+		template.executeAsync(this);
+	}
+
+	@Override
+	public void updateUI() {
+		labelCompletedCount.setValue(" " + CompletedCount);
+		labelCancelCount.setValue("  " + cancelCount);
+		labelInProgressCount.setValue(" " + inProgressCount);
+	}
+
+	@Override
+	public void onEvent(Event event) throws Exception {
+
+	}
+}
+
+
+
+===========================================================================================================================================================
+==
+Culture Widget:-
+
+package org.adempiere.webui.dashboard;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.theme.ITheme;
+import org.adempiere.webui.util.ServerPushTemplate;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zul.Div;
+
+public class DPCultureDistribution extends DashboardPanel implements EventListener<Event>{
+
+	private Label labelInCount;
+	private String inCountText;
+	private Label labelInCountCount;
+	private Label labelBorder;
+
+	private Label labelInQty;
+	private String inQtyText;
+	private Label labelInQtyCount;
+
+	private Label labelOutCount;
+	private Label labelOutCountCount;
+	private String outCountText;
+	
+	private Label labelOutQty;
+	private Label labelOutQtyCount;
+	private String outQtyText;
+
+	private int INCount;
+	private int InQty;
+	private int OutCount;
+	private int OutQty;
+
+	private static final long serialVersionUID = 1L;
+
+	public DPCultureDistribution() {
+		super();
+		this.setSclass("activities-box");
+		initOptions();
+		this.appendChild(createActivitiesPanel());
+	}
+	
+
+	private Div createActivitiesPanel() {
+		Div div = new Div();
+		
+		Div childDivFirst = new Div();
+		Div subChildFirst = new Div();
+
+		labelInCount = new Label();
+		labelInCount.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		inCountText = "In Count";
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_PURPLE);
+		labelInCount.setValue(inCountText);
+
+		subChildFirst.appendChild(labelBorder);
+		subChildFirst.appendChild(labelInCount);
+
+		childDivFirst.appendChild(subChildFirst);
+		labelInCountCount = new Label();
+		labelInCountCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelInCountCount.setValue(" " + INCount);
+		childDivFirst.appendChild(labelInCountCount);
+		childDivFirst.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivFirst);
+
+		Div childDivThird = new Div();
+		Div subChildThird = new Div();
+
+		labelInQty = new Label();
+		labelInQty.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		inQtyText = "In Qty";
+		labelInQty.setValue(inQtyText);
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_ORANGE);
+
+		subChildThird.appendChild(labelBorder);
+		subChildThird.appendChild(labelInQty);
+		childDivThird.appendChild(subChildThird);
+		labelInQtyCount = new Label();
+		labelInQtyCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelInQtyCount.setValue("  " + InQty);
+		childDivThird.appendChild(labelInQtyCount);
+		childDivThird.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivThird);
+
+		Div childDivFour = new Div();
+		Div subChildFour = new Div();
+
+		labelOutCount = new Label();
+		labelOutCount.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		outCountText = "Out Count";
+		labelOutCount.setValue(outCountText);
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_LIGHT_BLUE);
+
+		subChildFour.appendChild(labelBorder);
+		subChildFour.appendChild(labelOutCount);
+		childDivFour.appendChild(subChildFour);
+
+		labelOutCountCount = new Label();
+		labelOutCountCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivFour.appendChild(labelOutCountCount);
+		labelOutCountCount.setValue(" " + OutCount);
+		childDivFour.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivFour);
+		
+		Div childDivout = new Div();
+		Div subChildout = new Div();
+
+		labelOutQty = new Label();
+		labelOutQty.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		outQtyText = "Out Qty";
+		labelOutQty.setValue(outQtyText);
+
+		labelBorder = new Label();
+		labelBorder.setSclass(ITheme.DASHBOARD_WIDGET_LABELS_BORDER_PURPLE);
+
+		subChildout.appendChild(labelBorder);
+		subChildout.appendChild(labelOutQty);
+		childDivout.appendChild(subChildout);
+
+		labelOutQtyCount = new Label();
+		labelOutQtyCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivout.appendChild(labelOutQtyCount);
+		labelOutQtyCount.setValue(" " + OutCount);
+		childDivout.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT_BASIC_STATS);
+		div.appendChild(childDivout);
+
+		return div;
+	}
+
+	private void initOptions() {
+		Properties ctx = Env.getCtx();
+		int clientId = Env.getAD_Client_ID(ctx);
+		PreparedStatement pstmt = null;
+		ResultSet RS = null;
+		try {
+			String visitSql = null;
+			
+			visitSql = "SELECT inCount,inQty,outCount,outQty\n"
+					+ "FROM (SELECT COUNT(*) AS inCount,SUM(quantity) AS inQty\n"
+					+ "FROM adempiere.tc_in WHERE ad_client_id = "+clientId+") AS inSubquery,\n"
+					+ "(SELECT COUNT(*) AS outCount,SUM(quantity) AS outQty \n"
+					+ "FROM adempiere.tc_out) AS outSubquery;";
+			
+			pstmt = DB.prepareStatement(visitSql.toString(), null);// get_TrxName());
+			RS = pstmt.executeQuery();
+			while (RS.next()) {
+				INCount = 0;InQty = 0;OutCount = 0;OutQty = 0;
+				INCount = RS.getInt("inCount");
+				InQty = RS.getInt("inQty");
+				OutCount = RS.getInt("outCount");
+				OutQty = RS.getInt("outQty");
+			}
+			DB.close(RS, pstmt);
+			RS = null;pstmt = null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void refresh(ServerPushTemplate template) {
+		initOptions();
+		template.executeAsync(this);
+	}
+
+	@Override
+	public void updateUI() {
+		labelInCountCount.setValue(" " + INCount);
+		labelInQtyCount.setValue("  " + InQty);
+		labelOutCountCount.setValue(" " + OutCount);
+		labelOutQtyCount.setValue(" " + OutQty);
+	}
+
+	@Override
+	public void onEvent(Event event) throws Exception {
+
+	}
+}
+
+=========================================================================================================================================================
+=======
+changes
+package org.adempiere.webui.dashboard;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.desktop.IDesktop;
+import org.adempiere.webui.theme.ITheme;
+import org.adempiere.webui.util.ServerPushTemplate;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zul.Div;
+
+public class DPTransctions extends DashboardPanel implements EventListener<Event> {
+
+	private Label labelInoutCount;
+	private String inoutCountText;
+	private Label inoutCountLabelText;
+
+	private Label labelInCount;
+	private String inCountText;
+	private Label inCountLabelText;
+
+	private Label labelOutCount;
+	private String outCountText;
+	private Label outCountLabelText;
+
+	private Label labelInternalMoveCount;
+	private String internalMoveCountText;
+	private Label internalMoveCountLabelText;
+
+	private Label labelQaRejectionsCount;
+	private String qaRejectionsText;
+	private Label qaRejectionsLabelText;
+
+	private static final long serialVersionUID = 1L;
+	private String inoutCount;
+	private String inCount;
+	private String outCount;
+	private String internalMoveCount;
+	private String qaRejections;
+	List<String> warehouseNames = new ArrayList<String>();
+
+	public DPTransctions() {
+		super();
+		this.setSclass("activities-box");
+		initOptions();
+		this.appendChild(createActivitiesPanel());
+	}
+
+	private Div createActivitiesPanel() {
+		Div div = new Div();
+		div.setSclass(ITheme.WARE_HOUSE_DATA_WIDGET);
+
+		Div childDivFirst = new Div();
+
+		inoutCountLabelText = new Label();
+		inoutCountLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		inoutCountText = "Receipts";
+		inoutCountLabelText.setValue(inoutCountText);
+		childDivFirst.appendChild(inoutCountLabelText);
+
+		labelInoutCount = new Label();
+		labelInoutCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelInoutCount.setValue(" " + inoutCount);
+		childDivFirst.appendChild(labelInoutCount);
+
+		childDivFirst.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivFirst);
+
+		Div childDivSec = new Div();
+		inCountLabelText = new Label();
+		inCountLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		inCountText = "Picks";
+		inCountLabelText.setValue(inCountText);
+		childDivSec.appendChild(inCountLabelText);
+
+		labelInCount = new Label();
+		labelInCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivSec.appendChild(labelInCount);
+		labelInCount.setValue(" " + inCount);
+
+		childDivSec.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivSec);
+
+		Div childDivThird = new Div();
+
+		outCountLabelText = new Label();
+		outCountLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		outCountText = "Dispatches";
+		outCountLabelText.setValue(outCountText);
+		childDivThird.appendChild(outCountLabelText);
+
+		labelOutCount = new Label();
+		labelOutCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelOutCount.setValue("  " + outCount);
+		childDivThird.appendChild(labelOutCount);
+
+		childDivThird.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivThird);
+
+		Div childDivFour = new Div();
+		internalMoveCountLabelText = new Label();
+		internalMoveCountLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		internalMoveCountText = "Internal Moves";
+		internalMoveCountLabelText.setValue(internalMoveCountText);
+		childDivFour.appendChild(internalMoveCountLabelText);
+
+		labelInternalMoveCount = new Label();
+		labelInternalMoveCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivFour.appendChild(labelInternalMoveCount);
+		labelInternalMoveCount.setValue(" " + internalMoveCount);
+
+		childDivFour.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivFour);
+
+		Div childDivFive = new Div();
+		qaRejectionsLabelText = new Label();
+		qaRejectionsLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		qaRejectionsText = "QA Rejections";
+		qaRejectionsLabelText.setValue(qaRejectionsText);
+		childDivFive.appendChild(qaRejectionsLabelText);
+
+		labelQaRejectionsCount = new Label();
+		labelQaRejectionsCount.setValue("  " + qaRejections);
+		labelQaRejectionsCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivFive.appendChild(labelQaRejectionsCount);
+
+		childDivFive.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivFive);
+
+		return div;
+	}
+
+	private void initOptions() {
+
+		Properties ctx = Env.getCtx();
+		int clientId = Env.getAD_Client_ID(ctx);
+		int wareHouseId = DPWarehouseSelection.getWareHouse_ID(ctx);
+		int productId = DPWarehouseSelection.getProduct_ID(ctx);
+
+		PreparedStatement pstmt = null;
+		ResultSet RS = null;
+		try {
+			String sql = null;
+			if (wareHouseId == 0 && productId == 0) {
+				sql = "SELECT COUNT(DISTINCT mi) AS inoutCount,\n"
+						+ "(SELECT COUNT(a) FROM adempiere.m_inout a WHERE a.movementtype = 'V+' AND DATE(a.created) = DATE(NOW())) AS inCount,\n"
+						+ "(SELECT COUNT(b) FROM adempiere.m_inout b WHERE b.movementtype = 'C-' AND DATE(b.created) = DATE(NOW())) AS outCount,\n"
+						+ "(SELECT COUNT(DISTINCT c) FROM adempiere.m_movement c WHERE DATE(c.created) = DATE(NOW())) AS internalMoveCount, \n"
+						+ "(SELECT COUNT(d) FROM adempiere.m_inoutlineconfirm d WHERE qcfailedqty != 0.00 AND DATE(d.created) = DATE(NOW())) AS qc\n"
+						+ "FROM adempiere.m_inout mi WHERE DATE(mi.created) = DATE(NOW()) AND mi.ad_client_id = "+ clientId +";";
+			} else if (wareHouseId != 0 && productId == 0) {
+				sql = "SELECT COUNT(DISTINCT mi) AS inoutCount,\n"
+						+ "(SELECT COUNT(a) FROM adempiere.m_inout a WHERE a.movementtype = 'V+' AND a.m_warehouse_id = "+ wareHouseId +" AND DATE(a.created) = DATE(NOW())) AS inCount,\n"
+						+ "(SELECT COUNT(b) FROM adempiere.m_inout b WHERE b.movementtype = 'C-' AND b.m_warehouse_id = "+ wareHouseId +" AND DATE(b.created) = DATE(NOW())) AS outCount,\n"
+						+ "(SELECT COUNT(DISTINCT c) FROM adempiere.m_movement c WHERE DATE(c.created) = DATE(NOW()) AND c.m_warehouse_id = "+ wareHouseId +") AS internalMoveCount,\n"
+						+ "(SELECT COUNT(d) FROM adempiere.m_inoutlineconfirm d JOIN adempiere.m_inoutline ili ON ili.m_inoutline_id = d.m_inoutline_id \n"
+						+ "JOIN adempiere.m_inout ii ON ii.m_inout_id = ili.m_inout_id JOIN adempiere.m_warehouse whh ON whh.m_warehouse_id = ii.m_warehouse_id \n"
+						+ "WHERE d.qcfailedqty != 0.00 AND whh.m_warehouse_id = "+ wareHouseId +" AND DATE(d.created) = DATE(NOW())) AS qc\n"
+						+ "FROM adempiere.m_inout mi \n"
+						+ "WHERE DATE(mi.created) = DATE(NOW()) \n"
+						+ "AND mi.m_warehouse_id = "+ wareHouseId +" \n"
+						+ "AND mi.ad_client_id = "+ clientId +";";
+			} else if (wareHouseId == 0 && productId != 0) {
+				sql = "SELECT COUNT(DISTINCT mi) as inoutCount,\n"
+						+ "(SELECT COUNT(a) FROM m_inout a JOIN m_inoutline aa ON aa.m_inout_id = a.m_inout_id WHERE a.movementtype = 'V+' AND aa.M_product_id = "+productId+" AND DATE(a.created) = DATE(NOW())) as inCount,\n"
+						+ "(SELECT COUNT(a) FROM m_inout a JOIN m_inoutline aa ON aa.m_inout_id = a.m_inout_id WHERE a.movementtype = 'C-' AND aa.m_product_id = "+productId+" AND DATE(a.created) = DATE(NOW())) as outCount,\n"
+						+ "(SELECT COUNT(DISTINCT c) FROM m_movement c JOIN m_movementline cc ON cc.m_movement_id = c.m_movement_id WHERE DATE(c.created) = DATE(NOW()) AND cc.m_product_id = "+productId+") as internalMoveCount,\n"
+						+ "(SELECT COUNT(d) FROM adempiere.m_inoutlineconfirm d JOIN adempiere.m_inoutline ili ON ili.m_inoutline_id = d.m_inoutline_id JOIN adempiere.m_inout ii ON ii.m_inout_id = ili.m_inout_id\n"
+						+ "JOIN adempiere.m_product wh ON wh.m_product_id = ili.m_product_id WHERE d.qcfailedqty != 0.00 AND wh.m_product_id = "+productId+" AND DATE(d.created) = DATE(NOW())) AS qc\n"
+						+ "FROM m_inout mi JOIN m_inoutline mil ON mil.m_inout_id = mi.m_inout_id WHERE DATE(mi.created) = DATE(NOW()) AND mi.ad_client_id = "+clientId+" AND mil.m_product_id = "+productId+";";
+			}
+			pstmt = DB.prepareStatement(sql.toString(), null);
+			RS = pstmt.executeQuery();
+			while (RS.next()) {
+				inoutCount = RS.getString("inoutCount");
+				inCount = RS.getString("inCount");
+				outCount = RS.getString("outCount");
+				internalMoveCount = RS.getString("internalMoveCount");
+				qaRejections = RS.getString("qc");
+			}
+			DB.close(RS, pstmt);
+			RS = null;
+			pstmt = null;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void refresh(ServerPushTemplate template) {
+		initOptions();
+		template.executeAsync(this);
+	}
+
+	@Override
+	public void updateUI() {
+		labelInoutCount.setValue("  " + inoutCount);
+		labelInCount.setValue("  " + inCount);
+		labelOutCount.setValue(" " + outCount);
+		labelInternalMoveCount.setValue(" " + internalMoveCount);
+		labelQaRejectionsCount.setValue("  " + qaRejections);
+		EventQueue<Event> queue = EventQueues.lookup(IDesktop.ACTIVITIES_EVENT_QUEUE, true);
+		Event event = new Event(IDesktop.ON_ACTIVITIES_CHANGED_EVENT, null,
+				inoutCount + inCount + outCount + internalMoveCount + 0);
+		queue.publish(event);
+
+	}
+
+	@Override
+	public void onEvent(Event event) throws Exception {
+
+	}
+}
+
+
+====================================================================================================================================================
+===========================================================================================================================================================
+===========================================================================================================================================================
+package org.adempiere.webui.dashboard;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.theme.ITheme;
+import org.adempiere.webui.util.ServerPushTemplate;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zul.Div;
+
+public class DPVisitStates extends DashboardPanel implements EventListener<Event> {
+
+    private Label labelCompleted;
+    private String completeText;
+    private Label labelCompletedCount;
+
+    private Label labelCancel;
+    private String cancelText;
+    private Label labelCancelCount;
+
+    private Label labelInProgress;
+    private Label labelInProgressCount;
+    private String inProgressText;
+
+    private int CompletedCount;
+    private int cancelCount;
+    private int inProgressCount;
+
+    private static final long serialVersionUID = 1L;
+
+    public DPVisitStates() {
+        super();
+        this.setSclass("activities-box");
+        initOptions();
+        this.appendChild(createActivitiesPanel());
+    }
+
+    private Div createActivitiesPanel() {
+        Div div = new Div();
+        // Create a parent container for the whole row
+        Div rowContainer = new Div();
+        rowContainer.setStyle("display: flex;");
+
+        // Completed section
+        Div completedDiv = createActivityDiv("Completed", CompletedCount, ITheme.DASHBOARD_WIDGET_LABELS_BORDER_PURPLE);
+        rowContainer.appendChild(completedDiv);
+
+        // Cancel section
+        Div cancelDiv = createActivityDiv("Cancel", cancelCount, ITheme.DASHBOARD_WIDGET_LABELS_BORDER_ORANGE);
+        rowContainer.appendChild(cancelDiv);
+
+        // In Progress section
+        Div inProgressDiv = createActivityDiv("In Progress", inProgressCount, ITheme.DASHBOARD_WIDGET_LABELS_BORDER_LIGHT_BLUE);
+        rowContainer.appendChild(inProgressDiv);
+
+        div.appendChild(rowContainer);
+
+        return div;
+    }
+
+    // Helper method to create each activity div
+    private Div createActivityDiv(String activityName, int count, String borderStyle) {
+        Div activityDiv = new Div();
+
+        // Create sub containers for label and count
+        Div labelDiv = new Div();
+        Div countDiv = new Div();
+
+        // Create label
+        Label label = new Label(activityName);
+        label.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+
+        // Create border label
+        Label borderLabel = new Label();
+        borderLabel.setSclass(borderStyle);
+        labelDiv.appendChild(borderLabel);
+        labelDiv.appendChild(label);
+
+        // Create count label
+        Label countLabel = new Label(String.valueOf(count));
+        countLabel.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+        countDiv.appendChild(countLabel);
+
+        // Set styles for sub containers
+        labelDiv.setStyle("margin-right: 5px;");
+        countDiv.setStyle("margin-left: 5px;");
+
+        activityDiv.appendChild(labelDiv);
+        activityDiv.appendChild(countDiv);
+
+        return activityDiv;
+    }
+
+    private void initOptions() {
+        Properties ctx = Env.getCtx();
+        int clientId = Env.getAD_Client_ID(ctx);
+        PreparedStatement pstmt = null;
+        ResultSet RS = null;
+        try {
+            String visitSql = null;
+
+            visitSql = "SELECT\n" + "    COUNT(CASE WHEN v.description = 'completed' THEN 1 END) AS Completed_Count,\n"
+                    + "    COUNT(CASE WHEN v.description = 'cancel' THEN 1 END) AS Cancelled_Count,\n"
+                    + "    COUNT(CASE WHEN v.description is null THEN 1 END) AS InProgress_Count\n"
+                    + "FROM adempiere.tc_visit v\n" + "JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id\n"
+                    + "WHERE v.ad_client_id = " + clientId + ";";
+
+            pstmt = DB.prepareStatement(visitSql.toString(), null);// get_TrxName());
+            RS = pstmt.executeQuery();
+            while (RS.next()) {
+                CompletedCount = 0;
+                cancelCount = 0;
+                inProgressCount = 0;
+                CompletedCount = RS.getInt("Completed_Count");
+                cancelCount = RS.getInt("Cancelled_Count");
+                inProgressCount = RS.getInt("InProgress_Count");
+            }
+            DB.close(RS, pstmt);
+            RS = null;
+            pstmt = null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void refresh(ServerPushTemplate template) {
+        initOptions();
+        template.executeAsync(this);
+    }
+
+    @Override
+    public void updateUI() {
+        // No need to update UI here as it's handled in the createActivitiesPanel() method
+    }
+
+    @Override
+    public void onEvent(Event event) throws Exception {
+        // No event handling required for now
+    }
+}

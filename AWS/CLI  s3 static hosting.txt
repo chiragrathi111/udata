@@ -1,0 +1,51 @@
+*** aws s3api create-bucket --bucket chirath299 --acl public-read
+
+Modify the Newly Created Bucket to Be an S3 Website Bucket
+
+*** aws s3 website s3://chirath299 --index-document index.html
+
+Make JSON FILE NAME - policy_s3.json
+## check file exix or nor
+dir
+##json file create in user/lenovo/ctrl+v
+Added Bucket policy inside permission tab in s3 bucket:-
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::chirath299/*"
+            ]
+        }
+    ]
+}
+*** aws s3api put-bucket-policy --bucket chirath299 --policy file://policy_s3.json
+
+create HTML FILE index.html
+
+<html>
+<head>
+    <title>My Website Home Page</title>
+</head>
+<body>
+  <h1>Welcome to my website</h1>
+  <p>Now hosted on Amazon S3!</p>
+</body>
+</html>
+
+##"<html><center><h1>My Static Website on S3</h1></center></html>" index.html
+
+Create a Basic `index.html` Page and Upload File
+
+*** aws s3 cp index.html s3://chirath299
+
+
+
+*** curl http://chirath299.s3-website.us-east-1.amazonaws.com

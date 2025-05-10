@@ -1,0 +1,19 @@
+#!/bin/sh
+sudo su
+yum update -y
+yum install docker -y
+service docker start
+docker run -td --name container1 -p 80:80 ubuntu
+docker exce -it container1 /bin/bash
+
+
+######################################################
+user data mai yahi command run karne ke baad 
+
+sudo su
+docker exec -it containerName /bin/bash
+apt-get update -y
+apt-get install apache2 -y
+cd /var/www/html
+echo "hello, CHIRAG RATHI $(hostname)" > index.html
+service apache2 start

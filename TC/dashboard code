@@ -1,0 +1,229 @@
+Sales Order Record:-
+package org.adempiere.webui.dashboard;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.theme.ITheme;
+import org.adempiere.webui.util.ServerPushTemplate;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zul.Div;
+
+public class DPSales extends DashboardPanel implements EventListener<Event> {
+
+	private Label labelOrdersProcessedCount;
+	private String ordersText;
+
+	private Label ordersLabelText;
+
+	private Label labelLinesProcessedCount;
+	private String linesProcessedText;
+
+	private Label linesLabelText;
+
+	private Label labelUnitsProcessedCount;
+	private String unitsProcessedText;
+
+	private Label unitsLabelText;
+
+	private Label labelAmount;
+	private String amountText;
+
+	private Label amountLabelText;
+	private Label currencyTypeText;
+
+	private String warehouseDefaultName;
+
+	private static final long serialVersionUID = 1L;
+	private String ordersProcessedCount;
+	private String linesProcessedCount;
+	private int unitsProcessedCount;
+	private String amount;
+	List<String> warehouseNames = new ArrayList<String>();
+
+	public DPSales() {
+		super();
+		this.setSclass("activities-box");
+		initOptions();
+		this.appendChild(createActivitiesPanel());
+	}
+
+	private Div createActivitiesPanel() {
+		Div div = new Div();
+		div.setSclass(ITheme.WARE_HOUSE_DATA_WIDGET);
+
+		Div childDivFirst = new Div();
+
+		ordersLabelText = new Label();
+		ordersLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		ordersText = "Orders Processed";
+		ordersLabelText.setValue(ordersText);
+		childDivFirst.appendChild(ordersLabelText);
+
+		labelOrdersProcessedCount = new Label();
+		labelOrdersProcessedCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelOrdersProcessedCount.setValue(" " + ordersProcessedCount);
+		labelOrdersProcessedCount.setTooltiptext(ordersText);
+		childDivFirst.appendChild(labelOrdersProcessedCount);
+
+		childDivFirst.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivFirst);
+
+		Div childDivSec = new Div();
+		linesLabelText = new Label();
+		linesLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		linesProcessedText = "Lines Processed";
+		linesLabelText.setValue(linesProcessedText);
+		childDivSec.appendChild(linesLabelText);
+
+		labelLinesProcessedCount = new Label();
+		labelLinesProcessedCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		childDivSec.appendChild(labelLinesProcessedCount);
+		labelLinesProcessedCount.setValue(" " + linesProcessedCount);
+
+		childDivSec.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivSec);
+
+		Div childDivThird = new Div();
+		unitsLabelText = new Label();
+		unitsLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		unitsProcessedText = "Units Processed";
+		unitsLabelText.setValue(unitsProcessedText);
+		childDivThird.appendChild(unitsLabelText);
+
+		labelUnitsProcessedCount = new Label();
+		labelUnitsProcessedCount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		labelUnitsProcessedCount.setValue("  " + unitsProcessedCount);
+		childDivThird.appendChild(labelUnitsProcessedCount);
+
+		childDivThird.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivThird);
+
+		Div childDivFour = new Div();
+		amountLabelText = new Label();
+		amountLabelText.setSclass(ITheme.DASHBOARD_WIDGET_LABELS);
+		amountText = "Amount";
+		amountLabelText.setValue(amountText);
+		childDivFour.appendChild(amountLabelText);
+
+		Div inrDiv = new Div();
+
+		currencyTypeText = new Label();
+		String text = "\u20B9";
+		currencyTypeText.setValue(text);
+		currencyTypeText.setSclass(ITheme.DASHBOARD_WIDGET_CURRENCY_TYPE);
+		inrDiv.appendChild(currencyTypeText);
+
+		labelAmount = new Label();
+		labelAmount.setSclass(ITheme.DASHBOARD_WIDGET_COUNT);
+		inrDiv.appendChild(labelAmount);
+		labelAmount.setValue(" " + amount);
+
+		childDivFour.appendChild(inrDiv);
+		childDivFour.setSclass(ITheme.DASHBOARD_WIDGET_Text_COUNT_CONT);
+		div.appendChild(childDivFour);
+
+		return div;
+	}
+
+	private void initOptions() {
+
+		Properties ctx = Env.getCtx();
+		int clientId = Env.getAD_Client_ID(ctx);
+		int wareHouseId = DPWarehouseSelection.getWareHouse_ID(ctx);
+		int productId = DPWarehouseSelection.getProduct_ID(ctx);
+
+		PreparedStatement pstmt = null;
+		ResultSet RS = null;
+		try {
+
+			if (wareHouseId != 0 && productId == 0) {
+				String warehousesql = "select name from m_warehouse where m_warehouse_id =" + wareHouseId + ";";
+				pstmt = DB.prepareStatement(warehousesql.toString(), null);
+				RS = pstmt.executeQuery();
+				while (RS.next()) {
+					String wName = RS.getString("name");
+					warehouseDefaultName = null;
+					if (wName != null) {
+						warehouseDefaultName = wName;
+					}
+				}
+			}
+			DB.close(RS, pstmt);
+			RS = null;
+			pstmt = null;
+
+			String sql = null;
+			if (wareHouseId == 0 && productId == 0) {
+				sql = "\n"
+						+ "SELECT count(distinct co.c_order_id) as orderCount, col.count as orderLineCount, sum(col.qtyInvoiced) as qnty, \n"
+						+ "sum(col.linenetamt) as totalamount FROM C_order co\n"
+						+ "join c_orderline col on col.c_order_id = co.c_order_id \n"
+						+ "where co.issotrx='Y' and co.ad_client_id="+clientId+" and col.qtyInvoiced !=0;";
+			} else if (wareHouseId != 0 && productId == 0) {
+				sql = "SELECT count(distinct co.c_order_id) as orderCount, col.count as orderLineCount, sum(col.qtyInvoiced) as qnty, \n"
+						+ "sum(col.linenetamt) as totalamount FROM C_order co\n"
+						+ "join c_orderline col on col.c_order_id = co.c_order_id \n"
+						+ "join m_warehouse mw on mw.m_warehouse_id = co.m_warehouse_id\n"
+						+ "where co.issotrx='Y' and mw.name='" + warehouseDefaultName + "' and co.ad_client_id="
+						+ clientId +" and col.qtyInvoiced !=0;";
+			} else if (wareHouseId == 0 && productId != 0) {
+				sql = "\n"
+						+ "SELECT count(distinct co.c_order_id) as orderCount, col.count as orderLineCount, sum(col.qtyInvoiced) as qnty,\n"
+						+ "sum(col.linenetamt) as totalamount FROM C_order co \n"
+						+ "join c_orderline col on col.c_order_id = co.c_order_id \n"
+						+ "join m_warehouse mw on mw.m_warehouse_id = co.m_warehouse_id \n"
+						+ "where co.issotrx='Y' and col.m_product_id = "+productId+" and co.ad_client_id="+clientId+";";
+			}
+
+			pstmt = DB.prepareStatement(sql.toString(), null);
+			RS = pstmt.executeQuery();
+			while (RS.next()) {
+				ordersProcessedCount = RS.getString("orderCount");
+				linesProcessedCount = RS.getString("orderLineCount");
+				String units = RS.getString("qnty");
+				if (units != null)
+					unitsProcessedCount = Integer.parseInt(units.split("\\.")[0]);
+				else
+					unitsProcessedCount = 0;
+				amount = RS.getString("totalamount");
+				if (amount == null)
+					amount = "0";
+
+			}
+			DB.close(RS, pstmt);
+			RS = null;
+			pstmt = null;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void refresh(ServerPushTemplate template) {
+		initOptions();
+		template.executeAsync(this);
+
+	}
+
+	@Override
+	public void updateUI() {
+		labelOrdersProcessedCount.setValue(" " + ordersProcessedCount);
+		labelLinesProcessedCount.setValue(" " + linesProcessedCount);
+		labelUnitsProcessedCount.setValue(" " + unitsProcessedCount);
+		labelAmount.setValue(" " + amount);
+	}
+
+	@Override
+	public void onEvent(Event event) throws Exception {
+	}
+}
+==============================================================================================================================

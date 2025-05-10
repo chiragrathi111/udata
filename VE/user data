@@ -1,0 +1,102 @@
+Scomp for vinay electrical:-
+scomp -javasource 11 -out lib/ve-xmlbeans.jar WEB-INF/xsd/ve.xsd
+
+Vinay Electrical side:-
+https://13.235.255.17:8443/webui/index.zul
+
+Terminal side:-
+ssh -i "pemFile/democ.pem" ubuntu@13.235.255.17
+
+Note:-
+If mvn clean install is not working first go to plugin and mfg plugin mvn clean install then go to com.pipra.ve plug in and enter mvn clean install if showing any error then go to idempiere and go to webservices plug in and go to mvn clean install after mvn clean install then go to plugin and go to com.pipra.ve and mvn clean install and you see it is working fine.
+
+Tissue culture :-
+scomp -javasource 11 -out lib/idempiere-xmlbeans.jar WEB-INF/xsd/idempiere-schema.xsd
+
+
+Vinay Client Server Login:
+ssh -l root 45.120.137.143
+l__3rVXT#aX-
+
+RootPassword: l__3rVXT#aX-
+Main IP: 45.120.137.143
+
+
+Connection=xyzCConnection[name\=0.0.0.0{13.235.255.17-erpVe-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=13.235.255.17,DBport\=5432,DBname\=erpVe,BQ\=false,FW\=false,FWhost\=,FWport\=0,UID\=adempiere]
+another postgres system added 
+
+Starting see this thing:-
+Connection=xyzCConnection[name\=0.0.0.0{localhost-idempiere-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=localhost,DBport\=5432,DBname\=idempiere>
+
+file send vinay server
+scp /home/mahe/Downloads/serverCode/download1.deb root@45.120.137.143:/root/WarePro/
+
+scp /home/chirag/Downloads/ExpDat.dmp  root@45.120.137.143:/root/WarePro/
+
+psql -U adempiere -d vinayERP < /root/WarePro/ExpDat.dmp
+
+cd /opt/idempiere-server# cat idempiere.properties
+
+cd /opt/idempiere-server# cat idempiereEnv.properties
+
+scp root@45.120.137.143:/root/vinaydatas.dmp /home/chirag/
+
+Dump data:-
+pg_dump -U adempiere -W vinayerpcr > /home/chirag/ram/vinayDBDMPFolder/vinayerpcr13.dmp
+
+testing:-
+ls ~/ram/vinayDBDMPFolder/ | grep vinayerp
+
+for aws server:-
+scp -i "pemFile/democ.pem" ubuntu@13.233.84.2:/home/ubuntu/erp5.dmp /home/chirag/
+
+================================================================================================================================================
+Reports:-
+-- to see storage detail by locator
+CREATE OR REPLACE VIEW adempiere.pi_storageDetailByLocator AS 
+SELECT w.m_warehouse_id,pr.m_product_category_id,pp.m_product_id,uom.name AS uom,pbom.PP_Product_BOM_ID,l.m_locatortype_id,pp.m_locator_id,
+SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availableCount,d.pi_deptartment_id,
+pr.value,pr.created As m_product_created,pr.createdby AS m_product_createdby,pr.updated AS m_product_updated,pr.updatedby AS m_product_updatedby,
+pr.isactive AS product_isactive,l.isactive AS locator_isactive,pp.ad_client_id,pp.ad_org_id
+FROM adempiere.pi_productlabel pp JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id LEFT JOIN adempiere.PP_Product_BOM pbom ON pbom.m_product_id = pr.m_product_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+LEFT JOIN adempiere.pi_deptartment d ON pr.pi_deptartment_id = d.pi_deptartment_id
+WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')
+GROUP BY pp.m_product_id,w.m_warehouse_id,uom.name,pp.ad_client_id,pp.ad_org_id,pr.isactive,l.isactive,l.m_locatortype_id, 
+pp.m_locator_id,pr.m_product_category_id,d.pi_deptartment_id,pbom.PP_Product_BOM_ID,pr.value,pr.created,pr.createdby,pr.updated,pr.updatedby Order BY pp.m_locator_id desc;
+
+CREATE OR REPLACE VIEW adempiere.pi_storageDetailByProduct AS 
+SELECT pr.m_product_category_id,pp.m_product_id,uom.name AS uom,pbom.PP_Product_BOM_ID,
+SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availableCount,
+pr.value,pr.created As m_product_created,pr.createdby AS m_product_createdby,pr.updated AS m_product_updated,pr.updatedby AS m_product_updatedby,
+pr.isactive AS product_isactive,pp.ad_client_id,pp.ad_org_id,d.pi_deptartment_id
+FROM adempiere.pi_productlabel pp JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id LEFT JOIN adempiere.PP_Product_BOM pbom ON pbom.m_product_id = pr.m_product_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+LEFT JOIN adempiere.pi_deptartment d ON pr.pi_deptartment_id = d.pi_deptartment_id
+WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')
+GROUP BY pp.m_product_id,uom.name,pp.ad_client_id,pp.ad_org_id,pr.isactive,pr.m_product_category_id,d.pi_deptartment_id,
+pbom.PP_Product_BOM_ID,pr.value,pr.created,pr.createdby,pr.updated,pr.updatedby Order BY pp.m_product_id desc;
+
+CREATE OR REPLACE VIEW adempiere.pi_storageDetailbyLabel AS 
+SELECT p.m_product_id,lo.m_warehouse_id,p.m_locator_id,p.m_inoutline_id,p.c_orderline_id,o.c_order_id,p.labeluuid,d.pi_deptartment_id,
+p.quantity,p.qcpassed,p.issotrx,p.created,p.ad_client_id,p.ad_org_id
+FROM adempiere.pi_productlabel p 
+LEFT JOIN adempiere.m_product pr ON pr.m_product_id = p.m_product_id
+LEFT JOIN adempiere.pi_deptartment d ON pr.pi_deptartment_id = d.pi_deptartment_id
+JOIN adempiere.m_locator lo ON lo.m_locator_id = p.m_locator_id
+JOIN adempiere.m_warehouse wh ON wh.m_warehouse_id = lo.m_warehouse_id 
+Left JOIN adempiere.c_orderline li ON li.c_orderline_id = p.c_orderline_id
+Left JOIN adempiere.c_order o ON o.c_order_id = li.c_order_id 
+WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = p.labeluuid AND pp_sales.issotrx = 'Y');	
+
+
+RWPL:-
+CREATE OR REPLACE VIEW adempiere.pi_emptyLocatorView AS 
+SELECT l.m_locator_id,l.value AS locator_name,l.ad_client_id,l.ad_org_id
+FROM adempiere.m_locator l
+LEFT JOIN adempiere.pi_productlabel s ON l.m_locator_id = s.m_locator_id 
+WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = s.labeluuid AND pp_sales.issotrx = 'Y')
+GROUP BY l.m_locator_id, l.value,s.ad_client_id,s.ad_org_id
+HAVING COALESCE(SUM(s.quantity), 0) = 0 ORDER BY l.m_locator_id;		
+

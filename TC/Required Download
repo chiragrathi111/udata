@@ -1,0 +1,47 @@
+Required Download:-
+
+sudo apt-get install net-tools
+
+sudo apt install openjdk-11-jdk
+
+sudo apt install postgresql-14
+
+wget https://dlcdn.apache.org/activemq/5.18.4/apache-activemq-5.18.4-bin.tar.gz
+
+Hyper ledger curl latest version
+
+#
+	sudo apt update
+	sudo apt-add-repository -y ppa:git-core/ppa
+	
+# Install git
+	sudo apt update
+	sudo apt install git -y
+	git --version
+	
+# Install Docker
+	sudo apt install docker.io -y
+	
+# Install Python
+	sudo apt install python3 -y
+	
+# Node, Nvm install
+
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+nvm install 14,18
+
+# Install docker compose
+	sudo apt install docker-compose	-y
+	
+# Install go.
+	sudo apt install golang-go -y
+
+curl -sSL http://bit.ly/2ysbOFE | bash -s -- 2.5.6 1.5.9
+
+npm i -g pm2
+	

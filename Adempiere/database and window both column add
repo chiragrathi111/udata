@@ -1,0 +1,14 @@
+1. Alter a Existing table and add new column:-
+ALTER TABLE adempiere.C_Orderline ADD COLUMN ExpiryDate DATE;
+
+2. login System user and update table and coulmn, Window and tab field:-
+	1. go to table and column window:-
+	 If you change order line field then go to search option and paste name -> C_OrderLine  (Name = Sales Order Line)
+	 and press Process Button and create Column from DB, so add your new field in c_order_line window field
+	 click Column Tab and show all column choose your column name and change method for your Requirement
+
+	2. go to Window,Tab and Field :-
+	  search Purchase Order and choose PO Line Tab
+	  go to create field then add your need fields
+	  Your Requiemnet change your Field Sequence and other modification your field value.
+	  

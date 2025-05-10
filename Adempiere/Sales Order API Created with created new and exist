@@ -1,0 +1,674 @@
+Sales Order API Created with created new and existing Business partner:-
+
+	private CLogger log = CLogger.getCLogger(ExpiryNotification.class);
+	private Properties ctx = Env.getCtx();
+	private int clientId = Env.getAD_Client_ID(ctx);
+	int AD_Client_ID = 1000002;
+    int AD_Org_ID = 1000004;
+    String NewBusinessPartnerName = "Customersssssssst";
+    String BPartnerEmail = "customer@gmail.com";
+    String BPartnerAddress = "Tarighat";
+    String c_bartner_ID = "";
+    int bPartnerId = 0;
+    String BusinessPartnerName = "";
+    int m_warehouse_id = 1000018;
+    int m_product_id = 1000041;
+    int productQTY = 10;
+    int C_BPartner_ID = 0;
+	@Override
+	protected void prepare() {
+	}
+
+	@Override
+	protected String doIt() throws Exception {
+        
+		MOrder mOrder = null;
+
+		PreparedStatement pstm = null,pstm1 = null;
+		ResultSet rs  = null,rs1 = null;
+        
+        String sql = "select name from adempiere.c_bpartner where ad_client_id = "+ AD_Client_ID +" and iscustomer = 'Y'";  
+        
+        pstm = DB.prepareStatement(sql.toString(), null);
+        rs = pstm.executeQuery();
+        
+        boolean nameExists = false;
+        while(rs.next()) {
+        	BusinessPartnerName = rs.getString("name");
+        	 if (NewBusinessPartnerName.equals(BusinessPartnerName)) {
+                 nameExists = true;
+                 break;  // Exit the loop if the name is found
+             }
+        }
+        pstm.close();
+		rs.close();
+        if (!nameExists) {
+            System.out.println("The desired name dose not exists in the result set.");
+            C_BPartner_ID = createBusinessPartner(AD_Client_ID, AD_Org_ID, NewBusinessPartnerName, BPartnerEmail, BPartnerAddress);        
+            c_bartner_ID = Integer.toString(C_BPartner_ID);
+            
+            mOrder = createSOOrder(C_BPartner_ID);
+            
+            return c_bartner_ID;
+        }else {
+        	System.out.println("New customer not required");
+        	String sql1 = "select c_bpartner_id from adempiere.c_bpartner where name = '"+ NewBusinessPartnerName +"' and ad_client_id = "+ AD_Client_ID +"";
+        	 pstm1 = DB.prepareStatement(sql1.toString(), null);
+             rs1 = pstm1.executeQuery();
+             while(rs1.next()) {
+            	bPartnerId = rs1.getInt("c_bpartner_id");
+             }
+             pstm1.close();
+     		 rs1.close();
+             mOrder = createSOOrder(bPartnerId);
+        	return "New customer not required "+bPartnerId;
+        }
+	}
+
+	private MOrder createSOOrder(int mBPartner_ID) throws Exception {
+		MOrder so = new MOrder(getCtx(), 0, null);
+		so.setC_DocTypeTarget_ID(1000138);
+		so.setAD_Org_ID(AD_Org_ID);
+		so.setC_BPartner_ID(mBPartner_ID);
+		so.setM_Warehouse_ID(m_warehouse_id);
+		so.setIsSOTrx(true);
+		so.setSalesRep_ID(1000028);
+		so.setPaymentRule("B");
+		
+		if(so.save()) {
+			MOrderLine mOrderLine = new MOrderLine(so);
+			mOrderLine.setM_Product_ID(m_product_id);
+			mOrderLine.setQty(BigDecimal.valueOf(productQTY));
+			mOrderLine.save();
+			
+			so.setDocAction(MOrder.DOCACTION_Complete);
+			so.processIt(MOrder.DOCACTION_Complete);
+			so.save();
+			
+			System.out.println("Order is Succesfully");
+		}else {
+			System.out.println("Sales order is not completed");
+		}
+		
+		System.out.println(so.get_ID());
+		return so;
+	}
+
+	private int createBusinessPartner(int AD_Client_ID, int AD_Org_ID, String name, String email, String address) {
+		Trx trx = Trx.get("CreateBusinessPartner",true);
+		int C_BPartner_ID = 0;		
+		try {
+			trx.start();
+            MBPartner bp = new MBPartner(Env.getCtx(), 0, trx.getTrxName());
+            bp.setClientOrg(AD_Client_ID, AD_Org_ID);
+            bp.setName(name);
+            bp.setIsCustomer(true); // Set as Customer
+            if (!bp.save()) {
+                throw new Exception("Failed to save Business Partner: " + bp);
+            }
+            
+            MLocation location = new MLocation(Env.getCtx(), 0, null);
+          location.setAddress1(address);
+          if (!location.save()) {
+              throw new Exception("Failed to save Location: " + location);
+          }          
+          MBPartnerLocation bpLocation = new MBPartnerLocation(bp);
+          bpLocation.setC_Location_ID(location.getC_Location_ID());
+          if (!bpLocation.save()) {
+              throw new Exception("Failed to save Business Partner Location: " + bpLocation);
+          } 
+          trx.commit();
+            C_BPartner_ID = bp.getC_BPartner_ID();			
+		}catch(Exception e) {
+			 e.printStackTrace();
+	            trx.rollback();
+			
+		}finally {
+			trx.close();
+		}
+		
+		return C_BPartner_ID;
+	}
+
+
+=========================================================================================================================================================
+
+package org.wms.ProductExpiryNoti.Model;
+
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import org.compiere.process.SvrProcess;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.compiere.util.Trx;
+import org.compiere.model.MLocation;
+import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
+import org.compiere.model.MBPartner;
+import org.compiere.model.MBPartnerLocation;
+
+public class ExpiryNotification extends SvrProcess{
+	
+	int AD_Client_ID = 1000002;
+    int AD_Org_ID = 1000004;
+    String NewBusinessPartnerName = "Customersssssssstt";
+    String BPartnerEmail = "customer@gmail.com";
+    String BPartnerAddress = "Tarighat";
+    int bPartnerId = 0;
+    String BusinessPartnerName = "";
+    int m_warehouse_id = 1000018;
+    int m_product_id = 1000041;
+    int productQTY = 10;
+	@Override
+	protected void prepare() {
+	}
+
+	@Override
+	protected String doIt() throws Exception {
+        
+		MOrder mOrder = null;
+
+		PreparedStatement pstm = null, pstm1 = null;
+		ResultSet rs = null, rs1 = null;
+
+		String sql = "select name from adempiere.c_bpartner where ad_client_id = " + AD_Client_ID
+				+ " and iscustomer = 'Y'";
+
+		pstm = DB.prepareStatement(sql.toString(), null);
+		rs = pstm.executeQuery();
+
+		boolean nameExists = false;
+		while (rs.next()) {
+			BusinessPartnerName = rs.getString("name");
+			if (NewBusinessPartnerName.equals(BusinessPartnerName)) {
+				nameExists = true;
+				break; // Exit the loop if the name is found
+			}
+		}
+		pstm.close();
+		rs.close();
+		if (!nameExists) {
+			int C_BPartner_ID = createBusinessPartner(AD_Client_ID, AD_Org_ID, NewBusinessPartnerName, BPartnerEmail,
+					BPartnerAddress);
+			mOrder = createSOOrder(C_BPartner_ID);
+		} else {
+			String sql1 = "select c_bpartner_id from adempiere.c_bpartner where name = '" + NewBusinessPartnerName
+					+ "' and ad_client_id = " + AD_Client_ID + "";
+			pstm1 = DB.prepareStatement(sql1.toString(), null);
+			rs1 = pstm1.executeQuery();
+			while (rs1.next()) {
+				bPartnerId = rs1.getInt("c_bpartner_id");
+			}
+			pstm1.close();
+			rs1.close();
+			mOrder = createSOOrder(bPartnerId);
+		}
+		return "";
+	}
+
+	private MOrder createSOOrder(int mBPartner_ID) throws Exception {
+		MOrder so = new MOrder(getCtx(), 0, null);
+		so.setC_DocTypeTarget_ID(1000138);
+		so.setAD_Org_ID(AD_Org_ID);
+		so.setC_BPartner_ID(mBPartner_ID);
+		so.setM_Warehouse_ID(m_warehouse_id);
+		so.setIsSOTrx(true);
+		so.setSalesRep_ID(1000028);
+		so.setPaymentRule("S");
+
+		if (so.save()) {
+			MOrderLine mOrderLine = new MOrderLine(so);
+			mOrderLine.setM_Product_ID(m_product_id);
+			mOrderLine.setQty(BigDecimal.valueOf(productQTY));
+			mOrderLine.save();
+
+			so.setDocAction(MOrder.DOCACTION_Complete);
+			so.processIt(MOrder.DOCACTION_Complete);
+			so.save();
+
+			System.out.println("Order is Succesfully");
+		} else {
+			System.out.println("Sales order is not completed");
+		}
+		return so;
+	}
+
+	private int createBusinessPartner(int AD_Client_ID, int AD_Org_ID, String name, String email, String address) {
+		Trx trx = Trx.get("CreateBusinessPartner", true);
+		int C_BPartner_ID = 0;
+		try {
+			trx.start();
+			MBPartner bp = new MBPartner(Env.getCtx(), 0, trx.getTrxName());
+			bp.setClientOrg(AD_Client_ID, AD_Org_ID);
+			bp.setName(name);
+			bp.setIsCustomer(true); // Set as Customer
+			if (!bp.save()) {
+				throw new Exception("Failed to save Business Partner: " + bp);
+			}
+
+			MLocation location = new MLocation(Env.getCtx(), 0, null);
+			location.setAddress1(address);
+			location.setPostal("491111");
+			location.setC_Country_ID(208);
+			if (!location.save()) {
+				throw new Exception("Failed to save Location: " + location);
+			}
+			MBPartnerLocation bpLocation = new MBPartnerLocation(bp);
+			bpLocation.setC_Location_ID(location.getC_Location_ID());
+			if (!bpLocation.save()) {
+				throw new Exception("Failed to save Business Partner Location: " + bpLocation);
+			}
+			trx.commit();
+			C_BPartner_ID = bp.getC_BPartner_ID();
+		} catch (Exception e) {
+			e.printStackTrace();
+			trx.rollback();
+
+		} finally {
+			trx.close();
+		}
+
+		return C_BPartner_ID;
+	}
+
+=================================================================================================================
+-------------------------------------------------------------------------------------------------------------------
+Locator list created:-
+
+@Override
+	public WarehouseLocatorListResponseDocument wareList(WarehouseLocatorListRequestDocument warehouseLocatorListRequestDocument) {
+		WarehouseLocatorListResponseDocument warehouseLocatorListResponseDocument = WarehouseLocatorListResponseDocument.Factory.newInstance();
+		WarehouseLocatorListResponse warehouseLocatorListResponse = warehouseLocatorListResponseDocument.addNewWarehouseLocatorListResponse();
+		WarehouseLocatorListRequest warehouseLocatorListRequest = warehouseLocatorListRequestDocument.getWarehouseLocatorListRequest();
+		ADLoginRequest loginReq = warehouseLocatorListRequest.getADLoginRequest();
+		int ad_client_id = loginReq.getClientID();
+		String serviceType = warehouseLocatorListRequest.getServiceType();
+		PreparedStatement pstm = null;
+	    ResultSet rs = null;
+	    CompiereService m_cs = getCompiereService();
+		
+		try {
+			String err = login(loginReq, webServiceName, "wareList", serviceType);
+			if (err != null && err.length() > 0) {
+				warehouseLocatorListResponse.setError(err);
+				warehouseLocatorListResponse.setIsError(true);
+				return warehouseLocatorListResponseDocument;
+			}
+			if (!serviceType.equalsIgnoreCase("wareList")) {
+				warehouseLocatorListResponse.setIsError(true);
+				warehouseLocatorListResponse.setError("Service type " + serviceType + " not configured");
+				return warehouseLocatorListResponseDocument;
+			}
+			
+			String sql = "SELECT \n"
+					+ "    w.m_warehouse_id as warehouseID,\n"
+					+ "    w.name as warehouseName,\n"
+					+ "	ml.isdefault,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "     LEFT JOIN (\n"
+					+ "         SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "         FROM adempiere.M_StorageOnHand\n"
+					+ "         GROUP BY M_Locator_ID\n"
+					+ "     ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "     WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "     AND COALESCE(ms.TotalQty, 0) = 0) AS emptyCount,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS total_count,\n"
+					+ "    lt.name AS locator_type,\n"
+					+ "    ml.value AS location_values,\n"
+					+ "    ((SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) - \n"
+					+ "     (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "      LEFT JOIN (\n"
+					+ "          SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "          FROM adempiere.M_StorageOnHand\n"
+					+ "          GROUP BY M_Locator_ID\n"
+					+ "      ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "      WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "      AND COALESCE(ms.TotalQty, 0) = 0) \n"
+					+ "    ) * 100 / (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS occupancy_percentage\n"
+					+ "FROM \n"
+					+ "    adempiere.m_warehouse w\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locator ml ON ml.m_warehouse_id = w.m_warehouse_id\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locatortype lt ON ml.m_locatortype_id = lt.m_locatortype_id\n"
+					+ "WHERE \n"
+					+ "    ml.ad_client_id = "+ ad_client_id +"\n"
+					+ "GROUP BY \n"
+					+ "    w.m_warehouse_id, w.name, lt.name,ml.value,ml.isdefault;";
+			pstm = DB.prepareStatement(sql.toString(), null);
+			rs = pstm.executeQuery();
+			
+			List<Integer> warehouseIds = new ArrayList<>();
+			LinkedHashMap<Integer,List<String>> locatorList = new LinkedHashMap<>();
+			while(rs.next()) {
+				int warehouseId = rs.getInt("warehouseID");
+				String warehouseName = rs.getString("warehouseName");
+				int occupancyPercents = rs.getInt("occupancy_percentage");
+				String locatorType = rs.getString("locator_type");
+				String locatorName = rs.getString("location_values");
+			if(!warehouseIds.contains(warehouseId)) {
+				List<String> name = new ArrayList<>();
+				name.add(locatorName);
+			
+				WarehouseListAccess warehouseListAccess = warehouseLocatorListResponse.addNewWarehouseListAccess();
+				warehouseListAccess.setId(warehouseId);
+				warehouseListAccess.setName(warehouseName);
+				warehouseListAccess.setOccupancy(occupancyPercents);
+				warehouseListAccess.setLocatortype(locatorType);
+				warehouseListAccess.addLocator(locatorName);
+				warehouseIds.add(warehouseId);
+				locatorList.put(warehouseId,name);
+				
+			}else {
+				List<String> nameList = locatorList.get(warehouseId);
+				nameList.add(locatorName);
+				locatorList.put(warehouseId, nameList);
+				WarehouseListAccess [] warehouseListAccessArray = warehouseLocatorListResponse.getWarehouseListAccessArray();
+				for(WarehouseListAccess access : warehouseListAccessArray) {
+					if(access.getId() == warehouseId) {
+						String[] l = access.getLocatorArray();
+						String[] concatenatedArray = Arrays.copyOf(l, l.length + 1); // Create a new array with increased size
+						concatenatedArray[l.length] = locatorName; // Add locatorName to the end of the new array
+
+						access.setLocatorArray(concatenatedArray);
+					}
+					}
+				}
+			}
+			pstm.close();
+			rs.close();
+		}catch (Exception e) {
+			warehouseLocatorListResponse.setError(e.getLocalizedMessage());
+			warehouseLocatorListResponse.setIsError(true);
+			return warehouseLocatorListResponseDocument;
+		}finally {
+			getCompiereService().disconnect();
+		}
+		return warehouseLocatorListResponseDocument;
+	}
+
+
+==============================================================================================================================
+Automatic create Warehouse,Locator type and 100 locators:-
+
+protected String doIt() throws Exception {
+		
+		String warehousename = "HeadWarehouseCR";
+		int org_id = 1000003;
+		String LocatorTypeName = "CR";
+		String LocatorValue = "A-L-";
+		String Aisle = "A";
+		String Level = "L-";
+		MWarehouse mWarehouse = null;
+		Trx trx = Trx.get("WarehouseLocatorCreation", true); 
+		
+		try {
+			trx.start();
+			
+			MLocation mLocation = new MLocation(getCtx(), 0, trx.getTrxName());
+			mLocation.setAddress1("Patan");
+			mLocation.setAddress2("Durg");
+			mLocation.setPostal("491111");
+			mLocation.saveEx();
+			
+			mWarehouse = new MWarehouse(getCtx(), 0, trx.getTrxName());
+			mWarehouse.setAD_Org_ID(org_id);
+			mWarehouse.setName(warehousename);
+			mWarehouse.setC_Location_ID(mLocation.get_ID());
+		    mWarehouse.saveEx();
+		    		    
+		    MLocatorType mtype = new MLocatorType(getCtx(), 0, trx.getTrxName());
+		    mtype.setName(LocatorTypeName);
+		    mtype.saveEx();
+		    
+		    int maxBin = 20;
+		    int maxLevel = 5;
+
+		    for (int i = 1; i <= maxBin; i++) {
+		        for (int j = 1; j <= maxLevel; j++) {
+		            MLocator mLocator = new MLocator(getCtx(), 0, trx.getTrxName());
+		            mLocator.setValue(LocatorValue + j + "-" + i);
+		            mLocator.setM_Warehouse_ID(mWarehouse.get_ID());
+		            mLocator.setM_LocatorType_ID(mtype.get_ID());
+		            mLocator.setX(Aisle);
+		            mLocator.setY(String.valueOf(i));
+		            mLocator.setZ(Level + j);
+		            mLocator.saveEx();
+		        }
+		    }		    
+		    trx.commit();	
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		String mWId = String.valueOf(mWarehouse.get_ID()); 
+		return mWId;
+		}
+		
+		==========================================================================================================================================
+		WarehouseLocatorListResponseDocument warehouseLocatorListResponseDocument = WarehouseLocatorListResponseDocument.Factory.newInstance();
+		WarehouseLocatorListResponse warehouseLocatorListResponse = warehouseLocatorListResponseDocument.addNewWarehouseLocatorListResponse();
+		WarehouseLocatorListRequest warehouseLocatorListRequest = warehouseLocatorListRequestDocument.getWarehouseLocatorListRequest();
+		ADLoginRequest loginReq = warehouseLocatorListRequest.getADLoginRequest();
+		int ad_client_id = loginReq.getClientID();
+		String serviceType = warehouseLocatorListRequest.getServiceType();
+		PreparedStatement pstm = null;
+	    ResultSet rs = null;
+		
+		try {
+			String err = login(loginReq, webServiceName, "wareList", serviceType);
+			if (err != null && err.length() > 0) {
+				warehouseLocatorListResponse.setError(err);
+				warehouseLocatorListResponse.setIsError(true);
+				return warehouseLocatorListResponseDocument;
+			}
+			if (!serviceType.equalsIgnoreCase("wareList")) {
+				warehouseLocatorListResponse.setIsError(true);
+				warehouseLocatorListResponse.setError("Service type " + serviceType + " not configured");
+				return warehouseLocatorListResponseDocument;
+			}
+			
+			String sql = "SELECT \n"
+					+ "    w.m_warehouse_id as warehouseID,\n"
+					+ "    w.name as warehouseName,\n"
+					+ "	ml.isdefault,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "     LEFT JOIN (\n"
+					+ "         SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "         FROM adempiere.M_StorageOnHand\n"
+					+ "         GROUP BY M_Locator_ID\n"
+					+ "     ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "     WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "     AND COALESCE(ms.TotalQty, 0) = 0) AS emptyCount,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS total_count,\n"
+					+ "    lt.name AS locator_type,\n"
+					+ "    ml.value AS location_values,\n"
+					+ "    ((SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) - \n"
+					+ "     (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "      LEFT JOIN (\n"
+					+ "          SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "          FROM adempiere.M_StorageOnHand\n"
+					+ "          GROUP BY M_Locator_ID\n"
+					+ "      ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "      WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "      AND COALESCE(ms.TotalQty, 0) = 0) \n"
+					+ "    ) * 100 / (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS occupancy_percentage\n"
+					+ "FROM \n"
+					+ "    adempiere.m_warehouse w\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locator ml ON ml.m_warehouse_id = w.m_warehouse_id\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locatortype lt ON ml.m_locatortype_id = lt.m_locatortype_id\n"
+					+ "WHERE \n"
+					+ "    ml.ad_client_id = "+ ad_client_id +"\n"
+					+ "GROUP BY \n"
+					+ "    w.m_warehouse_id, w.name, lt.name,ml.value,ml.isdefault;";
+			pstm = DB.prepareStatement(sql.toString(), null);
+			rs = pstm.executeQuery();
+			
+			List<Integer> warehouseIds = new ArrayList<>();
+//			List<String> locatorTypesN = new ArrayList<>();
+			Map<Integer, Map<String, List<String>>> locatorList = new HashMap<>();
+
+			
+			while(rs.next()) {
+				int warehouseId = rs.getInt("warehouseID");
+				String warehouseName = rs.getString("warehouseName");
+				int occupancyPercents = rs.getInt("occupancy_percentage");
+				String locatorType = rs.getString("locator_type");
+				String locatorName = rs.getString("location_values");
+				
+				if(!warehouseIds.contains(warehouseId)) {
+					 // New warehouse, create a new entry in locatorList
+			        Map<String, List<String>> locatorsByType = new HashMap<>();
+			        List<String> locatorsForType = new ArrayList<>();
+			        locatorsForType.add(locatorName);
+			        locatorsByType.put(locatorType, locatorsForType);
+					
+			        WarehouseListAccess warehouseListAccess = warehouseLocatorListResponse.addNewWarehouseListAccess();
+					warehouseListAccess.setId(warehouseId);
+		            warehouseListAccess.setName(warehouseName);
+		            warehouseListAccess.setOccupancy(occupancyPercents);
+		            warehouseListAccess.setLocatortype(locatorType);
+		            warehouseListAccess.addLocator(locatorName);
+		            
+//		            locatorTypesN.add(locatorType);
+		            warehouseIds.add(warehouseId);
+		            locatorList.put(warehouseId, locatorsByType);
+		            
+				}else {
+					
+			        Map<String, List<String>> locatorsByType = locatorList.computeIfAbsent(warehouseId, k -> new HashMap<>());
+
+			        if (locatorsByType.containsKey(locatorType)) {
+			            locatorsByType.get(locatorType).add(locatorName);
+			        } else {
+			            List<String> locatorsForType = new ArrayList<>();
+			            locatorsForType.add(locatorName);
+			            locatorsByType.put(locatorType, locatorsForType);
+			        }
+
+		            WarehouseListAccess[] warehouseListAccessArray = warehouseLocatorListResponse.getWarehouseListAccessArray();
+		            for (WarehouseListAccess access : warehouseListAccessArray) {
+		                if (access.getId() == warehouseId && access.getLocatortype().equals(locatorType)) {
+		                	access.setLocatorArray(locatorsByType.get(locatorType).toArray(new String[0]));
+		                    break;
+		                }
+		            }
+				}
+			}
+
+=============================================================================================================================
+Prper Working WarehouseList API:;-
+
+WarehouseLocatorListResponseDocument warehouseLocatorListResponseDocument = WarehouseLocatorListResponseDocument.Factory.newInstance();
+		WarehouseLocatorListResponse warehouseLocatorListResponse = warehouseLocatorListResponseDocument.addNewWarehouseLocatorListResponse();
+		WarehouseLocatorListRequest warehouseLocatorListRequest = warehouseLocatorListRequestDocument.getWarehouseLocatorListRequest();
+		ADLoginRequest loginReq = warehouseLocatorListRequest.getADLoginRequest();
+		int ad_client_id = loginReq.getClientID();
+		String serviceType = warehouseLocatorListRequest.getServiceType();
+		PreparedStatement pstm = null;
+	    ResultSet rs = null;
+		
+		try {
+			String err = login(loginReq, webServiceName, "wareList", serviceType);
+			if (err != null && err.length() > 0) {
+				warehouseLocatorListResponse.setError(err);
+				warehouseLocatorListResponse.setIsError(true);
+				return warehouseLocatorListResponseDocument;
+			}
+			if (!serviceType.equalsIgnoreCase("wareList")) {
+				warehouseLocatorListResponse.setIsError(true);
+				warehouseLocatorListResponse.setError("Service type " + serviceType + " not configured");
+				return warehouseLocatorListResponseDocument;
+			}
+			
+			String sql = "SELECT \n"
+					+ "    w.m_warehouse_id as warehouseID,\n"
+					+ "    w.name as warehouseName,\n"
+					+ "	ml.isdefault,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "     LEFT JOIN (\n"
+					+ "         SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "         FROM adempiere.M_StorageOnHand\n"
+					+ "         GROUP BY M_Locator_ID\n"
+					+ "     ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "     WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "     AND COALESCE(ms.TotalQty, 0) = 0) AS emptyCount,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS total_count,\n"
+					+ "    lt.name AS locator_type,\n"
+					+ "    ml.value AS location_values,\n"
+					+ "    ((SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) - \n"
+					+ "     (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "      LEFT JOIN (\n"
+					+ "          SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "          FROM adempiere.M_StorageOnHand\n"
+					+ "          GROUP BY M_Locator_ID\n"
+					+ "      ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "      WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "      AND COALESCE(ms.TotalQty, 0) = 0) \n"
+					+ "    ) * 100 / (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS occupancy_percentage\n"
+					+ "FROM \n"
+					+ "    adempiere.m_warehouse w\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locator ml ON ml.m_warehouse_id = w.m_warehouse_id\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locatortype lt ON ml.m_locatortype_id = lt.m_locatortype_id\n"
+					+ "WHERE \n"
+					+ "    ml.ad_client_id = "+ ad_client_id +"\n"
+					+ "GROUP BY \n"
+					+ "    w.m_warehouse_id, w.name, lt.name,ml.value,ml.isdefault;";
+			pstm = DB.prepareStatement(sql.toString(), null);
+			rs = pstm.executeQuery();
+			
+			List<Integer> warehouseIds = new ArrayList<>();
+
+			while (rs.next()) {
+			    int warehouseId = rs.getInt("warehouseID");
+			    String warehouseName = rs.getString("warehouseName");
+			    int occupancyPercents = rs.getInt("occupancy_percentage");
+			    String locatorType = rs.getString("locator_type");
+			    String locatorName = rs.getString("location_values");
+
+			    if (!warehouseIds.contains(warehouseId)) {
+			        WarehouseListAccess warehouseListAccess = warehouseLocatorListResponse.addNewWarehouseListAccess();
+			        warehouseListAccess.setWarehouseId(warehouseId);
+			        warehouseListAccess.setWarehouseName(warehouseName);
+			        warehouseListAccess.setOccupancyPercentage(occupancyPercents);
+
+			        LocationType locationType = warehouseListAccess.addNewLocations();
+			        locationType.setLocatorTypeName(locatorType);
+			        
+			        Locators locators = locationType.addNewLocators();
+			        locators.setLocatorName(locatorName);
+			        locators.setIsOccupied(false);
+			        warehouseIds.add(warehouseId);
+			    } else {
+			    	WarehouseListAccess[] warehouseListAccessArray = warehouseLocatorListResponse.getWarehouseListAccessArray();
+			    	for(WarehouseListAccess wLAcess : warehouseListAccessArray) {
+			    		if(wLAcess.getWarehouseId() == warehouseId) {
+			    			boolean flag = false;
+			    			LocationType[] LocationsArray = wLAcess.getLocationsArray();
+			    			for(LocationType lType : LocationsArray) {
+			    				if(lType.getLocatorTypeName().equals(locatorType)) {
+			    					 Locators locators  = lType.addNewLocators();
+			    					 locators.setLocatorName(locatorName);
+			    					 locators.setIsOccupied(false);
+			                        flag = true;
+			    					break;
+			    				}
+			    			}
+			    			if(flag == false) {
+			    				 LocationType locationType = wLAcess.addNewLocations();
+			 			        locationType.setLocatorTypeName(locatorType);
+			 			        Locators locators = locationType.addNewLocators();
+			 			        locators.setLocatorName(locatorName);
+			 			       locators.setIsOccupied(false);
+			    			}
+			    			break;
+			    		}
+			    	}
+			    }
+			}
+
+			===============================================================================================================================				

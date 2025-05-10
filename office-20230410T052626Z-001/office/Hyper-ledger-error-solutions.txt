@@ -1,0 +1,478 @@
+Errors from NodeJS(client):
+
+Error 1: node-gyp errors
+
+	gyp ERR! build error 
+	gyp ERR! stack Error: `make` failed with exit code: 2
+	gyp ERR! stack     at ChildProcess.onExit (/usr/local/lib/node_modules/npm/node_modules/node-gyp/lib/build.js:270:23)
+	gyp ERR! stack     at emitTwo (events.js:87:13)
+	gyp ERR! stack     at ChildProcess.emit (events.js:172:7)
+	gyp ERR! stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:200:12)
+	gyp ERR! System Darwin 14.5.0
+	Solution: My best suggestion is always install Nodejs by using NVM(Node version Manager)
+
+	sudo apt-get install build-essential libssl-dev
+
+	Always use stable version of NodeJS
+
+	Ex: v8.12.0 (Latest LTS: Carbon) — It should show green color
+
+Error 2: certificate is invalid [Cannot read property ‘curve’ of undefined]
+
+	error: [Client.js]: Failed to load user “maersksea-ica” from local key value store. Error: TypeError: Cannot read property ‘curve’ of undefined
+	at Object.KEYUTIL.getKey (/home/server/Downloads/bg-projects/adminTasks/node_modules/jsrsasign/lib/jsrsasign.js:247:10379)
+	at CryptoSuite_ECDSA_AES.getKey (/home/server/Downloads/bg-projects/adminTasks/node_modules/fabric-client/lib/impl/CryptoSuite_ECDSA_AES.js:204:27)
+	at <anonymous>
+
+	Above scenario tried to register a new user with wrong CAadmin certificates
+
+	Solution: certificate you provided is invalid check using below online tools
+
+	https://ssldecoder.org/
+	https://www.sslshopper.com/certificate-key-matcher.html
+Error 3: wrong chaincode name | instantiation failed, but try to invoke
+
+	error: [client-utils.js]: sendPeersProposal — Promise is rejected: Error: make sure the chaincode rate has been successfully instantiated and try again: getccdata public/rate responded with error: could not find chaincode with name ‘rate’
+	at /home/server/Downloads/fabric-ca-network/client-node/node_modules/fabric-client/lib/Peer.js:114:16
+	at /home/server/Downloads/fabric-ca-network/client-node/node_modules/grpc/src/client.js:586:7
+
+	Solution: Generally join peers to channels is like to identify which peers belong to which channel, same way install chaincode in all peers OK but to identify which chaincode belongs to which channel, we need to successfully instantiated chaincode, this is a one-time transaction and happened in channel
+
+	try to resolve problems with instantiating chaincode, if you encounter docker problems refer docker section.
+
+Error 4: Failed to create the channel ‘public’
+
+	NodeJS Logs: [2018–10–04 12:19:28.548] [DEBUG] Create-Channel — response ::{“status”:”BAD_REQUEST”,”info”:”error authorizing update: error validating DeltaSet: policy for [Group] /Channel/Application not satisfied: Failed to reach implicit threshold of 1 sub-policies, required 1 remaining”}
+	[2018–10–04 12:19:28.548] [ERROR] Create-Channel —
+	!!!!!!!!! Failed to create the channel ‘public’ !!!!!!!!!
+
+	Orderer Logs: reg channel creation error
+
+	2018–10–04 08:19:28.617 UTC [orderer/common/broadcast] Handle -> WARN 132 [channel: public] Rejecting broadcast of config message from 10.255.0.2:57714 because of error: error authorizing update: error validating DeltaSet: policy for [Group] /Channel/Application not satisfied: Failed to reach implicit threshold of 1 sub-policies, required 1 remaining
+
+	Reason: the transaction is not signed with an admin key
+
+	Solution: To create a channel we need admin credentials such as private key & public certificate(Ex: x.509)
+
+Error 5: reg channel creation error
+
+	NodeJS Logs: [2018–10–05 11:29:21.358] [DEBUG] Create-Channel — response ::{“status”:”BAD_REQUEST”,”info”:”error authorizing update: error validating ReadSet: readset expected key [Group] /Channel/Application at version 0, but got version 1"}
+	OrdererLogs:
+
+	2018–10–05 07:29:21.329 UTC [orderer/common/broadcast] Handle -> WARN bca [channel: public] Rejecting broadcast of config message from 10.255.0.2:44136 because of error: error authorizing update: error validating ReadSet: readset expected key [Group] /Channel/Application at version 0, but got version 1
+
+	Reason: Simple channel(public) is already created and try to create channel(public) again means error.
+
+Error 6: reg Policy error
+
+	{ status: ‘BAD_REQUEST’,
+	info: ‘error authorizing update: error validating DeltaSet: policy for [Group] /Channel/Orderer not satisfied: Failed to reach the implicit threshold of 2 sub-policies, required 1 remaining’ }
+	[2018–10–24 12:25:04.411] [DEBUG] Update-Channel — response3 ::{“status”:”BAD_REQUEST”,”info”:”error authorizing update: error validating DeltaSet: policy for [Group] /Channel/Orderer is not satisfied: Failed to reach the implicit threshold of 2 sub-policies, required 1 remaining”}
+
+	Reason: While update the channel make sure you got a majority of signatures from all organizations.
+
+	Update: Add/Remove an organisation from the network.
+
+Error 7: connection issue
+
+	error: [Remote.js]: Error: Failed to connect before the deadline
+	[2018–10–24 13:09:48.602] [ERROR] Join-Channel — Error: Failed to connect before the deadline
+	at checkState (/home/server/Downloads/fabric-ca-network/TwoOrgs-ThirdLater/Org3/client-node/node_modules/grpc/src/client.js:838:16)
+	[2018–10–24 13:09:48.602] [ERROR] Join-Channel — Failed to join all peers to channel. cause:Error: Failed to connect before the deadline
+
+	Reason: grpcs IP and port is correct but ssl target name has been changed
+
+	Ex: If orderer name is enoc-orderer-enoc then ssl-target-name also should beenoc-orderer-enoc.
+
+Error 8: Failed disseminating 2 out of 2 private RWSets
+
+	Peer Logs:
+
+	Org2_maersk-peer-maersk.1.05eunxk7gplx@devserver1 | 2018–10–29 10:15:08.814 UTC [gossip/gossip] learnAnchorPeers -> WARN 034 Got empty hostname, skipping connecting to anchor peer { 7051}
+	Org2_maersk-peer-maersk.1.05eunxk7gplx@devserver1 | 2018–10–29 10:15:08.814 UTC [gossip/gossip] learnAnchorPeers -> WARN 035 Got invalid port (0), skipping connecting to anchor peer {maersksea-peer-maersksea 0}
+	Org2_maersk-peer-maersk.1.05eunxk7gplx@devserver1 | 2018–10–29 10:15:08.814 UTC [gossip/gossip] learnAnchorPeers -> WARN 036 Got empty hostname, skipping connecting to anchor peer { 7051}
+
+	Reason: we need to define Anchor Peers for cross Org Communication
+
+	Note: Anchor peers are differ to leader peers.
+
+	Make sure you update Anchor peers after joining peers
+
+=======================================================================================================================================================
+
+Error No 1:
+	Error: Error trying to ping. Error: 2 UNKNOWN: make sure the chaincode test-registry has been successfully instantiated and try again: could not find chaincode with name ‘test-registry’
+
+	Solutions: Make sure that you have installed the network before you start. Use below commands to start the network
+
+	- composer network install — card PeerAdmin@hlfv1 — archiveFile network-name@0.0.1.bna
+
+	- composer network start — networkName networkname — networkVersion 0.0.1 — networkAdmin admin — networkAdminEnrollSecret adminpw — card PeerAdmin@hlfv1 — file networkadmin.card
+
+Error No 2:
+Error:
+	docker: Error response from daemon: Conflict. The container name “/composer-playground” is already in use by container “9f224b04663a4fa65f50843e5f7e28f7e7df662507a9b42ae5dfc72fd3433405”. You have to remove (or rename) that container to be able to reuse that name.
+	See ‘docker run — help’.
+
+	Solutions: Kill the dockers by running following command & re-execute the composer-playground command (“docker run — name composer-playground — publish 8080:8080 hyperledger/composer-playground”)
+
+	docker rm -f $(docker ps -a -q)
+
+	docker kill $(docker ps -q)
+
+	docker rm $(docker ps -aq)
+
+	docker rmi $(docker images dq-* -q)
+
+Error No 3:
+	Error: Chaincode already exists error
+
+	Solutions: Kill docker images, stop fabric & start fabric again. Once it runs fine, then start deploying the business network card again.
+
+	./stopFabric.sh
+
+	./startFabric.sh
+
+Error No 4:
+	Error: NG Serve Error
+
+	Solutions: Use npm instead of ng serve.
+
+	npm start
+
+Error No 5:
+	Error: Authorisation error REST-API
+
+	Solutions: Setup COMPOSER_PROVIDERS in environment variable, and restart the composer-rest-server
+
+	Follow this link https://github.com/hyperledger/composer/blob/master/packages/composer-website/jekylldocs/integrating/enabling-rest-authentication.md
+
+Error No 6:
+	Discovering types from business network definition …
+	Connection fails: Error: Error trying to ping. Error: 2 UNKNOWN: make sure the chaincode ‘network-name’ has been successfully instantiated and try again: could not find chaincode with name ‘network-name’
+
+	Solutions: Make sure to install & start the business network before you run composer-rest-server command.
+
+	1)composer network install — card PeerAdmin@hlfv1 — archiveFile network-name@0.0.1.bna
+
+	2)composer network start — networkName ‘network-name’ — networkVersion 0.0.1 — networkAdmin admin — networkAdminEnrollSecret adminpw — card PeerAdmin@hlfv1 — file networkadmin.card
+
+ERROR No 7:
+	ERROR: for couchdb Cannot create container for service couchdb: Conflict. The container name “/couchdb” is already in use by container “de8ceaf8f21b53bb4c9883eb618448f6f07c7690bea8ab122ef3b689e846eab4”. You have to remove (or rename) that Creating orderer.example.com … error
+
+	Solutions: Kill the dockers by running following command
+
+	docker rm -f $(docker ps -aq)
+
+Error No : 8
+	Error: Cannot find module ‘fabric-client’
+
+	Solution: Perform npm update, this will install necessary plug-in’s & modules.
+
+	npm update
+
+Error No : 9
+	Error: npm ERR! This is probably not a problem with npm. There is likely additional logging output above. npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+
+	Solution: perform npm install, this will install necessary node_modules.
+
+	npm install
+
+Error No: 10
+	Error: Angular2 app generated by “yo fabric-composer” does not have UI for Transactions
+
+	Solutions: We have issue open in Github — please follow the issue for more updates
+
+	Solution Update :
+	Go to <transaction>.component.html file in src/app/<transaction> folder and check for line
+	<button type=”button” class=”btn btn-primary invokeTransactionBtn” data-toggle=”modal”>Invoke</button>
+
+	Just add data-target attribute to it as below:
+	<button type=”button” class=”btn btn-primary invokeTransactionBtn” data-toggle=”modal” data-target=”#addTransactionModal”>Invoke</button>
+
+	#addTransactionModal is the id for the modal which has the form.
+
+	LInk : https://github.com/hyperledger/composer/issues/4121
+
+Error No: 11
+	Error: Connection fails: Error: Error trying to ping. Error: Composer runtime (0.19.8) is not compatible with client (0.19.5)
+	It will be retried for the next request.
+
+	Solutions:
+
+	./stopFabric.sh
+
+	npm install -g composer-playground@0.19.8
+
+	composer-rest-server
+
+Error No 12:
+	ERROR: curl: (7) Failed to connect to localhost port 49160: Connection refused
+
+	Solution: docker run — rm -i -t -p 49160:8080 <your username>/node-app
+
+	Note: This kind of error will only shoot up, when you build your own docker container & trying to execute it.
+
+Error No 13:
+	ERROR: network composer_default id b1067bdec4ca1800510fc9cc1f5d3500736e48920693b03831df0d8d8472ffac has active endpoints
+
+	You might hit this error, when you trying to execute new fabric-server(but the old one still in running state)
+
+	Solutions : Stop the already running fabric server, using .stopFabric.sh or .stop.sh(whatever the script you has in your network), then apply the following command to remove the running docker containers, and re-execute the fabric
+
+	docker rm -f $(docker ps -a -q)
+
+Error No 14:
+	Error: Node.JS Error: ENOSPC
+
+	Solution : https://stackoverflow.com/questions/22475849/node-js-error-enospc .
+
+Error NO 15:
+	Error: failed to create deliver client: orderer client failed to connect to orderer.example.com:7050: failed to create new connection: context deadline exceeded
+
+	Solution : You need to review the Orderer logs first to ensure what’s happening under the hood.
+
+	Step 1: docker logs orderer.example.com
+
+	Step 2: go to configtx.yaml file and check the capabilities
+
+	ensure you have right versions downloaded
+
+Error No 16:
+	Error: Failed to import the business network card
+
+	Failed to import the business network card
+	keyword: required
+	dataPath: .peers[‘peer0.org1.example.com’]
+	schemaPath: #/required
+	params:
+	missingProperty: eventUrl
+	message: should have required property ‘eventUrl’
+
+	Error: Errors found in the connection profile in the card
+	Command failed
+
+	Solution: You are trying to run fabric v1.1, but it pulls out fabric v1.2 createpeeradmin.sh
+
+Error No : 17
+	Error: container is marked for removal and cannot be started
+
+	Sometimes, when you kill / remove containers, it would sit up in “Removal Queue” or in “Dead Status”, that would be mounted forever and will not allow you to run your next steps.. So you have to remove the containers using below command. this kills all the containers that are marked in DEAD state.
+
+	Solution: docker rm $(docker ps — all -q -f status=dead)
+
+Error No : 18
+	Error: sendPeersProposal — Promise is rejected: Error: chaincode with name ‘chain-code-name’ already exists
+
+	Situtation — Occurred while instantiating chaincode
+
+	Solutions: This error mostly would occur due to the fact that, chaincode would have already instantiated on peers. So get rid of this, remove the node_modules & do npm install once it finishes fine, restart the “install chaincode” and then “instantitaet chaincode”.
+
+	Or
+
+	Use different chain_node id
+
+Error No : 19
+	CRIT 008 Error on outputBlock: Error writing genesis block: open ./channel-artifacts/genesis.block: no such file or directory
+
+	Solution : Create channel-artifacts folder before you run the command
+
+	./configtxgen -profile FourOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+
+Error No : 20
+	Error: readBlock -> DEBU 00a Got status: &{FORBIDDEN} Error: can’t read the block: &{FORBIDDEN}
+
+	Solution : Make sure, before you start your network no other containers are running behind. This error occurs due to permission issues, that containers are in conflict with existing containers. Goahead, kill the containers using docker rm -f $(docker ps -a -q) command & restart your network.
+
+Error No : 21
+	grpc: addrConn.createTransport failed to connect to {peer0.org1.example.com:7051 0 <nil>}. Err :connection error: desc = “transport: Error while dialing dial tcp: lookup peer0.org1.example.com on 127.0.0.11:53: no such host”. Reconnecting…
+
+	Solution: .. to be identified…
+
+Error No : 22
+	Error: Network Not found issue
+
+	Solution : Go to ./peer-base.yaml and change CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE to the corresponding network name. Clean the docker containers and then rebuild
+
+Error No : 23
+	Error: Sending the Instantiate Proposal ..
+	error: [Peer.js]: sendProposal — timed out after:45000
+
+	Solution: …
+
+	Note: After some time, it ran fine. but I will keep it updated when I face it again.
+
+Error No : 24
+	Error: could not assemble transaction: ProposalResponsePayloads do not match — proposal response: version:1 response:<status:200 >
+
+	Solution: Make sure, yo have installed Chaincode in the peers you are trying to invoke the transactions. Set the environment variables for the peers. For instance :
+
+	CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp CORE_PEER_ADDRESS=peer0.org2.example.com:7051 CORE_PEER_LOCALMSPID=”Org2MSP” CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+
+Error No :25
+	Error: Calling enrollment endpoint failed with error [Error: connect ECONNREFUSED 127.0.0.1:7054]
+
+	Solution: Regenerate Crypto Files, then point the secretKey in docker-composer-yaml file for ca-fabric (if 7054 is pointeed to CA-fabric)
+
+Error No : 26 instantiate-chaincode-Instantiate proposal was bad
+	This error would mostly occur when you try to instantiate the Chaincode.
+
+	Solution: you should understand the basic flow how it works first?, when you install Chaincode on peers, it would mostly be successfull, but after you install and instantiate the chaincode it would perform lot of actions such as
+
+	Scanning for Chaincode Syntax, Logical issues, etc.,
+	Bundling the code together
+	Trying to create a container with chaincodename-chaincode version
+	So what happen is that, the “Chaincode” instantitation mostly would fail in “Syntax checking & logical issues in your chaincode”.. To identify the same, run the following command in separate terminal
+
+	docker logs -f peer0.org1.example.com
+
+	Here, peer should be the one where you are trying to instantiate. this will give you clear logs behind , what’s happening and where the errors are being thrown, fix the errors & re install , instantitate.. YOU SHOULD BE GOOD TO GO
+
+Error 27: instantiate-chaincode — Error: ChannelEventHub has been shutdown
+	Solution: Mostly this occurs in “instantiate-chaincode” section, eventhub will get disconnect when it finds more than one chaincode version (when you upgraded with multiple version of same chaincode). Just kill all the containers, just keep the one that’s the latest version then try install & instantitate the chaincode
+
+Error 28: instantiate-chaincode — Error: ChannelEventHub has been shutdown
+	Solution: Mostly this occurs in “instantiate-chaincode” section, eventhub will get disconnect when it finds more than one chaincode version (when you upgraded with multiple version of same chaincode). Just kill all the containers, just keep the one that’s the latest version then try install & instantitate the chaincode
+
+Error 29: Cannot use encKey (type string) as type []byte in argument to entities.NewAES256EncrypterEntity
+Error 30: instantiate Proposal was bad — Chaincode
+	Solution: When you find this error,
+
+	i) Check if you have right fabric-client & fabric-ca-client by using below command
+
+	npm ls fabric-client
+
+	npm ls fabric-ca-client
+
+	Ensure, you have right compatible docker images with respect to fabric-client version.
+
+ERROR 31: docker: Got permission denied while trying to connect to the Docker daemon socket at unix
+
+	Solution: sudo usermod -a -G docker $USER
+
+	Perform this operation in your terminal, close it and re-open the terminal. if issue still persists, then re-boot your system.
+
+ERROR 32: [Remote.js]: Error: Failed to connect before the deadline URL:grpcs://localhost:7051
+
+	ERROR 33: response ::{“status”:”BAD_REQUEST”,”info”:”error authorizing update: error validating ReadSet: readset expected key [Group] /Channel/Application at version 0, but got version 1"}
+
+	SOLUTION : Mostly you will get this error when you trying to create a channel where channel would have already got created. So you can ignore this message and proceed with “JOIN Channel”
+
+ERROR 34: response ::
+	{“status”:”FORBIDDEN”,”info”:”Failed to reach implicit threshold of 1 sub-policies, required 1 remaining: permission denied”}
+
+ERROR 35 : affiliation validation: Failed getting affiliation ‘org3.department1
+
+	Solutions: the issue is that the fabric-ca being used in the sample does not know about the new affiliation. By default, fabric-ca only has the following affiliations:
+
+	org1.department1 org1.department2 org2.department1
+
+	go to app/helper.js and update the logic like below, replace getRegisteredUser function with below logic.
+
+var getRegisteredUser = async function(username, userOrg, isJson) {
+try {
+var client = await getClientForOrg(userOrg);
+logger.debug(‘Successfully initialized the credential stores’);
+// client can now act as an agent for organization Org1
+// first check to see if the user is already enrolled
+var user = await client.getUserContext(username, true);
+if (user && user.isEnrolled()) {
+logger.info(‘Successfully loaded member from persistence’);
+var response = {
+success: false,
+};
+return response;
+} else {
+// user was not enrolled, so we will need an admin user object to register
+logger.info(‘User %s was not enrolled, so we will need an admin user object to register’,username);
+var admins = hfc.getConfigSetting(‘admins’);
+let adminUserObj = await client.setUserContext({username: admins[0].username, password: admins[0].secret});
+
+//newly added
+if(adminUserObj.getAffiliation() != userOrg.toLowerCase()){
+logger.info(‘Admin affiliation not registered. Registering now.’);
+adminUserObj.setAffiliation(userOrg.toLowerCase());
+adminUserObj.setRoles([‘peer’,’orderer’,’client’,’user’]);
+adminUserObj = await client.setUserContext(adminUserObj);
+}
+
+logger.info(‘Admin User: %s’, adminUserObj);
+let affiliation = userOrg.toLowerCase() + ‘.department1’;
+
+let caClient = client.getCertificateAuthority();
+
+//check if org exists
+const affiliationService = caClient.newAffiliationService();
+const registeredAffiliations = await affiliationService.getAll(adminUserObj);
+if(!registeredAffiliations.result.affiliations.some(x => x.name == userOrg.toLowerCase())){
+logger.info(‘Register the new affiliation: %s ‘, affiliation);
+await affiliationService.create({name: affiliation, force: true}, adminUserObj);
+}
+
+let secret = await caClient.register({
+enrollmentID: username,
+affiliation: affiliation
+}, adminUserObj);
+logger.debug(‘Successfully got the secret for user %s — %s’,username);
+
+user = await client.setUserContext({username:username, password:secret});
+logger.debug(‘Successfully enrolled username %s and setUserContext on the client object’, username);
+
+}
+if(user && user.isEnrolled) {
+if (isJson && isJson === true) {
+var response = {
+success: true,
+secret: user._enrollmentSecret,
+message: username + ‘ enrolled Successfully’,
+};
+return response;
+}
+} else {
+throw new Error(‘User was not enrolled ‘);
+}
+} catch(error) {
+let message = ‘Failed to register the username ‘ + username + ‘ for organization ‘ + userOrg + ‘ with error: ‘ + error.toString();
+logger.error(message);
+var response = {
+success: false,
+message: message,
+};
+return response;
+}
+
+};
+
+ERROR 36 : Failed to get registered user: “user” with error: Error: Cannot find module ‘./utils.js’
+
+	Open issue : https://jira.hyperledger.org/browse/FABN-1500	
+
+ERROR 37: panic: etcdraft raft configuration missing [recovered]
+
+	ERROR 38 : Error: could not assemble transaction, err proposal response was not successful, error code 500, msg error starting container: error starting container: Failed to generate platform-specific docker build: Failed to pull hyperledger/fabric-ccenv:latest: API error (404): manifest for hyperledger/fabric-ccenv:latest not found: manifest unknown: manifest unknown
+
+	If you are running earlier version of fabric, you may face this errror.
+
+	Solution: In your instantiate chaincode script, add these two lines before you call instantiate
+
+	docker pull hyperledger/fabric-ccenv:1.4.3
+	docker tag hyperledger/fabric-ccenv:1.4.3 hyperledger/fabric-ccenv:latest
+ERROR NO 39 : Cannot connect to http://localhost:5984/_utils
+
+	Solution : Try switching from localhost to 127.0.0.1
+
+ERROR NO 40 : Common connection profile missing error while adding user for organization
+
+	Solution : getCertificateAuthority() function should be passed with ca name
+
+=====
+
+Portainer setup:
+
+# docker volume create portainer_data
+# docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+— — — — — — — — — — — — — — — — — — — — — — — — — — — — — — -
+
+
+
+

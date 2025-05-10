@@ -1,0 +1,102 @@
+package org.wms.tissue;
+
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.Properties;
+
+import org.compiere.model.MClient;
+import org.compiere.model.MLocator;
+import org.compiere.model.MProduct;
+import org.compiere.model.MStorageOnHand;
+import org.compiere.model.MTransaction;
+import org.compiere.process.DocAction;
+import org.compiere.util.CLogger;
+
+public class TCOrder extends X_TCC_out{
+
+	private static final long serialVersionUID = 1L;
+	private static final Timestamp Timestamp = null;
+
+	public TCOrder(Properties ctx, int TCC_out_ID, String trxName) {
+		super(ctx, TCC_out_ID, trxName);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public TCOrder(Properties ctx, ResultSet rs, String trxName) {
+		super(ctx, rs, trxName);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected boolean beforeDelete() {
+		// TODO Auto-generated method stub
+		return super.beforeDelete();
+	}
+	
+	@Override
+	protected boolean beforeSave(boolean newRecord) {
+		// TODO Auto-generated method stub
+				return super.beforeSave(newRecord);
+	}
+	
+	@Override
+	protected boolean afterDelete(boolean success) {
+		// TODO Auto-generated method stub
+		return super.afterDelete(success);
+	}
+	
+	@Override
+	protected boolean afterSave(boolean newRecord, boolean success) {
+		// TODO Auto-generated method stub
+		
+		if(success) {
+			
+//			Qty & Type
+			String MovementType = "V+";
+			BigDecimal Qty = getQuantity();
+			MProduct product = (MProduct) getM_Product();
+			MLocator locator = (MLocator) getM_Locator();
+//			getM_Locator().getM_Warehouse().get
+			Timestamp dateMPolicy= null;
+			
+//			Update Storage - see also VMatch.createMatchRecord
+			if (MStorageOnHand.add(getCtx(),
+				locator.getM_Locator_ID(),
+				product.getM_Product_ID(),
+				product.getM_AttributeSetInstance_ID(),
+				Qty,Timestamp,
+				get_TrxName())) {
+				
+				MStorageOnHand[] storages = MStorageOnHand.getWarehouse(getCtx(), 0,
+						product.getM_Product_ID(), product.getM_AttributeSetInstance_ID(), null,
+						MClient.MMPOLICY_FiFo.equals(product.getMMPolicy()), false,
+						locator.getM_Locator_ID(), get_TrxName());
+				
+				for (MStorageOnHand storage : storages) {
+					if (Qty.signum() == 0)
+						break;
+					if (storage.getQtyOnHand().compareTo(Qty.negate()) >= 0) {
+						dateMPolicy = storage.getDateMaterialPolicy();
+						break;
+					} else if (storage.getQtyOnHand().signum() > 0) {
+						BigDecimal onHand = storage.getQtyOnHand();
+						// this locator has less qty than required, ship all qtyonhand and iterate to next locator
+						if (!MStorageOnHand.add(getCtx(), 
+								locator.getM_Locator_ID(),
+								product.getM_Product_ID(),
+								product.getM_AttributeSetInstance_ID(),
+								onHand.negate(),storage.getDateMaterialPolicy(),get_TrxName()))
+						
+						Qty = Qty.add(onHand);
+					}
+				}
+
+				if (dateMPolicy == null && storages.length > 0)
+					dateMPolicy = storages[0].getDateMaterialPolicy();
+		
+		}
+		}
+		return super.afterSave(newRecord, success);	
+	}
+	}

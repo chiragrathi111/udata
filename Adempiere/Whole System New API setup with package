@@ -1,0 +1,68 @@
+1. create a Interface class:-
+
+@Path("/realmeds_customservice/")
+@Consumes({ "application/xml", "application/json" })
+@Produces({ "application/xml", "application/json" })
+@WebService(targetNamespace = "http://idempiere.org/ADInterface/1_0")
+@SOAPBinding(style = Style.RPC, use = Use.LITERAL, parameterStyle = ParameterStyle.WRAPPED)
+public interface RealMedsTissueWebservice {
+
+}
+
+2. impement our Interface class in java class:-
+
+@WebService(endpointInterface = "org.realmeds.tissue.custom.RealMedsTissueWebservice", serviceName = "RealMedsTissueWebservice", targetNamespace = "http://idempiere.org/ADInterface/1_0")
+public class RealMedsTissueWebserviceImpl extends AbstractService implements RealMedsTissueWebservice{
+	
+	public static final String ROLE_TYPES_WEBSERVICE = "NULL,WS,SS";
+	private static String webServiceName = new String("RealMedsTissueWebservice");
+
+	}
+
+
+3. go to System login and create a new Web service Deflication method
+
+	 search key = RealMedsTissueWebservice (Interface name)
+	 name = RealMeds Tissue Webservice
+
+4. added two another file this method otherwise API is not working:-
+
+   If you are not see two file then you go to vs code and search Pipra Interface name = "PipraCustomWebservice" and which four file show this interface name 
+   two file name already mention two another file show go to file and added method:-
+
+   1. rest-context.xml :-
+
+   <ref bean="RealMedsTissueWebserviceBean" />	 
+
+   <bean id="RealMedsTissueWebserviceBean" class="org.realmeds.tissue.custom.RealMedsTissueWebserviceImpl" />
+
+   2. services.xml :-
+
+   <jaxws:endpoint id="RealMedsTissueWebservice" address="/RealMedsTissueWebservice" implementor="org.realmeds.tissue.custom.RealMedsTissueWebserviceImpl">
+   <jaxws:dataBinding>
+       <bean class="org.apache.cxf.xmlbeans.XmlBeansDataBinding" />
+    </jaxws:dataBinding>
+  </jaxws:endpoint>
+
+  this two file added 
+
+
+5. go to postman and copy exising postman collection and change some place and you see your api is proper working:-
+
+	  First go to variable and change ip name like
+	   RealMedsTissueWebserviceImplPortBaseUrl
+
+	  Second 
+	  {{RealMedsTissueWebserviceImplPortBaseUrl}}/ADInterface/services/rest/realmeds_customservice/login_api
+
+	  {{RealMedsTissueWebserviceImplPortBaseUrl}} = first enter name value added
+
+	  realmeds_customservice = Interface path
+
+	  login_api = API path
+
+	  and work is done
+	  
+
+
+

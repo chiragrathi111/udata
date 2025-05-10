@@ -1,0 +1,100 @@
+Aws S3 Image:-
+
+<dependency>
+    <groupId>software.amazon.awssdk</groupId>
+    <artifactId>s3</artifactId>
+    <version>2.20.8</version>
+</dependency>
+
+
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+
+import java.net.URL;
+import java.time.Duration;
+import java.util.List;
+
+public class FarmerImageService {
+
+    private static final String BUCKET_NAME = "your-s3-bucket-name";
+    private static final Region REGION = Region.US_EAST_1; // Update to your bucket region
+
+    // Get the latest image URL for the specified farmer ID
+    public String getLatestImageUrl(String farmerId) {
+        // Initialize S3 Client
+        try (S3Client s3 = S3Client.builder()
+                .region(REGION)
+                .credentialsProvider(ProfileCredentialsProvider.create())
+                .build()) {
+
+            // List objects in the farmer's S3 folder
+            ListObjectsV2Request listRequest = ListObjectsV2Request.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(farmerId + "/") // Assumes images are stored in a folder named after farmer ID
+                    .build();
+            
+            ListObjectsV2Response listResponse = s3.listObjectsV2(listRequest);
+            List<S3Object> objects = listResponse.contents();
+
+            // Find the latest object by last modified date
+            S3Object latestObject = objects.stream()
+                    .max((o1, o2) -> o1.lastModified().compareTo(o2.lastModified()))
+                    .orElse(null);
+
+            if (latestObject == null) {
+                System.out.println("No images found for farmer ID: " + farmerId);
+                return null;
+            }
+
+            // Generate pre-signed URL for the latest image
+            return generatePresignedUrl(latestObject.key());
+        }
+    }
+
+    // Generate a pre-signed URL for an S3 object
+    private String generatePresignedUrl(String objectKey) {
+        try (S3Presigner presigner = S3Presigner.builder()
+                .region(REGION)
+                .credentialsProvider(ProfileCredentialsProvider.create())
+                .build()) {
+
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                    .bucket(BUCKET_NAME)
+                    .key(objectKey)
+                    .build();
+
+            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                    .signatureDuration(Duration.ofHours(24)) // URL is valid for 24 hours
+                    .getObjectRequest(getObjectRequest)
+                    .build();
+
+            PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+            URL url = presignedRequest.url();
+
+            return url.toString();
+        }
+    }
+
+    public static void main(String[] args) {
+        FarmerImageService service = new FarmerImageService();
+        String farmerId = "farmer123"; // Example farmer ID
+        String imageUrl = service.getLatestImageUrl(farmerId);
+        
+        if (imageUrl != null) {
+            System.out.println("Latest image URL for farmer " + farmerId + ": " + imageUrl);
+        } else {
+            System.out.println("No image available for farmer " + farmerId);
+        }
+    }
+}
+
+
+{
+    "farmerId": "farmer123",
+    "latestImageUrl": "https://your-s3-bucket.s3.amazonaws.com/farmer123/image.jpg?X-Amz-Security-Token=..."
+}

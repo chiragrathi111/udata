@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#UBUNTU setup:-
+sudo apt update -y
+sudo apt install postgresql postgresql-contrib -y
+sudo systemctl start postgresql.service
+sudo systemctl status postgresql
+sudo -i -u postgres 
+/su - postgres :-iska use tabhi hoha jab docker kai container mai run hoge 
+	         bacause docker mai sudo run anhi katna.
+psql
+\l
+create database databaseName;
+\c databaseName
+create table table1(id INT PRIMARY KEY NOT NULL, name text NOT NULL);
+insert into table1 values(1,'chi');
+select * from table1;
+\q
+ls
+pwd
+mkdir folder
+pg_dump -d databaseName -U postgres -p 5432 -Fc -f /var/lib/postgresql/folder/file.sql
+cd folder
+ls
+pg_restore -d databaseName -U postgres /var/lib/postgressql/folder/file.sql
+
+psql --version

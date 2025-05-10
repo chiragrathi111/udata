@@ -1,0 +1,11 @@
+Git Stash And Push Issue:-
+
+Stash and take pull then conflict:-
+git stash
+git pull
+git stash apply
+
+Push and take pull then conflict:-
+git stash
+git reset HEAD~1
+git pull

@@ -1,0 +1,17 @@
+5. Order Fulfilment Process (Proposed):-
+
+String all point available in our WarePro.
+
+Store Picker scan storage location if currect it is proper working but else condition such as not scan currect location this point some customization like suggest please scan correct locator and show also name and id.
+
+After scan location one more point add skip point
+
+Qty picked option also available in our WarePro
+
+SuperVisor physically visit and check product actual qty available or not and update remark (this is not available)
+Shipment Package and shipment is available in our warepro but not direct link in sales order
+
+Submit Package & generate barcode invoice and Bag id is not available(because WarePro create invoice after shipment customer)
+
+
+

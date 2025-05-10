@@ -1,0 +1,5 @@
+Name - you enter
+JDBC url - select postgresql database
+jdbc:postgresql://localhost:5432/tissueData (tissueData = database Name)
+user name - adempiere
+password - adempiere

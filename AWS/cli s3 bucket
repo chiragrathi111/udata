@@ -1,0 +1,11 @@
+//////////// CREATE S3 BUCKET \\\\\\\\\\\\\\\\
+
+aws s3api create-bucket \
+--bucket chirathi121 \
+--region us-east-1 \
+--acl private
+
+------------------------------------------------------------------------------------------
+#aws s3 ls       //list of s3 bucket
+
+#aws s3 rb s3://bucket name      //remove bucket

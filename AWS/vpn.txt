@@ -1,0 +1,23 @@
+Please find the below details to access github and VPN.
+Download the cisco anyconnect Client from the below link
+https://indiavpn.smartapp.com/+CSCOE+/logon.html#form_title_text
+
+Select the INQUEST-CONTRACTOR profile
+user:corp\pranav
+
+password: @InQuest@2022!
+
+Download and install the client
+
+2. Once VPN client is installed open that and provide the same details 
+
+indiavpn.smartapp.com
+Select the INQUEST-CONTRACTOR profile
+user:corp\pranav
+
+password: @InQuest@2022!
+
+
+RDP 1ST 10.140.168.105
+
+RDP 2ND 10.140.164.58

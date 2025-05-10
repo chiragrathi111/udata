@@ -1,0 +1,17 @@
+LOAD DATA INFILE 'C:/Users/cs/Downloads/sample-data.csv' 
+INTO TABLE sampleCSVtable 
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
+CREATE TABLE sampleCSVtable(
+    Year int,
+    Variable_code varchar(255),
+    Variable_name varchar(255)
+);
+
+
+this command are using any csv file upload CLI
+then this command re using

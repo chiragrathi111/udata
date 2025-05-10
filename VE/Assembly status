@@ -1,0 +1,193 @@
+Assembly status:-
+
+After createing records
+switchSocketAssemblyCreation
+
+after mark for pick
+switchSocketAssemblyPick
+
+after picked brass
+mouldingAssemblyPick
+
+after picked moulding
+mouldingAssemblyPicked
+
+send status 
+isPackagingOrder = true
+status = packagingAssemblyAgentPick
+this two value send create PA order operation = update
+then status change and packing agent satish show record, record show if pandingQty != 0 
+
+This four update Assembly status.
+
+Quantity = required Qty
+
+packingQty = packing qty and every time added
+like start 2 qty then packing 3 qty so total 5 qty
+
+pendingQty = totalQty - packingQty
+if(pendingQty != 0) then show partial
+
+fgreceivedQty = total transfer to received
+
+Packing Status:-
+
+after complete packing order (jatin)
+packagingAssemblyAgentPick
+
+after mark complete (satish)
+packagingAssemblySuperVisorPick
+
+hit PAOrderRequest api and operation is UPDATE and this api
+"pAOrderId": 1000448,  /enter order id
+"processed": false,
+"packagingOrder": true,
+"packingQty": 3,  //enter qty
+"fgReceivedQty": 3,  //enter qty
+
+this api hit then update qty their according show how much panding qty show or that order is id paritial or not
+
+currently UI person show list that status accoridng, 1 point added then show list status and panding qty according and also show order status is partial or not partial
+
+after mark transfer (jatin)
+packagingAssemblyPicked
+
+only show fgreceivedQty in pranshu login then that qty added on fg storage
+
+show fgreceivedQty instead of quantity
+after this status show in fg receiving area
+
+===========================================================================
+Satish transfer and send status then show qty to jatin
+status Line = packagingAssemblySupervisor
+
+jatin transfer and send status then show qty to pranshu
+status Line = fgSupervisor
+
+Pranshu received qty then check box checked so qty not show pranshu side
+status Line = fgReceived
+checked received check box
+
+============================================================================
+Assembly to Packing flow:-
+1. kishan create a assembly order
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = false
+	status = switchSocketAssemblyPick
+	processed = false
+
+2. kishan login issue brass product 
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = false
+	status = mouldingAssemblyPick
+	processed = false
+
+3. sitaram login issue moulding product
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = true
+	processed = false
+	status = mouldingAssemblyPicked 
+	this status through show in jatin login receving app
+
+4. jatin login receving app
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = true
+	processed = false
+	status = packagingAssemblyAgentPick
+	receiving app only received order and update status then order show in satish login
+
+5. satish login scan label and generate carton label and mark as completed
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = true
+	processed = false
+	status = packagingAssemblySuperVisorPick
+	packingQty = 3
+
+6. jatin login transfer app
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = true
+	processed = false
+	status = packagingAssemblyPicked
+	statusLine = fgSupervisor
+
+7. pranshu login receiving app
+	update paorder api :-
+	pAOrderId = 1000448
+	isPackagingOrder = true
+	processed = false
+	status = packingReceived
+	statusLine = fgReceived
+
+
+=====================================================================
+select packingQty from adempiere.pi_paorderpackingqty
+where pi_paorder_id = 1000448 order by pi_paorderpackingqty_id desc limit 1;
+
+select * from adempiere.pi_paorder;
+
+CREATE TABLE adempiere.pi_paorderpackingqty (
+    pi_paorderpackingqty_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    pi_paorderpackingqty_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    created TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    createdby NUMERIC(10,0) NOT NULL,
+    updated TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    updatedby NUMERIC(10,0) NOT NULL,
+    description VARCHAR(255),
+    isactive CHAR(1) NOT NULL DEFAULT 'Y'::bpchar,
+    packingQty NUMERIC(10, 0),
+    pi_paorder_id INTEGER,
+    FOREIGN KEY (pi_paorder_id) REFERENCES adempiere.pi_paorder(pi_paorder_id)
+);
+
+CREATE TABLE adempiere.pi_paorderreceiveqty (
+    pi_paorderreceiveqty_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    pi_paorderreceiveqty_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    created TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    createdby NUMERIC(10,0) NOT NULL,
+    updated TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    updatedby NUMERIC(10,0) NOT NULL,
+    description VARCHAR(255),
+    isactive CHAR(1) NOT NULL DEFAULT 'Y'::bpchar,
+    fgreceivedQty NUMERIC(10, 0),
+    pi_paorder_id INTEGER,
+    FOREIGN KEY (pi_paorder_id) REFERENCES adempiere.pi_paorder(pi_paorder_id)
+);
+
+ALTER TABLE adempiere.pi_paorderpackingqty ADD COLUMN statusline varchar;
+
+===============================================================================
+ALTER TABLE adempiere.pi_paorder DROP CONSTRAINT pi_paorder_contractor_fkey;
+
+SELECT constraint_name
+FROM information_schema.table_constraints
+WHERE table_name = 'pi_paorder'
+AND constraint_type = 'FOREIGN KEY';
+
+ALTER TABLE adempiere.pi_paorder 
+ALTER COLUMN contractor TYPE INTEGER 
+USING contractor::INTEGER;
+
+ALTER TABLE adempiere.pi_paorder 
+ADD CONSTRAINT pi_paorder_contractor_fkey
+FOREIGN KEY (contractor) 
+REFERENCES adempiere.ad_user(ad_user_id);
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'pi_paorder' AND column_name = 'contractor'
+UNION ALL
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'ad_user' AND column_name = 'ad_user_id';
+
+=============================================================

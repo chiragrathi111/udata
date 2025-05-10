@@ -1,0 +1,171 @@
+public TCIn[] getTcInLines ()
+    {
+        List<TCIn> list = new Query(getCtx(), I_TCC_in.Table_Name, "TCC_order_ID=?", get_TrxName())
+        .setParameters(getTCC_order_ID())
+        .setOrderBy(TCIn.COLUMNNAME_TCC_in_ID)
+        .list();
+        
+        TCIn[] tccInArray = new TCIn[list.size()];
+        list.toArray(tccInArray);
+        return tccInArray;
+    }
+	
+	public TCOut[] getTcOutLines() {
+	    List<TCOut> list = new Query(getCtx(), I_TCC_out.Table_Name, "TCC_order_ID=?", get_TrxName())
+	            .setParameters(getTCC_order_ID())
+	            .setOrderBy(TCOut.COLUMNNAME_TCC_out_ID)
+	            .list();
+
+	    TCOut[] tccOutArray = new TCOut[list.size()];
+	    list.toArray(tccOutArray);
+	    return tccOutArray;
+	}
+	//This table class every time interface class,and parameter every time out parent parameter
+
+
+@Override
+	public String completeIt() {
+		
+		TCIn[] tccInArray = getTcInLines();
+		processTC(tccInArray, true); // true for "in" operation
+
+		TCOut[] tccOutArray = getTcOutLines();
+		processTC(tccOutArray, false); 
+		
+		
+//		TCIn[] tccInArray  = getTcInLines();
+//		TCOut[] tccOutArray = getTcOutLines();
+//		
+//		//in
+//		for(TCIn tccIn : tccInArray) {
+//			
+//			BigDecimal Qty = tccIn.getQuantity();
+//			MProduct product = (MProduct) tccIn.getM_Product();
+//			MLocator locator = (MLocator) tccIn.getM_Locator();
+//			Timestamp dateMPolicy= null;
+//				
+//			if (MStorageOnHand.add(getCtx(),
+//				locator.getM_Locator_ID(),
+//				product.getM_Product_ID(),
+//				product.getM_AttributeSetInstance_ID(),
+//				Qty.negate(),getDateOrdered(),
+//				get_TrxName())) {
+//				
+//				MStorageOnHand[] storages = MStorageOnHand.getWarehouse(getCtx(), 0,
+//						product.getM_Product_ID(), product.getM_AttributeSetInstance_ID(), null,
+//						MClient.MMPOLICY_FiFo.equals(product.getMMPolicy()), false,
+//						locator.getM_Locator_ID(), get_TrxName());
+//				
+//				for (MStorageOnHand storage : storages) {
+//					if (Qty.signum() == 0)
+//						break;
+//					if (storage.getQtyOnHand().compareTo(Qty.negate()) >= 0) {
+//						dateMPolicy = storage.getDateMaterialPolicy();
+//						break;
+//					} else if (storage.getQtyOnHand().signum() > 0) {
+//						BigDecimal onHand = storage.getQtyOnHand();
+//						// this locator has less qty than required, ship all qtyonhand and iterate to next locator
+//						if (!MStorageOnHand.add(getCtx(), 
+//								locator.getM_Locator_ID(),
+//								product.getM_Product_ID(),
+//								product.getM_AttributeSetInstance_ID(),
+//								onHand.negate(),storage.getDateMaterialPolicy(),get_TrxName()))
+//						
+//						Qty = Qty.add(onHand.negate());
+//					}
+//				}
+//				if (dateMPolicy == null && storages.length > 0)
+//					dateMPolicy = storages[0].getDateMaterialPolicy();
+//			}
+//		}
+//		
+//		//out 
+//		 for(TCOut tccOut : tccOutArray) {
+//			
+//		BigDecimal Qty1 = tccOut.getQuantity();
+//		MProduct product1 = (MProduct) tccOut.getM_Product();
+//		MLocator locator1 = (MLocator) tccOut.getM_Locator();
+//		Timestamp dateMPolicy1 = null;
+//			
+//		if (MStorageOnHand.add(getCtx(),
+//			locator1.getM_Locator_ID(),
+//			product1.getM_Product_ID(),
+//			product1.getM_AttributeSetInstance_ID(),
+//			Qty1,getDateOrdered(),
+//			get_TrxName())) {
+//			
+//			MStorageOnHand[] storages = MStorageOnHand.getWarehouse(getCtx(), 0,
+//					product1.getM_Product_ID(), product1.getM_AttributeSetInstance_ID(), null,
+//					MClient.MMPOLICY_FiFo.equals(product1.getMMPolicy()), false,
+//					locator1.getM_Locator_ID(), get_TrxName());
+//			
+//			for (MStorageOnHand storage : storages) {
+//				if (Qty1.signum() == 0)
+//					break;
+//				if (storage.getQtyOnHand().compareTo(Qty1.negate()) >= 0) {
+//					dateMPolicy1 = storage.getDateMaterialPolicy();
+//					break;
+//				} else if (storage.getQtyOnHand().signum() > 0) {
+//					BigDecimal onHand = storage.getQtyOnHand();
+//					// this locator has less qty than required, ship all qtyonhand and iterate to next locator
+//					if (!MStorageOnHand.add(getCtx(), 
+//							locator1.getM_Locator_ID(),
+//							product1.getM_Product_ID(),
+//							product1.getM_AttributeSetInstance_ID(),
+//							onHand.negate(),storage.getDateMaterialPolicy(),get_TrxName()))
+//					
+//					Qty1 = Qty1.add(onHand);
+//				}
+//			}
+//			if (dateMPolicy1 == null && storages.length > 0)
+//				dateMPolicy1 = storages[0].getDateMaterialPolicy();
+//		}
+//		 }
+//		
+		setProcessed(true);
+		return DocAction.STATUS_Completed;
+//		return null;
+	}
+	
+	public void processTC(TC[] tcArray, boolean isIn) {
+	    for (TC tc : tcArray) {
+	        BigDecimal Qty = isIn ? tc.getQuantity().negate() : tc.getQuantity();
+	        MProduct product = (MProduct) tc.getM_Product();
+	        MLocator locator = (MLocator) tc.getM_Locator();
+	        Timestamp dateMPolicy = null;
+
+	        if (MStorageOnHand.add(getCtx(),
+	                locator.getM_Locator_ID(),
+	                product.getM_Product_ID(),
+	                product.getM_AttributeSetInstance_ID(),
+	                Qty, getDateOrdered(),
+	                get_TrxName())) {
+
+	            MStorageOnHand[] storages = MStorageOnHand.getWarehouse(getCtx(), 0,
+	                    product.getM_Product_ID(), product.getM_AttributeSetInstance_ID(), null,
+	                    MClient.MMPOLICY_FiFo.equals(product.getMMPolicy()), false,
+	                    locator.getM_Locator_ID(), get_TrxName());
+
+	            for (MStorageOnHand storage : storages) {
+	                if (Qty.signum() == 0)
+	                    break;
+	                if (storage.getQtyOnHand().compareTo(Qty.negate()) >= 0) {
+	                    dateMPolicy = storage.getDateMaterialPolicy();
+	                    break;
+	                } else if (storage.getQtyOnHand().signum() > 0) {
+	                    BigDecimal onHand = storage.getQtyOnHand();
+	                    // this locator has less qty than required, ship all qtyonhand and iterate to next locator
+	                    if (!MStorageOnHand.add(getCtx(),
+	                            locator.getM_Locator_ID(),
+	                            product.getM_Product_ID(),
+	                            product.getM_AttributeSetInstance_ID(),
+	                            onHand.negate(), storage.getDateMaterialPolicy(), get_TrxName()))
+
+	                        Qty = Qty.add(onHand.negate());
+	                }
+	            }
+	            if (dateMPolicy == null && storages.length > 0)
+	                dateMPolicy = storages[0].getDateMaterialPolicy();
+	        }
+	    }
+	}

@@ -1,0 +1,43 @@
+Vinay User and Role :-
+
+pranavshah/pranavshah -> Light Supervisor
+rohan/rohan                   -> Labour  (Light)
+srikant/srikant                   -> Supervisor (Light)
+
+kishan/kishan                   -> Supervisor (Brass) → created new role (Brass Supervisor)
+kanha/kanha                    -> Labour (Brass)
+
+jatin/jatin                          -> Packaging Assembly supervisor
+satish/satish                    -> Packaging Agent Assembly
+
+mohan/mohan                 -> Assembly Supervisor
+sohan/sohan                    -> Assembly Agent
+
+pranshu/pranshu             -> Fg Switch And Socket Assembly Receiving
+mahi/mahi                       -> Labour (FG-Switch & Socket)
+
+masha/masha                 -> Supervisor (Dispatch)
+
+chetan/chetan                 -> Supervisor (RM-Switch & Socket & Production Agent (Remove this 
+    access otherwise show all supervisor)
+nitin/nitin                         -> Labour (RM-Switch & Socket)
+
+mukesh/mukesh             -> Production Supervisor (Production Switch & Socket)
+rakesh/rakesh                          -> Production Agent (Backup)
+
+sitaram/sitaram               -> Moulding Switch And Socket Receipt Receiving
+lakshman/lakshman        -> Moulding Store Labour
+
+kishor/kishor                    -> Supervisor (MCB)
+kiran/kiran                        -> Labour (MCB)
+
+jishnu/jishnu                     -> Automation Supervisor
+kumar/kumar                    -> Automation Agent
+bhola/bhola                      -> Supervisor (Automation)
+shiv/shiv                           -> Labour (Automation)
+
+jitu/jitu                               -> RM-Wire Supervisor
+lala/lala                             -> Labour
+
+hitesh/hitesh                     -> FG-Wire Supervisor
+ramu/ramu                        -> Labour

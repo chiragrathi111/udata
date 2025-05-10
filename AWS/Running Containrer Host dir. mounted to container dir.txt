@@ -1,0 +1,26 @@
+docker run -it -p 80:80 -p 3306:3306 -v /var/www/html:/var/www/html ubuntu:18.04 /bin/bash
+
+Running container mount host dir. to connect in container dir. :-
+
+#cd /var/lib/docker/containers/d260db74672bf96c07536835229b1b3609c74f24ba54e4c4d0e314b24d01ae19
+
+Edit files configv2.json and hostconfig.json (showing this file and update in vi editor)
+
+1. hostconfig.json editing
+
+{"Binds":["/var/www/html:/var/www/html","/opt:/opt"]
+  (value put karna hai)
+
+2. configv2.json
+
+"MountPoints":{"/var/www/html":{"Source":"/var/www/html","Destination":"/var/www/html",
+"RW":true,"Name":"","Driver":"","Type":"bind","Propagation":"rprivate",
+"Spec":{"Type":"bind","Source":"/opt/lampp/htdocs/InvoicePlane",
+"Target":"/var/www/html/InvoicePlane"},"SkipMountpointCreation":false},
+"/opt":{"Source":"/opt","Destination":"/opt","RW":true,"Name":"","Driver":"",
+"Type":"bind","Propagation":"rprivate","Spec":{"Type":"bind","Source":"/opt",
+"Target":"/opt"},"SkipMountpointCreation":false}}
+
+4. Restart Docker, 
+   start container and 
+   log into container. Host Directory content should be available in the container.

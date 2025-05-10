@@ -1,0 +1,130 @@
+//////////////////// CREATE EC2 INSTANCES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+aws ec2 run-instances \
+--image-id <ami-id> \
+--instance-type <instance-type> \
+--subnet-id <subnet-id> \
+--security-group-ids <security-group-id> <security-group-id> … \
+--key-name <ec2-key-pair-name>
+
+
+aws ec2 run-instances \
+--image-id ami-007855ac798b5175e \
+--instance-type t2.micro \
+--subnet-id subnet-049aa7b47c4814433 \
+--security-group-ids sg-0e7199cf08e52fd98 \
+--key-name linux
+
+
+//////////// LOGGING IN TERMINAL \\\\\\\\\\\\\\\\
+
+ssh -i "Downloads/linux.pem" ubuntu@ec2-54-167-27-4.compute-1.amazonaws.com
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+////////////////// CHECK INSTANCES CREATE OR NOT \\\\\\\\\\\\\\\\\\\\\
+
+aws ec2 describe-instances --instance-ids $INSTANCE
+
+aws ec2 describe-instance-status
+
+////show the volumes\\\\
+aws ec2 describe-volumes
+
+
+Check Instances Running are not
+aws ec2 describe-instances --instance-ids $INSTANCE --query 'Reservations[].Instances[].State.Name' --output text
+
+Instances DNS name get
+aws ec2 describe-instances --instance-ids $INSTANCE --query Reservations[].Instances[].PublicDnsName --output text
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+////////// CREATE EC2 AMI IMAGES \\\\\\\\\\\\
+
+aws ec2 create-image --name WebServer --instance-id i-069f88eac17c7a64e
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+////////// TERMINATE EC2 INSTANCE \\\\\\\
+
+aws ec2 terminate-instances \
+--instance-ids id no.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+////////// STOP EC2 INSTANCE \\\\\\\\\
+
+aws ec2 stop-instances \
+--instance-ids i-1234567890abcdef0
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+///// CREATE A NEW VOLUME IN AWS \\\\\\\\\
+
+aws ec2 create-volume \
+--volume-type gp2 \
+--size 80 \
+--availability-zone us-east-1a
+
+    //gp2 => general perpose 2, size => gb 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------  
+
+///////////// ATTACH A VOLUME IN EC2 \\\\\\\\\\\\\\\\\\\\
+
+aws ec2 attach-volume \
+--volume-id vol-1234567890abcdef0 \
+--instance-id i-01474ef662b89480 \
+--device /dev/sdf  
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+//////////////////// EC2 LAUNCH IN UBUNTU  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+ssh -i Download/linux.pem ubuntu@ec2-3-90-163-237.compute-1.amazonaws.com
+
+Download/linux.pem => pem file ka specific path
+ubuntu => logging key
+ec2-3-90-163-237.compute-1.amazonaws.com => Ec2 DNS
+linux.pem => ye file mai permissionchange karna most important hota hai, ise only read only permission diya jata hai (sudo chmod 400 linux.pem) 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+//////////////////// MOUNT A VOLUME IN EC2 INSTANCES \\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#df-h
+#lsblk
+#sudo mkfs -t xfs volumePath (/dev/svdf)
+#sudo mkdir path (/mnt/backup)
+#sudo mount volumePath dirctoryPath
+#df -h
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+//////////////// UNMOUNT VOLUME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+sudo umount volumePath (/dev/svdf)
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+////////////// Delete a Volume \\\\\\\\\\\\\\\
+
+aws ec2 delete-volume \
+--volume-id vol-08242ab6b70723a20
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+////////////// Detach a Volume \\\\\\\\\\\\\\\\\\\
+
+aws ec2 detach-volume \
+--volume-id vol-1234567890abcdef0
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------

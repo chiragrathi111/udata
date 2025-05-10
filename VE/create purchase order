@@ -1,0 +1,166 @@
+@Override
+	public StandardResponseDocument createPurchaseOrder(PurchaseOrderRequestDocument req) {
+		StandardResponseDocument resp = StandardResponseDocument.Factory.newInstance();
+		StandardResponse response = resp.addNewStandardResponse();
+
+		PurchaseOrderRequest request = req.getPurchaseOrderRequest();
+		LoginRequest rqq = request.getLoginRequest();
+		Trx trx = null;
+		try {
+			CompiereService m_cs = getCompiereService();
+			Properties ctx = m_cs.getCtx();
+			String trxName = Trx.createTrxName(getClass().getName() + "_");
+			trx = Trx.get(trxName, true);
+			trx.start();
+
+			String serviceType = request.getServiceType();
+			String bPartnerName = request.getBusinessPartner();
+			String bPartnerAddress = request.getPartnerLocation();
+			
+//			LoginRequest loginReq = request.getLoginRequest();
+			
+//			org.idempiere.adInterface.x10.ADLoginRequest loginReq = convertToADLogin(request.getLoginRequest(), ctx, trxName);
+
+//			String err = login(aDLoginRequest, webServiceName, "createPurchaseOrder", serviceType);
+//			if (err != null && err.length() > 0) {
+//				response.setError(err);
+//				response.setIsError(true);
+//				return resp;
+//			}
+//			if (!serviceType.equalsIgnoreCase("createPurchaseOrder")) {
+//				response.setIsError(true);
+//				response.setError("Service type " + serviceType + " not configured");
+//				return resp;
+//			}
+
+			MUser mUser = MUser.get(ctx, rqq.getUser(), rqq.getPass());
+			if(mUser == null || mUser.get_ID() == 0) {
+				response.setIsError(true);
+				response.setError("Inavid Login Credentials");
+				return resp;
+			}
+//			
+//			int adClientId = loginReq.getClientID();
+//			int adOrgId = loginReq.getOrgID();
+			
+
+			int adClientId = mUser.getAD_Client_ID();
+			int adOrgId = mUser.getAD_Org_ID();
+			
+			PO po  = new Query(ctx, MWarehouse.Table_Name, "ad_client_ID = ? AND ad_org_ID = ?", trxName)
+					.setParameters(adClientId, adOrgId).firstOnly();
+			MWarehouse warehouse = new MWarehouse(ctx, po.get_ID(), trxName);
+
+			MDocType mDocTypee = (MDocType) new Query(ctx, MDocType.Table_Name,
+					"name = 'Purchase Order' and ad_client_id = ?", trxName).setParameters(adClientId).firstOnly();
+			MBPartner mBPartner = (MBPartner) new Query(ctx, MBPartner.Table_Name,
+					"name = ? and ad_client_id = ? and isVendor = 'Y'", trxName).setParameters(bPartnerName, adClientId)
+					.firstOnly();
+
+			if (mBPartner == null) {
+				
+				MLocation location = new MLocation(ctx, 0, trxName);
+				location.setAddress1(bPartnerAddress);
+				location.setC_Country_ID(208);
+
+				location.saveEx(trxName);
+//				if (!location.save()) {
+//					throw new Exception("Failed to save Location: " + location);
+//				}
+				
+				mBPartner = new MBPartner(ctx, 0, trxName);
+				mBPartner.setClientOrg(adClientId, adOrgId);
+				mBPartner.setName(bPartnerName);
+				mBPartner.setIsVendor(true);
+				mBPartner.saveEx(trxName);
+//				if (!mBPartner.save()) {
+//					throw new Exception("Failed to save Business Partner: " + bPartnerName);
+//				}
+				
+				MBPartnerLocation bpLocation = new MBPartnerLocation(mBPartner);
+				bpLocation.setC_Location_ID(location.getC_Location_ID());
+
+				bpLocation.saveEx(trxName);
+//				if (!bpLocation.save()) {
+//					throw new Exception("Failed to save Business Partner Location: " + bpLocation);
+//				}
+//				mBPartner.saveEx();
+			}
+
+			createPOOrder(adClientId, adOrgId, warehouse.getM_Warehouse_ID(), mBPartner.get_ID(), ctx, mDocTypee.get_ID(),
+					mUser.getAD_User_ID(), trxName, request);
+			trx.commit();
+			response.setIsError(false);
+
+		} catch (Exception e) {
+			if (trx != null) {
+	            trx.rollback();
+	        }
+			response.setError(e.getLocalizedMessage());
+			response.setIsError(true);
+//			return resp;
+		} finally {
+			getCompiereService().disconnect();
+	        if (trx != null && trx.isActive()) {
+	            trx.close();
+	        }
+		}
+		return resp;
+	}
+
+	private MOrder createPOOrder(int ad_client_id, int org_id, int warehouseId, int mBPartnerId, Properties ctx,
+			int docTypeId, int userId, String trxName, PurchaseOrderRequest request) throws Exception {
+		
+
+		MBPartner mBPartner = new MBPartner(ctx, mBPartnerId, trxName);
+		MOrder po = new MOrder(ctx, 0, trxName);
+		po.setC_DocTypeTarget_ID(docTypeId);
+		po.setClientOrg(ad_client_id, org_id);
+		po.setDescription(request.getDescription());
+		po.setPOReference(request.getOrderReference());
+
+		Timestamp timestamp = new Timestamp(request.getDateOrdered().getTimeInMillis());
+		po.setDateOrdered(timestamp);
+		timestamp = new Timestamp(request.getDatePromised().getTimeInMillis());
+		po.setDatePromised(timestamp);
+
+		po.setC_BPartner_ID(mBPartner.getC_BPartner_ID());
+		po.setBill_BPartner_ID(mBPartner.getC_BPartner_ID());
+		po.setBill_User_ID(userId);
+		po.setM_Warehouse_ID(warehouseId);
+		po.setIsSOTrx(false);
+		po.setSalesRep_ID(userId);
+		po.setAD_User_ID(userId);
+		po.setPaymentRule(request.getPaymentRule());
+//		po.setPaymentRule("B");
+
+		if (po.save()) {
+
+			for (POLine line : request.getPOLineArray()) {
+				int productQTY = line.getQuantity();
+				int discount = line.getDiscount();
+				if (productQTY == 0)
+					throw new AdempiereException("Please Enter Product Quantity");
+				
+				MProduct mProduct = (MProduct) new Query(ctx, MProduct.Table_Name, "name = ? and ad_client_id = ?",
+						trxName).setParameters(line.getProductName(), ad_client_id).firstOnly();
+				if (mProduct == null)
+					throw new AdempiereException("Invalid Product Name");
+				MTax tax = new Query(ctx, MTax.Table_Name,"name = ? and ad_client_id = ?", trxName)
+						.setParameters(line.getTax(),ad_client_id).firstOnly();
+				MOrderLine mOrderLine = new MOrderLine(po);
+				mOrderLine.setM_Product_ID(mProduct.getM_Product_ID());
+				mOrderLine.setDescription(line.getDescription());
+				mOrderLine.setQty(BigDecimal.valueOf(productQTY));
+				mOrderLine.setC_Tax_ID(tax.getC_Tax_ID());
+				mOrderLine.setDiscount(BigDecimal.valueOf(discount));
+				mOrderLine.setC_UOM_ID(mProduct.getC_UOM_ID());
+//				mOrderLine..setImage(line.getImage());
+				mOrderLine.saveEx(trxName);
+			}
+			po.setDocAction(MOrder.DOCACTION_Complete);
+			po.processIt(MOrder.DOCACTION_Complete);
+			po.saveEx(trxName);
+		}
+		return po;
+	}

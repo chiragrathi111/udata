@@ -1,0 +1,18 @@
+@Override
+	protected boolean afterSave(boolean newRecord, boolean success) {
+		boolean result = super.afterSave(newRecord, success);
+        if (newRecord && success) {
+            int recordId = get_ID();
+            if (recordId != 0) {
+            	String deviceId = (String) get_Value("deviceid");
+
+                if (deviceId == null || deviceId.isEmpty()) {
+                    set_Value("deviceid", String.valueOf(recordId));
+                    saveEx();
+                }
+            } else {
+                log.warning("Record ID is 0 after saving.");
+            }
+        }
+        return result;	
+	}

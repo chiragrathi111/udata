@@ -1,0 +1,12 @@
+Port Open:-
+
+1. search a Firewall and create a new firewall rule -
+
+	Mandotory field enter:-
+		Name,Enter Target Tags(enter Network Tag),Source Ipv4 ranges(0.0.0.0/0),select TCP check box and enter port no(4047) and create.
+
+
+2. go to Instance in Compute Engine
+	First Edit the Instance
+	and put the Network Tags(enter tag name above created)
+	and save		

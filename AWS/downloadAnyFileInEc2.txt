@@ -1,0 +1,3 @@
+scp -i "Downloads/democ.pem" ubuntu@ec2-43-204-108-220.ap-south-1.compute.amazonaws.com:/home/ubuntu/WarePro/idempiere-server/data/ExpDat.jar /home/chirag
+
+download any file in ec2 

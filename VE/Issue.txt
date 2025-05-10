@@ -1,0 +1,36 @@
+Issue:-
+
+1. qcpass string but api side want boolean value  (so change after database setup)
+
+2. putstatus not added in vinay database file so if create sales order then solist show error
+	Added putstatus and if you have added and 255 space not provide show your response gave too much white space show you ui is not proper working show please added 255 
+
+3.	If PP_Order table status column not updatable so createMO api is not working show error field not updatable
+	and status list to convert string then error resolve
+
+4. pi_orderreceipt table pi_department coulmn gave updatable then problem solve
+
+5. insert into adempiere.pi_productlabel (pi_productlabel_id,ad_client_id,ad_org_id,createdby,created,updatedby,updated,repacked,qcpassed,labeluuid,
+	issotrx) values (0,1000000,1000000,1000000,'2024-11-10 10:12:52.41',1000000,'2024-11-10 10:12:52.41','N','Y','abc','N');
+
+6. Server Configuration:-
+
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+VALUES (nextval('adempiere.AD_SysConfig_seq'), 0, 0, 'ZK_BROWSER_TITLE', 'WarePro', 'Custom Browser Title', 'Y', NOW(), 100, NOW(), 100);
+
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+VALUES (1000216, 0, 0, 'ZK_BROWSER_TITLE', 'WarePro', 'Custom Browser Title', 'Y', NOW(), 100, NOW(), 100);
+
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+VALUES (1000217, 0, 0, 'ZK_APP_DESCRIPTION', 'WarePro is a large commericial building used for<br></br> the storage of goods materials', 'Custom Browser DESCRIPTION', 'Y', NOW(), 100, NOW(), 100);  
+    
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+VALUES (1000218, 0, 0, 'ZK_BROWSER_ICON', '~./theme/default/images/icon.png', 'Icon', 'Y', NOW(), 100, NOW(), 100);  
+
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+VALUES (1000219, 0, 0, 'ZK_LOGIN_ICON', '/images/warepro-logo.svg', 'Login Icon', 'Y', NOW(), 100, NOW(), 100);
+
+7. If so details show 1 value down like if i total qty 20 but show 19 qty this is main reason is 1 qty is available in our packaging qty so 1 
+   value less so. Example - If you same probelm face any product then you move putaway api then qty show actual Resolved
+
+/zul/mom1.zul   

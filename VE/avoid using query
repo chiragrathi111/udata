@@ -1,0 +1,30 @@
+1. If You have id then using this type query method:-
+public X_PI_Deptartment getPi_Department() throws RuntimeException
+	{
+		PO po = MTable.get(getCtx(), X_PI_Deptartment.Table_ID)
+		.getPO(getPI_DEPARTMENT_ID(), get_TrxName());
+		X_PI_Deptartment dept = new X_PI_Deptartment(getCtx(), po.get_ID(), get_TrxName());
+		return dept;
+	}
+
+2. If i have don't id then i used parent id get data then using this query:-
+
+MPPOrderBOM orderBoms = new Query(ctx, MPPOrderBOM.Table_Name,"ad_client_ID =?  AND " + MPPOrder.COLUMNNAME_PP_Order_ID + " =?", trxName)
+					.setParameters(clientId, mOrderId).setOrderBy(MPPOrderBOM.COLUMNNAME_PP_Order_BOM_ID+ " desc").first();
+
+
+3. List of detils:-
+
+public static List<PO> getOrderBomLines(int clientId, int orgId, int orderid, Properties ctx, String trxName) {
+		List<PO> list = new Query(ctx, MPPOrderBOMLine.Table_Name,
+				"ad_client_ID =? AND ad_org_ID = ? AND " + MPPOrderBOMLine.COLUMNNAME_PP_Order_BOM_ID + " =?", trxName)
+				.setParameters(clientId, orgId, orderid).setOrderBy(MPPOrderBOMLine.COLUMNNAME_PP_Order_BOMLine_ID+ " desc").list();
+		return list;
+	}
+
+
+4.If you have then you also use this one also:-
+
+X_PI_Deptartment department = new Query(ctx, X_PI_Deptartment.Table_Name, "pi_deptartment_id=?", trxName)
+    .setParameters(ltype.getPI_DEPARTMENT_ID())
+    .first();							

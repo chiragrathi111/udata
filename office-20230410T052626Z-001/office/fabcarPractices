@@ -1,0 +1,142 @@
+///////////////// createCarOwner in fabcar chaincode \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    async createOwnerDetailes(ctx,carNumber, ownerId, owner,ownerAddress,ownerEmail){
+        console.log('Start owner details..........')
+
+            const ownerDetail = {
+                ownerId,
+                docType: 'owner',
+                owner,
+                ownerAddress,
+                ownerEmail
+            };
+            await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(ownerDetail)));
+            console.log('owner details add')
+    }
+
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+///////////////////////// createCarOwner and check carNumber exist or not \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    // async createOwnerDetailes(ctx,carNumber, ownerId, ownerName,ownerAddress,ownerEmail){
+    //     console.log('Start owner details..........')
+
+    //     const ownerExist = await ctx.stub.getState(carNumber);
+    //     // console.log(typeof ownerExist);
+    //     console.log(`owner details : ${ownerExist}`)
+    //     if(!ownerExist || ownerExist.length===0){
+    //         throw new Error(`${carExist} carNumber does not exist`)
+    //         // console.log('owner is not exist please check Owner Name')
+    //         // return;
+    //     }else{
+    //         const ownerDetail = {
+    //             ownerId,
+    //             docType: 'owner',
+    //             ownerName,
+    //             ownerAddress,
+    //             ownerEmail
+    //         };
+    
+    //         await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(ownerDetail)));
+    //         console.log('owner details add')
+    //     }
+
+    // }
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+////////////////////// queryAllResult use getQueryResult method not using getStateByReange  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+ async queryAllResults1(ctx,query) {
+
+        const integ = await ctx.stub.getQueryResult(query);
+        const allResults1 = [];
+        while (true) {
+            const res = await integ.next();
+
+            if (res.value && res.value.value.toString()) {
+                console.log(res.value.value.toString('utf8'));
+
+                const Key1 = res.value.key;
+                let Record1;
+                try {
+                    Record1 = JSON.parse(res.value.value.toString('utf8'));
+                } catch (err) {
+                    console.log(err);
+                    Record = res.value.value.toString('utf8');
+                }
+                allResults1.push({ Key1, Record1 });
+            }
+            if (res.done) {
+                console.log('end of data');
+                await integ.close();
+                console.info(allResults1);
+                return JSON.stringify(allResults1);
+            }
+        }
+    }    
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+///////////////////////// craete query.js file getQueryResult method ke liye \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ 
+
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+'use strict';
+
+const { FileSystemWallet, Gateway } = require('fabric-network');
+const path = require('path');
+
+const ccpPath = path.resolve(__dirname, '..', '..', 'first-network', 'connection-org1.json');
+
+async function main() {
+    try {
+
+        // Create a new file system based wallet for managing identities.
+        const walletPath = path.join(process.cwd(), 'wallet');
+        const wallet = new FileSystemWallet(walletPath);
+        console.log(`Wallet path: ${walletPath}`);
+
+        // Check to see if we've already enrolled the user.
+        const userExists = await wallet.exists('user1');
+        if (!userExists) {
+            console.log('An identity for the user "user1" does not exist in the wallet');
+            console.log('Run the registerUser.js application before retrying');
+            return;
+        }
+
+        // Create a new gateway for connecting to our peer node.
+        const gateway = new Gateway();
+        await gateway.connect(ccpPath, { wallet, identity: 'user1', discovery: { enabled: true, asLocalhost: true } });
+
+        // Get the network (channel) our contract is deployed to.
+        const network = await gateway.getNetwork('mychannel');
+
+        // Get the contract from the network.
+        const contract = network.getContract('fabcar');
+
+        // Evaluate the specified transaction.
+        // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
+        // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
+        // const queryy = ("{\"selector\":{\"docType\":\"car\"}}");
+        const queryy = (`{"selector": {"docType": {"$in": ["car","owner"]} }}`);
+
+        const result = await contract.evaluateTransaction('queryAllResults1',queryy);
+        console.log(`Transaction has been evaluated, result is: ${result}`);
+
+    } catch (error) {
+        console.error(`Failed to evaluate transaction: ${error}`);
+        process.exit(1);
+    }
+}
+
+main();
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------  
+
+
+npm install aws-sdk@^2.675.0

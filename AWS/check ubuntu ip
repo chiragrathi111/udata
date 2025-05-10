@@ -1,0 +1,29 @@
+#curl http://ipinfo.io/ip
+
+
+////////////////////////  show latest 7 file \\\\\\\\\\\\\\\\\\\\\
+
+#ls test/ -tp | head -7
+#ls -t | tail -2 | xargs rm --
+
+
+///////////////////   Ec2 ins. install awscli \\\\\\\\\
+#sudo apt-get update
+#sudo apt-get install awscli -y
+#which aws
+
+----------------------------------------------------------------------------------------------------
+
+#find /backup/ -name "DB_Backup_name*" -mtime -7 -exec rm {} \;
+{above line command is 
+/backup/ => folder path
+-name => file name ke liye extention
+"DB_Backup_name*" => file name 
+-mtime -7 => current seven day data show 
+-mtime +7 => before 7 days data}
+
+
+#find /backup/ -name "DB_Backup_name*" -amin -60 -exec rm {} \
+
+
+

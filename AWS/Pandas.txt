@@ -1,0 +1,10 @@
+import pandas as pd
+gh=pd.read_csv('D:/Meljo scans/AWS related/AWS Re-Start/Python/hello2.csv')
+gh['Username']= gh['Username'].str.lower()
+gh.fillna('NA',inplace=True)
+gh['First name']= gh['First name'].str.upper()
+gh['Last name']= gh['Last name'].str.upper()
+gh['Date']=pd.to_datetime(gh['Date'])
+gh.drop_duplicates(inplace=True)
+# new_gh=gh.drop_duplicates()
+print(gh)

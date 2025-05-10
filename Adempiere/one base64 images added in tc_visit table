@@ -1,0 +1,163 @@
+one base64 images added in tc_visit table:-
+
+public AddVisitResponseDocument addVisit(AddVisitRequestDocument req) {
+    AddVisitResponseDocument addVisitResponseDocument = AddVisitResponseDocument.Factory.newInstance();
+    AddVisitResponse addVisitResponse = addVisitResponseDocument.addNewAddVisitResponse();
+    AddVisitRequest loginRequest = req.getAddVisitRequest();
+    ADLoginRequest logis = loginRequest.getADLoginRequest();
+    AddVisit addVisit = loginRequest.getAddVisit();
+    String serviceType = loginRequest.getServiceType();
+    String name = addVisit.getName();
+    String mobileNo = addVisit.getMobileNo();
+    String dateStr = addVisit.getDate();
+    int adOrgId = logis.getOrgID();
+    int farmerId = addVisit.getFarmerId();
+    int visitTypeId = addVisit.getVisitTypeId();
+    String base64Image = addVisit.getBase64Image(); // New field for base64 image
+
+    Trx trx = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    try {
+        getCompiereService().connect();
+        CompiereService m_cs = getCompiereService();
+        Properties ctx = m_cs.getCtx();
+        String trxName = Trx.createTrxName(getClass().getName() + "_");
+        trx = Trx.get(trxName, true);
+        trx.start();
+
+        String err = login(logis, webServiceName, "addVisit", serviceType);
+        if (err != null && err.length() > 0) {
+            addVisitResponse.setError(err);
+            addVisitResponse.setIsError(true);
+            return addVisitResponseDocument;
+        }
+
+        if (!serviceType.equalsIgnoreCase("addVisit")) {
+            addVisitResponse.setError("Service type " + serviceType + " not configured");
+            addVisitResponse.setIsError(true);
+            return addVisitResponseDocument;
+        }
+
+        Date date = dateFormat.parse(dateStr);
+        long timestampValue = date.getTime();
+        Timestamp timestamp = new Timestamp(timestampValue);
+
+        TCVisit visit = new TCVisit(ctx, 0, trx.getTrxName());
+        visit.setAD_Org_ID(adOrgId);
+        visit.setName(name);
+        visit.setmobileno(mobileNo);
+        visit.setdate(timestamp);
+        visit.setTC_Farmer_ID(farmerId);
+        visit.setTC_VisitType_ID(visitTypeId);
+        
+        // Set base64 image
+        visit.setBase64Image(base64Image);
+
+        if (!visit.save()) {
+            throw new Exception("Failed to save Farmer Registration: " + visit);
+        }
+
+        trx.commit();
+        addVisitResponse.setStatus("Visit Added Successfully");
+
+    } catch (Exception e) {
+        addVisitResponse.setStatus("Visit Added Failed");
+        addVisitResponse.setError(e.getMessage());
+        addVisitResponse.setIsError(true);
+    }
+    return addVisitResponseDocument;
+}
+
+======================================================================================================================================
+modify your database:-
+ALTER TABLE tc_visit ADD COLUMN base64_image TEXT;
+
+
+java code modify:-
+public class TCVisit {
+    private String base64Image;
+
+    // Constructor, setter, and getter methods for other fields
+
+    public void setBase64Image(String base64Image) {
+        this.base64Image = base64Image;
+    }
+
+    public String getBase64Image() {
+        return base64Image;
+    }
+}
+
+
+======================================================================================================================================
+Multiple base64 images added in tc_visit table:-
+
+public AddVisitResponseDocument addVisit(AddVisitRequestDocument req) {
+    AddVisitResponseDocument addVisitResponseDocument = AddVisitResponseDocument.Factory.newInstance();
+    AddVisitResponse addVisitResponse = addVisitResponseDocument.addNewAddVisitResponse();
+    AddVisitRequest loginRequest = req.getAddVisitRequest();
+    ADLoginRequest logis = loginRequest.getADLoginRequest();
+    AddVisit addVisit = loginRequest.getAddVisit();
+    String serviceType = loginRequest.getServiceType();
+    String name = addVisit.getName();
+    String mobileNo = addVisit.getMobileNo();
+    String dateStr = addVisit.getDate();
+    int adOrgId = logis.getOrgID();
+    int farmerId = addVisit.getFarmerId();
+    int visitTypeId = addVisit.getVisitTypeId();
+    List<String> base64Images = addVisit.getBase64Images(); // Updated to handle multiple images
+
+    Trx trx = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    try {
+        getCompiereService().connect();
+        CompiereService m_cs = getCompiereService();
+        Properties ctx = m_cs.getCtx();
+        String trxName = Trx.createTrxName(getClass().getName() + "_");
+        trx = Trx.get(trxName, true);
+        trx.start();
+
+        String err = login(logis, webServiceName, "addVisit", serviceType);
+        if (err != null && err.length() > 0) {
+            addVisitResponse.setError(err);
+            addVisitResponse.setIsError(true);
+            return addVisitResponseDocument;
+        }
+
+        if (!serviceType.equalsIgnoreCase("addVisit")) {
+            addVisitResponse.setError("Service type " + serviceType + " not configured");
+            addVisitResponse.setIsError(true);
+            return addVisitResponseDocument;
+        }
+
+        Date date = dateFormat.parse(dateStr);
+        long timestampValue = date.getTime();
+        Timestamp timestamp = new Timestamp(timestampValue);
+
+        TCVisit visit = new TCVisit(ctx, 0, trx.getTrxName());
+        visit.setAD_Org_ID(adOrgId);
+        visit.setName(name);
+        visit.setmobileno(mobileNo);
+        visit.setdate(timestamp);
+        visit.setTC_Farmer_ID(farmerId);
+        visit.setTC_VisitType_ID(visitTypeId);
+        
+        // Set multiple base64 images
+        for (String base64Image : base64Images) {
+            visit.addBase64Image(base64Image);
+        }
+
+        if (!visit.save()) {
+            throw new Exception("Failed to save Farmer Registration: " + visit);
+        }
+
+        trx.commit();
+        addVisitResponse.setStatus("Visit Added Successfully");
+
+    } catch (Exception e) {
+        addVisitResponse.setStatus("Visit Added Failed");
+        addVisitResponse.setError(e.getMessage());
+        addVisitResponse.setIsError(true);
+    }
+    return addVisitResponseDocument;
+}

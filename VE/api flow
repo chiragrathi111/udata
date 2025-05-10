@@ -1,0 +1,7 @@
+Api flow:-
+1. Carton label api:-
+first "GenerateLabelRequest" api to create new labelId
+
+second  "ParentLabelRequest" attached child label to parent label
+
+2. 

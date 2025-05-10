@@ -1,0 +1,10 @@
+1. Error: could not send to orderer node: EOF
+Solution:- This error solution I see stackoverflow solution then i enter my specific chaincode language like node then it is working fine.
+
+docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.realmeds.io/users/Admin@org1.realmeds.io/msp" cli peer chaincode instantiate -o orderer.realmeds.io:7050 -C channel -n realmeds -l node -v 1.0 -c '{"Args":[]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+
+2. This error show in realmeds api folder if press command :- node .
+2024-12-05T06:30:33.912Z - error: [Channel.js]: Error: 2 UNKNOWN: identity expired
+2024-12-05T06:30:33.913Z - error: [Network]: _initializeInternalChannel: Unable to initialize channel. Attempted to contact 1 Peers. Last error was Error: 2 UNKNOWN: identity expired
+
+

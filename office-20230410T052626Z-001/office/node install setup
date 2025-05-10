@@ -1,0 +1,95 @@
+//node 10 install
+#nvm install 10
+
+//node ko lene ke liye
+#nvm use 10 //node 10 version aa jayega
+
+Nvm uninstall setup :-
+
+#nvm deactivate // show path .nvm/ folder remove command
+#rm -rf .nvm/
+#nvm deactivate
+#nvm unload
+#export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm
+
+nvm uninstall done-------------------------------
+
+
+Node complete uninstall setup :-
+
+#which node //show path
+#sudo apt-get remove nodejs
+#sudo apt-get remove npm
+#sudo apt-get update
+#which node //Don't show path
+
+node uninstall done .....................................
+
+NVM ke through Node ko install karna :-
+
+#curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+#export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#nvm install 10
+#nvm use 10
+#node -v
+
+
+
+---------------------------------------------------------
+
+Docker complete remove image,container,volume and network :-
+
+#docker stop $(docker ps -a -q)
+#docker rm -f $(docker ps -aq)
+#docker system prune
+#docker volume prune
+#docker ps -a
+#docker volume list
+#docker images 
+
+docker rmi --force 3b96a893c1e4  //use any images forcefully remove
+
+cd network/setup/
+#docker-compose down --volumes  //this line use all volume remove
+//this line use all volume are removes
+-----------------------------------
+//Direct show node different type of version
+#cd ~/.nvm/versions/node
+#ll
+
+-------------------------------------------------------------------------------------------------------------
+Git remove command :-
+
+#sudo apt-get remove git
+#sudo apt-get purge git
+-------------------------------------------------
+Docker-compose remove :-
+
+#sudo rm /usr/local/bin/docker-compose
+
+Docker remove :-
+
+#sudo apt-get purge docker-ce docker-ce-cli containerd.io
+#sudo rm -rf /var/lib/docker
+#sudo rm -rf /etc/docker
+
+----------------------------------------------------------------------------------------------------
+Awscli remove :-
+
+#sudo apt-get remove awscli
+
+
+
+
+ 
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+hostname -- get ip
+pwd --- current working directory
+whoami -- get current user
+getent passwd --- to get list of user   --- cat /etc/passwd
+getent passwd | cut -d: -f1-- list the name of user
+history -- to get history of run commands
+clear -- to clear screen
+date -- to get date
+wc -l filename  -- wc=word count -l number of line
+wc -m filename  -- wc=word count -m number of characters
+wc -w filename  -- wc=word count -w number of words
+
+
+uptime -- how log the system has been up since the last boot
+du          -- to know folder size
+df          -- to know disk size
+du -h       -- to change into human readable
+free -g     -- to check free space in GB
+-g is for gb -m is for mb -h is for human readable
+rm -r       --is for deleting directory
+rm -rf      --is for deleteing file or directory forcefully
+> test.txt  --to delete content of file
+cat > text.txt --to add content or overide the data without opening the file
+cat text.txt > text1.txt --to add content from one file to another
+cat -s filename  -->  and suqeze line by 1 blank space
+cat -n filename  --> add number for blank space
+cat file1 file2 file3
+cat -E      --list
+cat -E      --filename
+cat -n file.txt  --add number to blank space
+cat -b file.txt  --numbering without space
+cat file* | wc -l   --> get count of the lines in file
+split -l 2 file.txt --> Split the conetnt as per your need
+diff file1 file2    --> Find difference in file
+
+
+groupadd groupname ---> add new group
+useradd username ---> add new user
+usermod -aG wheel username
+usermod -aG groupname username --- to add user in particular group
+
+
+read write e
+
+

@@ -1,0 +1,44 @@
+Newer Linux kernels may rename your devices to /dev/xvdf through /dev/xvdp internally, 
+even when the device name entered here (and shown in the details) is /dev/sdf through /dev/sdp.
+
+
+
+Created an Amazon EBS volume
+Attached the volume to an EC2 instance
+Created a file system on the volume
+Added a file to volume
+Created a snapshot of your volume
+Created a new volume from the snapshot and Resize the Vloume
+Attached and mounted the new volume to your EC2 instance
+Verified that the file you created earlier was on the newly created volume
+Check the size of the new Volume and resize it
+Finally check the Newely created volume size
+
+
+Create Ec2 instane on MC
+Create EBS volume and attach it to Ec2 (EBS volume and EC2 should be in the same AZ)
+Attach it to EC2
+df -h
+lsblk
+sudo mkfs -t ext3 /dev/xvdf
+sudo mkdir /mnt/data-store
+sudo mount /dev/xvdf /mnt/data-store
+df -h
+vi file.txt
+This will be deleted but will be recreated from snapshot
+cat /mnt/data-store/file.txt
+create snapshot on MC
+sudo rm /mnt/data-store/file.txt
+ls /mnt/data-store
+Restore to EBS snapshot on MC tag - name : Restore volume while restoring increase the size
+attach it to Ec2 instance
+Linux 
+lsblk
+sudo mkdir /mnt/datastore2
+sudo mount /dev/xvdg /mnt/datastore2
+df -h
+sudo resize2fs /dev/xvdg
+df -h
+
+
+sudo umount /mnt/recovery

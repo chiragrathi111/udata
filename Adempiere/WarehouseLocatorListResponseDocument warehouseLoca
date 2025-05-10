@@ -1,0 +1,127 @@
+WarehouseLocatorListResponseDocument warehouseLocatorListResponseDocument = WarehouseLocatorListResponseDocument.Factory.newInstance();
+		WarehouseLocatorListResponse warehouseLocatorListResponse = warehouseLocatorListResponseDocument.addNewWarehouseLocatorListResponse();
+		WarehouseLocatorListRequest warehouseLocatorListRequest = warehouseLocatorListRequestDocument.getWarehouseLocatorListRequest();
+		ADLoginRequest loginReq = warehouseLocatorListRequest.getADLoginRequest();
+		int ad_client_id = loginReq.getClientID();
+		String serviceType = warehouseLocatorListRequest.getServiceType();
+		PreparedStatement pstm = null;
+	    ResultSet rs = null;
+		
+		try {
+			String err = login(loginReq, webServiceName, "wareList", serviceType);
+			if (err != null && err.length() > 0) {
+				warehouseLocatorListResponse.setError(err);
+				warehouseLocatorListResponse.setIsError(true);
+				return warehouseLocatorListResponseDocument;
+			}
+			if (!serviceType.equalsIgnoreCase("wareList")) {
+				warehouseLocatorListResponse.setIsError(true);
+				warehouseLocatorListResponse.setError("Service type " + serviceType + " not configured");
+				return warehouseLocatorListResponseDocument;
+			}
+			
+			String sql = "SELECT \n"
+					+ "    w.m_warehouse_id as warehouseID,\n"
+					+ "    w.name as warehouseName,\n"
+					+ "	ml.isdefault,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "     LEFT JOIN (\n"
+					+ "         SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "         FROM adempiere.M_StorageOnHand\n"
+					+ "         GROUP BY M_Locator_ID\n"
+					+ "     ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "     WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "     AND COALESCE(ms.TotalQty, 0) = 0) AS emptyCount,\n"
+					+ "    (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS total_count,\n"
+					+ "    lt.name AS locator_type,\n"
+					+ "    ml.value AS location_values,\n"
+					+ "    ((SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) - \n"
+					+ "     (SELECT COUNT(*) FROM adempiere.M_Locator l\n"
+					+ "      LEFT JOIN (\n"
+					+ "          SELECT M_Locator_ID, COALESCE(SUM(QtyOnHand), 0) AS TotalQty\n"
+					+ "          FROM adempiere.M_StorageOnHand\n"
+					+ "          GROUP BY M_Locator_ID\n"
+					+ "      ) ms ON l.M_Locator_ID = ms.M_Locator_ID\n"
+					+ "      WHERE l.m_warehouse_id = w.m_warehouse_id\n"
+					+ "      AND COALESCE(ms.TotalQty, 0) = 0) \n"
+					+ "    ) * 100 / (SELECT COUNT(*) FROM adempiere.m_locator WHERE m_warehouse_id = w.m_warehouse_id) AS occupancy_percentage\n"
+					+ "FROM \n"
+					+ "    adempiere.m_warehouse w\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locator ml ON ml.m_warehouse_id = w.m_warehouse_id\n"
+					+ "JOIN \n"
+					+ "    adempiere.m_locatortype lt ON ml.m_locatortype_id = lt.m_locatortype_id\n"
+					+ "WHERE \n"
+					+ "    ml.ad_client_id = "+ ad_client_id +"\n"
+					+ "GROUP BY \n"
+					+ "    w.m_warehouse_id, w.name, lt.name,ml.value,ml.isdefault;";
+			pstm = DB.prepareStatement(sql.toString(), null);
+			rs = pstm.executeQuery();
+			
+			List<Integer> warehouseIds = new ArrayList<>();
+			List<String> locatorTypesN = new ArrayList<>();
+//			Map<Integer,Map<String,String>> locatorList = new HashMap<>();
+			Map<Integer, Map<String, List<String>>> locatorList = new HashMap<>();
+
+			
+			while(rs.next()) {
+				int warehouseId = rs.getInt("warehouseID");
+				String warehouseName = rs.getString("warehouseName");
+				int occupancyPercents = rs.getInt("occupancy_percentage");
+				String locatorType = rs.getString("locator_type");
+				String locatorName = rs.getString("location_values");
+				
+				if(!locatorTypesN.contains(locatorType)) {
+//					Map<String,String> locators = new HashMap<>();
+//					locators.put(locatorType, locatorName);
+					
+					 // New warehouse, create a new entry in locatorList
+			        Map<String, List<String>> locatorsByType = new HashMap<>();
+			        List<String> locatorsForType = new ArrayList<>();
+			        locatorsForType.add(locatorName);
+			        locatorsByType.put(locatorType, locatorsForType);
+					
+			        WarehouseListAccess warehouseListAccess = warehouseLocatorListResponse.addNewWarehouseListAccess();
+					warehouseListAccess.setId(warehouseId);
+		            warehouseListAccess.setName(warehouseName);
+		            warehouseListAccess.setOccupancy(occupancyPercents);
+		            warehouseListAccess.setLocatortype(locatorType);
+		            warehouseListAccess.addLocator(locatorName);
+//		            
+//		            locatorList.put(warehouseId,locators);
+		            
+		            locatorTypesN.add(locatorType);
+		            warehouseIds.add(warehouseId);
+		            locatorList.put(warehouseId, locatorsByType);
+		            
+				}else {
+					
+			        Map<String, List<String>> locatorsByType = locatorList.computeIfAbsent(warehouseId, k -> new HashMap<>());
+
+					// Existing warehouse, check if locator type is already in locatorList
+//			        Map<String, List<String>> locatorsByType = locatorList.get(warehouseId);
+			        if (locatorsByType.containsKey(locatorType)) {
+			            // Locator type already exists, add locator name
+			            locatorsByType.get(locatorType).add(locatorName);
+			        } else {
+			            // Locator type doesn't exist, create a new entry
+			            List<String> locatorsForType = new ArrayList<>();
+			            locatorsForType.add(locatorName);
+			            locatorsByType.put(locatorType, locatorsForType);
+			        }
+					
+					
+//					// Retrieve the existing locators for the warehouseId
+//					Map<String,String> locators = locatorList.get(warehouseId);
+//		            locators.put(locatorType, locatorName);
+
+		            // Update the WarehouseListAccess in the response with the new locator
+		            WarehouseListAccess[] warehouseListAccessArray = warehouseLocatorListResponse.getWarehouseListAccessArray();
+		            for (WarehouseListAccess access : warehouseListAccessArray) {
+		                if (access.getId() == warehouseId && access.getLocatortype().equals(locatorType)) {
+//		                    access.addLocator(locatorName);
+		                	access.setLocatorArray(locatorsByType.get(locatorType).toArray(new String[0]));
+		                    break;
+		                }
+		            }
+				}

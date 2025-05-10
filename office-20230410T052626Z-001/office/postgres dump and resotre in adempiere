@@ -1,0 +1,8 @@
+first go to server terminal and work in home
+
+# pg_dump -U adempiere erp > data.sql
+ this command is use whole database backup required password
+
+scp -i "pemFile/democ.pem" ubuntu@ec2-3-7-97-129:/home/ubuntu/data.sql /home/chirag/  (download server to local) 
+
+scp -i "pemFile/democ.pem" /home/chirag/Downloads/ExpDat.dmp ubuntu@2-3-7-97-129:/home/ubuntu/WarePro (download local to server)

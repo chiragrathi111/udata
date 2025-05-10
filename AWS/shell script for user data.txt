@@ -1,0 +1,12 @@
+#!/bin/sh
+yum -y install httpd
+systemctl enable httpd
+systemctl start httpd.service
+sudo chmod 777 /var/www/
+sudo chmod 777 /var/www/html
+sudo echo "Hello Chirag Rathi System ip : $(hostname -i)" > /var/www/html/index.html
+
+stress 
+sudo amazon-linux-extras install epel -y
+sudo yum install stress -y
+stress --cpu 1 --timeout 330
