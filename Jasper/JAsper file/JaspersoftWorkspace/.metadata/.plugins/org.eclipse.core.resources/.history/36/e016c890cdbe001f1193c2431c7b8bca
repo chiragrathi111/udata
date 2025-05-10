@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="employerCard" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="464acb9d-0556-45b0-bbfe-97fd7d4faffe">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinay2.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT e.p_employer_id AS Id,e.name AS EmployName,Date(e.created) AS Date,e.role AS Role,e.mobileno AS MobileNo,e.villagename AS villageName,
+e.block AS block,e.city AS city,e.district AS district,e.state AS state,e.pincode As pinCode,encode(img.binarydata,'base64') as image_binarydata
+FROM adempiere.p_employer e LEFT JOIN adempiere.ad_image img ON (e.ad_image_id = img.ad_image_id)
+WHERE e.ad_client_id = 11 AND e.p_employer_id = 1000001]]>
+	</queryString>
+	<field name="id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="employname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="employname"/>
+		<property name="com.jaspersoft.studio.field.label" value="employname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+	</field>
+	<field name="role" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="role"/>
+		<property name="com.jaspersoft.studio.field.label" value="role"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="mobileno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="mobileno"/>
+		<property name="com.jaspersoft.studio.field.label" value="mobileno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="villagename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="villagename"/>
+		<property name="com.jaspersoft.studio.field.label" value="villagename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="block" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="block"/>
+		<property name="com.jaspersoft.studio.field.label" value="block"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="city" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="city"/>
+		<property name="com.jaspersoft.studio.field.label" value="city"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="district" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="district"/>
+		<property name="com.jaspersoft.studio.field.label" value="district"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="state" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="state"/>
+		<property name="com.jaspersoft.studio.field.label" value="state"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="pincode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pincode"/>
+		<property name="com.jaspersoft.studio.field.label" value="pincode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="p_employer"/>
+	</field>
+	<field name="image_binarydata" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="image_binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="image_binarydata"/>
+	</field>
+	<title>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement x="5" y="0" width="480" height="30" backcolor="#080707" uuid="5c08236b-49ee-4959-b95f-566ed5cd323f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="0" width="203" height="30" forecolor="#FCFAFA" backcolor="#0A0909" uuid="c22c5297-0e1f-4ec4-8a57-8cea0db6e79c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMPLOY CARD]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="204" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement x="5" y="2" width="480" height="202" uuid="edacd97b-5d39-4c68-a8c4-328deaaa18ae">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<image>
+				<reportElement x="370" y="5" width="112" height="123" uuid="8f5598a3-a4d2-4d7f-8f6b-a7179f63339c"/>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary($F{image_binarydata}))]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="12" y="6" width="358" height="30" uuid="a50853a1-ac95-4f37-9b2d-3a160be3028c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ID           : " + $F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="67" width="358" height="30" uuid="641a3d88-1584-4d85-b651-70e251d52494"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ROLE      : " + $F{role}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="36" width="358" height="30" uuid="717a7b9d-6484-41da-b872-7dcba0411255"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NAME   : " + $F{employname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="98" width="358" height="30" uuid="6ae58d98-063a-463a-98d9-753ddbd96354"/>
+				<textElement verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MOBILE  : " + $F{mobileno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="130" width="98" height="20" uuid="83d228ae-536f-40e1-87fa-07170736a3d4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ADDRESS   : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="130" width="370" height="71" uuid="414d5a9e-4c6a-420d-9de9-2145b7bc76b0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Village Name - " + $F{villagename} + ", " + "Block - " + $F{block} + ", City - " + $F{city} + ", District - " + $F{district} + ", State " + $F{state} + ", Pin Code - " + $F{pincode}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

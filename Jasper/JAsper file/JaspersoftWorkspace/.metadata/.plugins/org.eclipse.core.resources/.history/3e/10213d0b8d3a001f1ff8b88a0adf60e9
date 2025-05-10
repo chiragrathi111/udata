@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="UserManagementReportForFieldOffiecr" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4949013e-12b4-4dba-8302-6b040862c660">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[select * from adempiere.tc_firstvisit;]]>
+	</queryString>
+	<field name="tc_firstvisit_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_firstvisit_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_firstvisit_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="plantno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="plantno"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="visitdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="visitdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="visitdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="isdefault" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="pesthistory" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pesthistory"/>
+		<property name="com.jaspersoft.studio.field.label" value="pesthistory"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="nextvisitdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="nextvisitdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="nextvisitdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_visit_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_visit_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_visit_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_farmer_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_farmer_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_farmer_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_fieldselection_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_fieldselection_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_fieldselection_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_soiltype_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_soiltype_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_soiltype_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_wateringtype_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_wateringtype_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_wateringtype_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_fieldmanagement_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_fieldmanagement_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_fieldmanagement_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="c_uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="enterdetailsofinfestation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="enterdetailsofinfestation"/>
+		<property name="com.jaspersoft.studio.field.label" value="enterdetailsofinfestation"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<group name="User">
+		<groupHeader>
+			<band height="50"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="Date">
+		<groupHeader>
+			<band height="50"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="1" width="540" height="55" forecolor="#298F60" backcolor="#298F60" uuid="c7bd22cf-c434-4fac-b3ed-a9aab5152780">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="4" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="21f13b43-5bd9-451b-b855-bf3cae4e51b3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User Management Report For Field Officer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="34" width="70" height="20" forecolor="#FFFFFF" uuid="adc05d07-ccaf-47d4-93ad-f3a55b2f2839">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Technician]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="188" y="34" width="30" height="20" forecolor="#FFFFFF" uuid="14a3d24c-b7e0-4be1-a02f-7e5573eac581">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="36" width="54" height="20" forecolor="#FFFFFF" uuid="4d0380c5-6642-43a3-b3df-c255008317cb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Order Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="35" width="90" height="20" forecolor="#FFFFFF" uuid="cfaa6503-a80d-4386-8e40-62f31b273057">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personnel Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="438" y="34" width="50" height="20" forecolor="#FFFFFF" uuid="7c2b582d-c66c-417d-86cd-fc799e3adaeb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+</jasperReport>

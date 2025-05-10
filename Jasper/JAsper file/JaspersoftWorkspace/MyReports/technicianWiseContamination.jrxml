@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="technicianWiseContamination" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8a705115-4de4-44fc-92e1-e58f9f2f422c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT cl.tc_culturelabel_id AS id,cl.c_uuid AS uuid,cl.updated AS date,u.name AS technician,cl.updatedby AS techId,cl.personalcode2 AS personalCode,cl.discardDate AS discardDate FROM adempiere.tc_culturelabel cl
+JOIN adempiere.ad_user u ON u.ad_user_id = cl.updatedby	
+WHERE cl.AD_Client_ID = 1000000 AND cl.isdiscarded = 'Y' ORDER BY u.name,cl.tc_culturelabel_id;]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="technician" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technician"/>
+		<property name="com.jaspersoft.studio.field.label" value="technician"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="techid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="techid"/>
+		<property name="com.jaspersoft.studio.field.label" value="techid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="discarddate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="discarddate"/>
+		<property name="com.jaspersoft.studio.field.label" value="discarddate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TemperatureStatus" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8c4b2ec7-8f19-4d15-8483-8fd99440a968">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT t.name AS Room,tc_temperatureStatus_id,
+       ts.name AS status,
+       temperature,
+       humidity,
+       t.ad_client_id,
+       t.ad_org_id
+FROM adempiere.tc_temperatureStatus t
+JOIN adempiere.tc_tempstatus ts ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+WHERE t.ad_client_id = 1000000;]]>
+	</queryString>
+	<field name="room" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="room"/>
+		<property name="com.jaspersoft.studio.field.label" value="room"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_temperaturestatus"/>
+	</field>
+	<field name="tc_temperaturestatus_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_temperaturestatus_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_temperaturestatus_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_temperaturestatus"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_tempstatus"/>
+	</field>
+	<field name="temperature" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="temperature"/>
+		<property name="com.jaspersoft.studio.field.label" value="temperature"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_temperaturestatus"/>
+	</field>
+	<field name="humidity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="humidity"/>
+		<property name="com.jaspersoft.studio.field.label" value="humidity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_temperaturestatus"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_temperaturestatus"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_temperaturestatus"/>
+	</field>
+	<group name="Room">
+		<groupExpression><![CDATA[$F{room}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="20" y="5" width="100" height="20" uuid="a44b2eb3-a3d8-4c01-ab97-72a02587a2aa">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="3">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<line>
+					<reportElement x="122" y="2" width="350" height="1" forecolor="#000000" uuid="026f8545-05ed-4dad-93b9-8dea1f02216c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="140" y="5" width="90" height="20" uuid="b9e4460a-fc48-4562-9b75-70e874b720af">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="239" y="5" width="115" height="20" uuid="5dbffdb9-585f-4e5f-afda-87c4c88bffd7">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{humidity}+" g/kg"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="5" width="100" height="20" uuid="efd2a9c9-8695-4cc3-af80-2c5371e025e3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{temperature}+" °C"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

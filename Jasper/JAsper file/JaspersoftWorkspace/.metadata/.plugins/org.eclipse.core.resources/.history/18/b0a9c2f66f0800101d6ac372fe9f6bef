@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="user_iamges" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aeabf0bd-33ac-42fe-8de4-93ed100c09d6">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[select u.name,u.ad_user_id,encode(img.binarydata,'base64') as image_binarydata from adempiere.ad_user u
+LEFT JOIN adempiere.ad_image img ON (u.ad_image_id = img.ad_image_id)]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_user_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="image_binarydata" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="image_binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="image_binarydata"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="220" height="40" uuid="7f22d571-a0c7-49ac-bd25-b6a6bf9fecad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User Records:-]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="157" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="20" width="270" height="50" uuid="5f0e23c1-dc05-4c0f-90e8-052fa2dde223"/>
+				<textElement>
+					<font size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="370" y="5" width="112" height="123" uuid="30a82e7c-d2f6-4a7d-a727-ac146cf39e8c"/>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary($F{image_binarydata}))]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

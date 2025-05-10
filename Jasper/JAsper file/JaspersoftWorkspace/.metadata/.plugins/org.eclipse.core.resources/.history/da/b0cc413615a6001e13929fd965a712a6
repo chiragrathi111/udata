@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="734367ef-9327-4677-a292-355853ac4fd3">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere adapter"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="337"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="651"/>
+	<queryString language="SQL">
+		<![CDATA[select i.c_bpartner_id,i.c_invoice_id As InvoiceId,bp.name AS BPartnerName,pr.name AS ProductName,il.m_product_id,il.pricelist,il.qtyinvoiced,il.linenetamt from adempiere.c_invoice i
+join adempiere.c_invoiceline il on i.c_invoice_id = il.c_invoice_id
+join adempiere.c_bpartner bp on bp.c_bpartner_id = i.c_bpartner_id
+join adempiere.m_product pr on pr.m_product_id = il.m_product_id 
+where i.ad_client_id = 11 and i.issotrx = 'Y' order by c_bpartner_id, m_product_id]]>
+	</queryString>
+	<field name="c_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
+	</field>
+	<field name="m_product_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="pricelist" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pricelist"/>
+		<property name="com.jaspersoft.studio.field.label" value="pricelist"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="qtyinvoiced" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="qtyinvoiced"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtyinvoiced"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="linenetamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="ProductName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ProductName"/>
+		<property name="com.jaspersoft.studio.field.name" value="ProductName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="BPartnerName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="BPartnerName"/>
+		<property name="com.jaspersoft.studio.field.name" value="BPartnerName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
+	</field>
+	<field name="InvoiceId" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="InvoiceId"/>
+		<property name="com.jaspersoft.studio.field.name" value="InvoiceId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
+	</field>
+	<variable name="BPartnerQtySum" class="java.math.BigDecimal" resetType="Group" resetGroup="BPartnerGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtyinvoiced}]]></variableExpression>
+	</variable>
+	<variable name="BPartnerAmtSum" class="java.math.BigDecimal" resetType="Group" resetGroup="BPartnerGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{linenetamt}]]></variableExpression>
+	</variable>
+	<group name="BPartnerGroup">
+		<groupExpression><![CDATA[$F{c_bpartner_id}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement x="1" y="10" width="100" height="20" uuid="18e75915-4a54-43d7-9841-2f2662d3114a"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BPartnerName}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="68">
+				<textField>
+					<reportElement x="140" y="16" width="100" height="20" uuid="b22617a0-6353-408c-8fe3-0f915c7ebf68"/>
+					<textFieldExpression><![CDATA["Total: "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="250" y="16" width="100" height="20" uuid="b22617a0-6353-408c-8fe3-0f915c7ebf68"/>
+					<textFieldExpression><![CDATA[$V{BPartnerQtySum}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="370" y="16" width="100" height="20" uuid="b22617a0-6353-408c-8fe3-0f915c7ebf68"/>
+					<textFieldExpression><![CDATA[$V{BPartnerAmtSum}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="120" y="0" width="330" height="16" uuid="1cc81528-098b-4914-bb30-b83e98cd2592"/>
+					<text><![CDATA[------------------------------------------------------------------------------------------]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="120" y="36" width="330" height="16" uuid="585b585a-165e-46c1-b6fa-bb27b35debd7"/>
+					<text><![CDATA[------------------------------------------------------------------------------------------]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="220" height="20" uuid="6e324b8c-fde4-46eb-9555-5efad91739cf"/>
+				<text><![CDATA[PARTY / ITEM WISE SALE SUMMERY FROM
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="11" width="140" height="30" uuid="cab250b4-c4e1-4120-81ab-97f80cc9dc78"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Report For  : Sale S/R
+                Company    : Austrak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="34" width="480" height="21" uuid="784a8110-8497-4dd1-aa89-575e4d632058"/>
+				<text><![CDATA[-------------------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="60" width="480" height="21" uuid="df3056a6-e41a-41e8-bc15-ccaaed080c34"/>
+				<text><![CDATA[-------------------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="44" width="461" height="30" uuid="bd6255fb-a412-4ef6-b522-9b684ef475c1"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[  Description                  Unit Price      Quantity      NetAmount       ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="5" width="100" height="20" uuid="bb58ac17-d018-4b42-b778-31d5660ade2e"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ProductName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="3" width="100" height="25" uuid="b7bdbe44-2073-442a-aa28-869595de91a1"/>
+				<textFieldExpression><![CDATA[$F{pricelist}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="258" y="5" width="100" height="35" uuid="10a8def8-f8be-4267-8df3-fe17b3b90f0e"/>
+				<textFieldExpression><![CDATA[$F{qtyinvoiced}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="10" width="100" height="30" uuid="95d6b6c2-dca0-4a8a-979c-31b4e1f60fd5"/>
+				<textFieldExpression><![CDATA[$F{linenetamt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

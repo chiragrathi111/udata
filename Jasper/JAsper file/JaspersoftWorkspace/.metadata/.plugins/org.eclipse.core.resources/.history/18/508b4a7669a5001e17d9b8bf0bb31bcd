@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="734367ef-9327-4677-a292-355853ac4fd3">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[select i.c_bpartner_id,il.m_product_id,il.pricelist,il.qtyinvoiced,il.linenetamt from adempiere.c_invoice i
+join adempiere.c_invoiceline il on i.c_invoice_id = il.c_invoice_id
+where i.ad_client_id = 1000002 and i.issotrx = 'Y' order by c_bpartner_id]]>
+	</queryString>
+	<field name="c_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
+	</field>
+	<field name="m_product_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="pricelist" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pricelist"/>
+		<property name="com.jaspersoft.studio.field.label" value="pricelist"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="qtyinvoiced" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="qtyinvoiced"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtyinvoiced"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="linenetamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<group name="c_bpartner_id">
+		<groupExpression><![CDATA[$F{c_bpartner_id}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="220" height="20" uuid="6e324b8c-fde4-46eb-9555-5efad91739cf"/>
+				<text><![CDATA[PARTY / ITEM WISE SALE SUMMERY FROM
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="230" y="0" width="100" height="20" uuid="4dd08386-9662-4270-a9aa-4c211ceb194a"/>
+				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="11" width="120" height="30" uuid="cab250b4-c4e1-4120-81ab-97f80cc9dc78"/>
+				<text><![CDATA[Report For  : Sale S/R
+Company    : Austrak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="28" width="480" height="21" uuid="784a8110-8497-4dd1-aa89-575e4d632058"/>
+				<text><![CDATA[-------------------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="60" width="480" height="21" uuid="df3056a6-e41a-41e8-bc15-ccaaed080c34"/>
+				<text><![CDATA[-------------------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="43" width="430" height="30" uuid="bd6255fb-a412-4ef6-b522-9b684ef475c1"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[  Description             Unit Price      Quantity      NetAmount       ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="217" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="10" width="100" height="20" uuid="9c08d2ff-5285-4e54-8aac-353f4b1192f3"/>
+				<textFieldExpression><![CDATA[$F{c_bpartner_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="100" height="20" uuid="bb58ac17-d018-4b42-b778-31d5660ade2e"/>
+				<textFieldExpression><![CDATA[$F{m_product_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="127" y="50" width="100" height="30" uuid="b7bdbe44-2073-442a-aa28-869595de91a1"/>
+				<textFieldExpression><![CDATA[$F{pricelist}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="50" width="100" height="30" uuid="10a8def8-f8be-4267-8df3-fe17b3b90f0e"/>
+				<textFieldExpression><![CDATA[$F{qtyinvoiced}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="50" width="100" height="30" uuid="95d6b6c2-dca0-4a8a-979c-31b4e1f60fd5"/>
+				<textFieldExpression><![CDATA[$F{linenetamt}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="90" width="100" height="30" uuid="e84b57d1-c326-41d4-a9ce-2e53a17ea003"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

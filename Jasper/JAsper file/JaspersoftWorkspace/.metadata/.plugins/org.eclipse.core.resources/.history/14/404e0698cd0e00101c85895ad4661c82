@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="user_iamges" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aeabf0bd-33ac-42fe-8de4-93ed100c09d6">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinay111.jrdax"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[select u.name,u.ad_user_id,img.binarydata AS binarydata,encode(img.binarydata,'base64') as image_binarydata from adempiere.ad_user u
+LEFT JOIN adempiere.ad_image img ON (u.ad_image_id = img.ad_image_id)
+WHERE u.ad_client_id =   $P{AD_Client_ID} ;]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_user_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="binarydata" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="binarydata"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_image"/>
+	</field>
+	<field name="image_binarydata" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="image_binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="image_binarydata"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="43" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="220" height="40" uuid="7f22d571-a0c7-49ac-bd25-b6a6bf9fecad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User Records:-]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{USER_IMAGE} == null || $P{USER_IMAGE}.length == 0]]></printWhenExpression>
+			<textField>
+				<reportElement x="20" y="0" width="515" height="20" uuid="221e86b3-28a7-44eb-8791-00f4ff42064c"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USER_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="120">
+			<printWhenExpression><![CDATA[$P{USER_IMAGE} != null && $P{USER_IMAGE}.length > 0]]></printWhenExpression>
+			<textField>
+				<reportElement x="20" y="0" width="270" height="20" uuid="ce7e26ce-cdf2-4343-a35d-8e0e53212246"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USER_NAME}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="340" y="0" width="210" height="100" uuid="0e3bf390-35d1-4ee3-99ef-d91cd8166bb2"/>
+				<imageExpression><![CDATA[$P{USER_IMAGE}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

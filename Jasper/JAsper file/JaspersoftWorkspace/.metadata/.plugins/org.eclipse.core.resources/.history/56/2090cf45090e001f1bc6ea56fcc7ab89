@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="traNew" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="25a5b912-be7e-4364-9bb4-0e9f122a26de">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[WITH RECURSIVE cte AS (
+-- Anchor query
+SELECT l.parentuuid, l.tc_in_id, l.tc_out_id,l.c_uuid,lo.value As location,l.created,l.cycleno,ps.name As cropType,cs.name As stage,v.name As variety,
+	l.personal_code,ts.temperature As temp,ts.humidity AS humidity
+FROM adempiere.tc_culturelabel l
+	JOIN adempiere.tc_out o ON o.tc_out_id = l.tc_out_id
+	JOIN adempiere.m_locator lo ON lo.m_locator_id = o.m_locator_id
+	JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = l.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = l.tc_culturestage_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = l.tc_species_ids
+	JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = lo.m_locatortype_id
+JOIN (SELECT ts.m_locatortype_id,MAX(ts.created) AS max_created
+FROM adempiere.tc_temperaturestatus ts GROUP BY ts.m_locatortype_id
+) max_ts ON max_ts.m_locatortype_id = lo.m_locatortype_id
+JOIN adempiere.tc_temperaturestatus ts ON ts.m_locatortype_id = lo.m_locatortype_id AND ts.created = max_ts.max_created
+WHERE l.c_uuid = '32f0ba8d-1c87-49e0-b2d8-970634eb5732' AND l.ad_client_id = 1000000
+
+UNION ALL
+
+-- Recursive query
+SELECT t2.parentuuid, t2.tc_in_id, t2.tc_out_id,t2.c_uuid,lo.value As location,t2.created,t2.cycleno,ps.name As cropType,cs.name As stage,v.name As variety,
+	t2.personal_code,ts.temperature As temp,ts.humidity AS humidity
+	
+FROM cte t1
+JOIN adempiere.tc_culturelabel t2
+ON t1.parentuuid = t2.c_uuid
+	JOIN adempiere.tc_out o ON o.tc_out_id = t2.tc_out_id
+	JOIN adempiere.m_locator lo ON lo.m_locator_id = o.m_locator_id
+	JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = t2.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = t2.tc_culturestage_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = t2.tc_species_ids
+	JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = lo.m_locatortype_id
+JOIN (SELECT ts.m_locatortype_id,MAX(ts.created) AS max_created
+FROM adempiere.tc_temperaturestatus ts GROUP BY ts.m_locatortype_id
+) max_ts ON max_ts.m_locatortype_id = lo.m_locatortype_id
+JOIN adempiere.tc_temperaturestatus ts ON ts.m_locatortype_id = lo.m_locatortype_id AND ts.created = max_ts.max_created
+)
+SELECT * FROM cte;]]>
+	</queryString>
+	<field name="parentuuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parentuuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentuuid"/>
+	</field>
+	<field name="tc_in_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_in_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_in_id"/>
+	</field>
+	<field name="tc_out_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_out_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_out_id"/>
+	</field>
+	<field name="c_uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uuid"/>
+	</field>
+	<field name="location" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="location"/>
+		<property name="com.jaspersoft.studio.field.label" value="location"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+	</field>
+	<field name="cycleno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cycleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycleno"/>
+	</field>
+	<field name="croptype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.label" value="croptype"/>
+	</field>
+	<field name="stage" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stage"/>
+		<property name="com.jaspersoft.studio.field.label" value="stage"/>
+	</field>
+	<field name="variety" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="variety"/>
+		<property name="com.jaspersoft.studio.field.label" value="variety"/>
+	</field>
+	<field name="personal_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personal_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="personal_code"/>
+	</field>
+	<field name="temp" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="temp"/>
+		<property name="com.jaspersoft.studio.field.label" value="temp"/>
+	</field>
+	<field name="humidity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="humidity"/>
+		<property name="com.jaspersoft.studio.field.label" value="humidity"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

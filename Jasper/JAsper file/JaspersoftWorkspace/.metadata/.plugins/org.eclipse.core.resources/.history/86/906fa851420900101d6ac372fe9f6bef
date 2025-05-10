@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="user" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9eb18f70-e1b0-40e8-a34a-9ca4127a364a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinay111.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[select * from adempiere.ad_user]]>
+	</queryString>
+	<field name="ad_user_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="password" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="password"/>
+		<property name="com.jaspersoft.studio.field.label" value="password"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email"/>
+		<property name="com.jaspersoft.studio.field.label" value="email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="supervisor_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="supervisor_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="supervisor_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="processing" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="processing"/>
+		<property name="com.jaspersoft.studio.field.label" value="processing"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="emailuser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emailuser"/>
+		<property name="com.jaspersoft.studio.field.label" value="emailuser"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="emailuserpw" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emailuserpw"/>
+		<property name="com.jaspersoft.studio.field.label" value="emailuserpw"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_bpartner_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_location_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_greeting_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_greeting_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_greeting_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="title" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="title"/>
+		<property name="com.jaspersoft.studio.field.label" value="title"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="comments" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="comments"/>
+		<property name="com.jaspersoft.studio.field.label" value="comments"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="phone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="phone2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone2"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone2"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="fax" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fax"/>
+		<property name="com.jaspersoft.studio.field.label" value="fax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="lastcontact" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="lastcontact"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastcontact"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="lastresult" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lastresult"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastresult"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="birthday" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="birthday"/>
+		<property name="com.jaspersoft.studio.field.label" value="birthday"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_orgtrx_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_orgtrx_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_orgtrx_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="emailverify" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emailverify"/>
+		<property name="com.jaspersoft.studio.field.label" value="emailverify"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="emailverifydate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="emailverifydate"/>
+		<property name="com.jaspersoft.studio.field.label" value="emailverifydate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="notificationtype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notificationtype"/>
+		<property name="com.jaspersoft.studio.field.label" value="notificationtype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isfullbpaccess" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isfullbpaccess"/>
+		<property name="com.jaspersoft.studio.field.label" value="isfullbpaccess"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_job_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_job_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_job_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ldapuser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ldapuser"/>
+		<property name="com.jaspersoft.studio.field.label" value="ldapuser"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="connectionprofile" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="connectionprofile"/>
+		<property name="com.jaspersoft.studio.field.label" value="connectionprofile"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="userpin" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="userpin"/>
+		<property name="com.jaspersoft.studio.field.label" value="userpin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isinpayroll" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isinpayroll"/>
+		<property name="com.jaspersoft.studio.field.label" value="isinpayroll"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_user_uu" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_uu"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_uu"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ismenuautoexpand" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ismenuautoexpand"/>
+		<property name="com.jaspersoft.studio.field.label" value="ismenuautoexpand"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="salt" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salt"/>
+		<property name="com.jaspersoft.studio.field.label" value="salt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="islocked" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="islocked"/>
+		<property name="com.jaspersoft.studio.field.label" value="islocked"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="dateaccountlocked" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateaccountlocked"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateaccountlocked"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="failedlogincount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="failedlogincount"/>
+		<property name="com.jaspersoft.studio.field.label" value="failedlogincount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="datepasswordchanged" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="datepasswordchanged"/>
+		<property name="com.jaspersoft.studio.field.label" value="datepasswordchanged"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="datelastlogin" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="datelastlogin"/>
+		<property name="com.jaspersoft.studio.field.label" value="datelastlogin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isnopasswordreset" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isnopasswordreset"/>
+		<property name="com.jaspersoft.studio.field.label" value="isnopasswordreset"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isexpired" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isexpired"/>
+		<property name="com.jaspersoft.studio.field.label" value="isexpired"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="securityquestion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="securityquestion"/>
+		<property name="com.jaspersoft.studio.field.label" value="securityquestion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="answer" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="answer"/>
+		<property name="com.jaspersoft.studio.field.label" value="answer"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="issaleslead" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="issaleslead"/>
+		<property name="com.jaspersoft.studio.field.label" value="issaleslead"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="leadsource" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leadsource"/>
+		<property name="com.jaspersoft.studio.field.label" value="leadsource"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="leadstatus" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leadstatus"/>
+		<property name="com.jaspersoft.studio.field.label" value="leadstatus"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="leadsourcedescription" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leadsourcedescription"/>
+		<property name="com.jaspersoft.studio.field.label" value="leadsourcedescription"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="leadstatusdescription" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leadstatusdescription"/>
+		<property name="com.jaspersoft.studio.field.label" value="leadstatusdescription"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_campaign_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_campaign_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_campaign_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="salesrep_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salesrep_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesrep_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="bpname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bpname"/>
+		<property name="com.jaspersoft.studio.field.label" value="bpname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="bp_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="bp_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bp_location_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isaddmailtextautomatically" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isaddmailtextautomatically"/>
+		<property name="com.jaspersoft.studio.field.label" value="isaddmailtextautomatically"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="r_defaultmailtext_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="r_defaultmailtext_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="r_defaultmailtext_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_image_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_image_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_image_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isnoexpire" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isnoexpire"/>
+		<property name="com.jaspersoft.studio.field.label" value="isnoexpire"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="issupportuser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="issupportuser"/>
+		<property name="com.jaspersoft.studio.field.label" value="issupportuser"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isbillto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isbillto"/>
+		<property name="com.jaspersoft.studio.field.label" value="isbillto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isshipto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isshipto"/>
+		<property name="com.jaspersoft.studio.field.label" value="isshipto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="isvendorlead" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isvendorlead"/>
+		<property name="com.jaspersoft.studio.field.label" value="isvendorlead"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="emailconfirmnotifdetails" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emailconfirmnotifdetails"/>
+		<property name="com.jaspersoft.studio.field.label" value="emailconfirmnotifdetails"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="pi_deptartment_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pi_deptartment_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="pi_deptartment_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="depthead" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="depthead"/>
+		<property name="com.jaspersoft.studio.field.label" value="depthead"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="deptagent" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="deptagent"/>
+		<property name="com.jaspersoft.studio.field.label" value="deptagent"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="contractor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="contractor"/>
+		<property name="com.jaspersoft.studio.field.label" value="contractor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="0" width="260" height="30" uuid="94ab255f-3f48-4ad5-89ff-eed9655203e4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="40" width="250" height="38" uuid="52952319-06f8-4ec1-adea-89e8e417e1c6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="413" y="5" width="112" height="115" uuid="43cdf174-3e4d-4757-864b-dcbfae2437a5"/>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary($F{image_binarydata}))]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

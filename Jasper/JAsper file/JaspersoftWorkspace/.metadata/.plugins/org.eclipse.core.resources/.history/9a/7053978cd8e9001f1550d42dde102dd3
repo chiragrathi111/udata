@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="produvtLabelRWPL" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="20" uuid="dc0e6729-05ef-4515-bbeb-7b47705e6f2a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinayloacl.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select pi.labeluuid as label, mp.value,pi.pi_productlabel_id from adempiere.pi_productlabel pi
+join adempiere.m_product mp on mp.m_product_id = pi.m_product_Id 
+where pi.ad_client_id =  $P{AD_CLIENT_ID}  and pi.pi_productlabel_id = $P{RECORD_ID} ;]]>
+	</queryString>
+	<field name="label" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="label"/>
+		<property name="com.jaspersoft.studio.field.label" value="label"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_productlabel"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="pi_productlabel_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pi_productlabel_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="pi_productlabel_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_productlabel"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="570" height="30" forecolor="#298F60" backcolor="#298F60" uuid="0a3b59d4-5eca-456d-9fa5-f36e43b4e75c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="0" width="521" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="f3827bc9-5e5d-47ea-bb10-66176c0ec965">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Media Label]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="350">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="90" y="49" width="329" height="299" uuid="13fc6367-98e1-4eee-8fa2-00485453b425">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["{\"outUuid\": \"" + $F{outuuid} + "\"," +
+"\"inId\": \"" + $F{inid} + "\"," +
+"\"cultureUuid\": \"" + $F{uuid} + "\"," +
+"\"cropType\": \"" + $F{croptype} + "\"," +
+"\"varietyType\": \"" + $F{variety} + "\"," +
+"\"parentLine\": \"" + $F{parentcultureline} + "\"," +
+"\"natureOfSample\": \"" + $F{naturesample} + "\"," +
+"\"cultureStage\": \"" + $F{culturestageid} + "\"," +
+"\"cycle\": \"" + $F{cycleno} + "\"," +
+"\"virusTesting\": \"" + $F{virusid} + "\"," +
+"\"dateOfSourcing\": \"" + $F{culturedate} + "\"," +
+"\"tcpf\": \"" + $F{tcpf} + "\"," +
+"\"dateOfOperation\": \"" + $F{cultureoperationdate} + "\"," +
+"\"personnelCode\": \"" + $F{personalcode} + "\"," +
+"\"machineCode\": \"" + $F{machinename} + "\"}"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="3" y="1" width="523" height="80" uuid="9cc67c17-027b-49ba-8c66-be691d183d15">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{yearcode} + " " + $F{croptype}+ " " +  $F{variety}  + " "+$F{pcultureline} + " "  + $F{lotnumber} + " " + $F{culturestage} + " - " + $F{plotnumbertray} + " " + new SimpleDateFormat("ddMMyy").format($F{operationdate}) ]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="user" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9eb18f70-e1b0-40e8-a34a-9ca4127a364a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinay111.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT u.name,u.ad_user_id,img.binarydata,img.record_id,encode(img.binarydata, 'base64') AS image_binarydata
+FROM adempiere.ad_user u
+LEFT JOIN adempiere.ad_attachment img ON u.ad_user_id = img.record_id AND img.ad_table_id = 114
+WHERE u.ad_client_id = 1000000 ORDER BY img.created ASC;]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="ad_user_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="binarydata" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="binarydata"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_attachment"/>
+	</field>
+	<field name="record_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="record_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="record_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_attachment"/>
+	</field>
+	<field name="image_binarydata" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="image_binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="image_binarydata"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="0" width="260" height="30" uuid="94ab255f-3f48-4ad5-89ff-eed9655203e4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="40" width="250" height="38" uuid="52952319-06f8-4ec1-adea-89e8e417e1c6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="413" y="5" width="112" height="115" uuid="43cdf174-3e4d-4757-864b-dcbfae2437a5"/>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary($F{image_binarydata}))]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

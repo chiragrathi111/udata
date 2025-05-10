@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListOfPlantTag" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4b9b5484-5d16-4ef6-9fe5-a5459637aa40">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="FromDate" class="java.sql.Date"/>
+	<parameter name="ToDate" class="java.sql.Date"/>
+	<queryString language="SQL">
+		<![CDATA[select * from adempiere.tc_planttag
+Where ad_client_id =  $P{AD_CLIENT_ID}
+AND created >= $P{FromDate}     
+ AND created < ($P{ToDate}::timestamp + INTERVAL '1 day') Order by tc_planttag_id;]]>
+	</queryString>
+	<field name="tc_planttag_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_planttag_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_planttag_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="documentno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="documentno"/>
+		<property name="com.jaspersoft.studio.field.label" value="documentno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="tc_planttag_uu" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tc_planttag_uu"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_planttag_uu"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="c_uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="2" width="528" height="55" forecolor="#298F60" backcolor="#298F60" uuid="83adb70b-ddc1-47f9-9bdb-eff6a69ead8c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="4" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="089a2eba-1227-49d1-aa72-68cda7f48400">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plant Tag Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="451" y="34" width="62" height="20" forecolor="#FFFFFF" uuid="194ca8e5-4353-4ed7-ab76-6d3199eb6a4b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qr Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="19" y="34" width="83" height="20" forecolor="#FFFFFF" uuid="dd082bb9-898f-417d-9e54-2372844cbc31">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plant Tag Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="34" width="113" height="20" forecolor="#FFFFFF" uuid="08e0e924-0d85-4bfa-b90d-2fc73d45eae7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plant Tag UUId]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="61" splitType="Stretch">
+			<componentElement>
+				<reportElement x="441" y="2" width="70" height="58" uuid="47165891-be6a-4cac-94cc-d09ed3c45df9"/>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["{"  +
+  "\"Id\": \"" + $F{tc_planttag_id} + "\"," +
+  "\"PlantTagUUId\": \"" + $F{c_uuid}+ "\"" +
+"}"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="26" y="22" width="90" height="20" uuid="f0e42550-5bfb-4697-b169-98d86d928ad1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tc_planttag_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="126" y="22" width="310" height="20" uuid="4b34d64a-88e1-4aa7-83f3-654930eca33c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_uuid}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="traNew" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="25a5b912-be7e-4364-9bb4-0e9f122a26de">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TissueServer.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="CultureLabelUUId" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[WITH RECURSIVE cte AS (
+SELECT cl.parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,cl.cycleno,ps.name AS cropType,cs.name AS stage,
+var.name AS variety, cl.personal_code,ts.temperature AS temp, ts.humidity AS humidity, 1 AS level
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = loc.m_locatortype_id JOIN adempiere.tc_temperaturestatus ts ON ts.m_locatortype_id = lt.m_locatortype_id
+WHERE cl.c_uuid =  $P{CultureLabelUUId}  AND cl.ad_client_id =  $P{AD_CLIENT_ID} 
+AND DATE(ts.created) = (SELECT MAX(DATE(created)) FROM adempiere.tc_temperaturestatus WHERE ad_client_id =  $P{AD_CLIENT_ID}  )
+UNION ALL
+SELECT cl2.parentuuid,cl2.tc_in_id,cl2.tc_out_id,cl2.c_uuid,loc.value AS location,cl2.created,cl2.cycleno,ps.name AS cropType,cs.name AS stage,
+var.name AS variety,cl2.personal_code,ts.temperature AS temp,ts.humidity AS humidity,cte.level + 1 AS level FROM cte
+JOIN adempiere.tc_culturelabel cl2 ON cte.parentuuid = cl2.c_uuid JOIN adempiere.tc_out o ON o.tc_out_id = cl2.tc_out_id
+JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl2.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl2.tc_culturestage_id JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = loc.m_locatortype_id JOIN adempiere.tc_temperaturestatus ts ON ts.m_locatortype_id = lt.m_locatortype_id
+	),
+culture_result AS (
+SELECT cte.parentuuid,cte.tc_in_id,cte.tc_out_id,cte.c_uuid,cte.location,cte.created,cte.cycleno,cte.cropType,cte.stage,cte.variety,cte.personal_code, 
+MIN(cte.temp) AS min_temperature,MAX(cte.temp) AS max_temperature,MIN(cte.humidity) AS min_humidity, MAX(cte.humidity) AS max_humidity,cte.level FROM cte
+GROUP BY cte.parentuuid, cte.tc_in_id, cte.tc_out_id, cte.c_uuid, cte.location,cte.created, cte.cycleno, cte.cropType, cte.stage, cte.variety,cte.personal_code, cte.level
+UNION ALL
+SELECT DISTINCT tcc.parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,cte.cropType,pr.name AS stage,
+cte.variety,tcc.personalcode AS personal_code,NULL AS min_temperature,NULL AS max_temperature,NULL AS min_humidity,NULL AS max_humidity,cte.level 
+FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
+JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id JOIN adempiere.m_product pr ON pr.m_product_id = eo.m_product_id
+UNION ALL
+SELECT DISTINCT NULL AS parentuuid,0 AS tc_in_id,0 AS tc_out_id,tpt.c_uuid,NULL AS location,tpt.created,0 AS cycleno,cte.cropType,'Plant Tag' AS stage, 
+cte.variety,NULL AS personal_code,NULL AS min_temperature,NULL AS max_temperature,NULL AS min_humidity,NULL AS max_humidity,cte.level 
+FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid LEFT JOIN adempiere.tc_planttag tpt ON tcc.parentuuid = tpt.c_uuid
+WHERE tpt.c_uuid IS NOT NULL ORDER BY created ASC
+),
+explant_result AS (
+SELECT DISTINCT tcc.parentuuid, tcc.tc_in_id, tcc.tc_out_id, tcc.c_uuid, loc.value AS location,tcc.created, 0 AS cycleno, ps.name AS cropType,
+pr.name AS stage, var.name AS variety,tcc.personalcode AS personal_code, NULL AS min_temperature, NULL AS max_temperature, 
+NULL AS min_humidity, NULL AS max_humidity, 1 AS level FROM adempiere.tc_explantlabel tcc
+JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = tcc.tc_species_id JOIN adempiere.tc_variety var ON var.tc_variety_id = tcc.tc_variety_id
+JOIN adempiere.m_product pr ON pr.m_product_id = eo.m_product_id WHERE tcc.c_uuid =  $P{CultureLabelUUId}  AND tcc.ad_client_id =  $P{AD_CLIENT_ID} 
+UNION ALL
+SELECT DISTINCT NULL AS parentuuid, 0 AS tc_in_id, 0 AS tc_out_id, tpt.c_uuid, NULL AS location,tpt.created, 0 AS cycleno, ps.name AS cropType,
+'Plant Tag' AS stage, var.name AS variety,NULL AS personal_code, NULL AS min_temperature, NULL AS max_temperature,NULL AS min_humidity, NULL AS max_humidity, 2 AS level
+FROM adempiere.tc_planttag tpt JOIN adempiere.tc_explantlabel tcc ON tcc.parentuuid = tpt.c_uuid
+JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id
+JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id WHERE tcc.c_uuid =  $P{CultureLabelUUId}  AND tpt.c_uuid IS NOT NULL
+),
+plant_tag_result AS (
+SELECT DISTINCT NULL AS parentuuid, 0 AS tc_in_id, 0 AS tc_out_id, tpt.c_uuid, NULL AS location,tpt.created, 0 AS cycleno, ps.name AS cropType,
+'Plant Tag' AS stage, var.name AS variety,NULL AS personal_code, NULL AS min_temperature, NULL AS max_temperature,NULL AS min_humidity, NULL AS max_humidity, 1 AS level
+FROM adempiere.tc_planttag tpt JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id	
+WHERE tpt.c_uuid =  $P{CultureLabelUUId}  AND tpt.ad_client_id =  $P{AD_CLIENT_ID} 
+)	
+SELECT * FROM culture_result
+UNION ALL
+SELECT * FROM explant_result WHERE NOT EXISTS (SELECT 1 FROM culture_result)
+UNION ALL
+SELECT * FROM plant_tag_result WHERE NOT EXISTS (SELECT 1 FROM explant_result) AND NOT EXISTS (SELECT 1 FROM culture_result)
+ORDER BY created ASC;]]>
+	</queryString>
+	<field name="parentuuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parentuuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentuuid"/>
+	</field>
+	<field name="tc_in_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_in_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_in_id"/>
+	</field>
+	<field name="tc_out_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_out_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_out_id"/>
+	</field>
+	<field name="c_uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uuid"/>
+	</field>
+	<field name="location" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="location"/>
+		<property name="com.jaspersoft.studio.field.label" value="location"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+	</field>
+	<field name="cycleno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cycleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycleno"/>
+	</field>
+	<field name="croptype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.label" value="croptype"/>
+	</field>
+	<field name="stage" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stage"/>
+		<property name="com.jaspersoft.studio.field.label" value="stage"/>
+	</field>
+	<field name="variety" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="variety"/>
+		<property name="com.jaspersoft.studio.field.label" value="variety"/>
+	</field>
+	<field name="personal_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personal_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="personal_code"/>
+	</field>
+	<field name="min_temperature" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="min_temperature"/>
+		<property name="com.jaspersoft.studio.field.label" value="min_temperature"/>
+	</field>
+	<field name="max_temperature" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="max_temperature"/>
+		<property name="com.jaspersoft.studio.field.label" value="max_temperature"/>
+	</field>
+	<field name="min_humidity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="min_humidity"/>
+		<property name="com.jaspersoft.studio.field.label" value="min_humidity"/>
+	</field>
+	<field name="max_humidity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="max_humidity"/>
+		<property name="com.jaspersoft.studio.field.label" value="max_humidity"/>
+	</field>
+	<field name="level" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="level"/>
+		<property name="com.jaspersoft.studio.field.label" value="level"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="51" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="3" width="528" height="30" forecolor="#298F60" backcolor="#298F60" uuid="d1ec235c-d8a7-45bc-aed8-fef72f96cf67">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="23" y="5" width="450" height="22" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="6b4cab65-b9d5-4f79-8019-35afce2463de">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Traceability]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="199" splitType="Stretch">
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="197" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="7c7824f0-4a47-4020-85eb-a2b5d10b4173"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#069C33" uuid="af97f6a9-336d-46ae-9af3-706923ce3efc">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Plant Tag")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#F79ED5" uuid="af97f6a9-336d-46ae-9af3-706923ce3efc">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Explant")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#F7FF0D" uuid="af97f6a9-336d-46ae-9af3-706923ce3efc">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Initiation")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#13FF6F" uuid="af97f6a9-336d-46ae-9af3-706923ce3efc">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Callusing")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#FCC80D" uuid="d0f001e3-52bb-4823-85e8-eb3d10e05e13">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Multiplication")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#B3B1B1" uuid="d0f001e3-52bb-4823-85e8-eb3d10e05e13">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Elongation")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="190" y="0" width="210" height="171" backcolor="#F05B5B" uuid="d0f001e3-52bb-4823-85e8-eb3d10e05e13">
+					<printWhenExpression><![CDATA[$F{stage}.equals("Rooting")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<textField>
+				<reportElement x="212" y="39" width="108" height="12" uuid="0aff3d87-ea83-413b-a0a2-752d51a3119f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Crop Type: "+$F{croptype}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="52" width="108" height="12" uuid="91b8b7c2-1d2b-49f5-b7d7-0cfe3ca4b744">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Variety: "+$F{variety}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="66" width="100" height="12" uuid="e22221fe-1260-468e-922a-f0a041bdab84">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Date: "+new SimpleDateFormat("dd/MM/yyyy").format($F{created})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="80" width="124" height="12" backcolor="#DE3633" uuid="648d977e-3762-4f6b-b13e-9fda498b104a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Stage: "+$F{stage}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="95" width="100" height="12" uuid="734c2a81-6541-436f-8d1e-168d7039cc43">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{stage}.equals("Plant Tag") == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Cycle: "+$F{cycleno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="109" width="100" height="12" uuid="213558b3-9b75-4aff-97cd-dd7bec41fdda">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{stage}.equals("Plant Tag") == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["User: "+$F{personal_code}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="210" y="1" width="60" height="39" uuid="3cca4daf-da9d-4d8e-ba5c-dd3c2059db21">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["CultureLabelUUId: "+$F{c_uuid}]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="212" y="123" width="100" height="12" uuid="7919b278-e02e-4833-b7f0-b80594bfcbfb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[!($F{stage}.equals("Plant Tag") || $F{stage}.equals("Explant"))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Location: "+$F{location}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="137" width="142" height="12" uuid="3627caa7-5965-439c-99e6-0953e93c0fb9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[!($F{stage}.equals("Plant Tag") || $F{stage}.equals("Explant"))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Temperature: " + $F{min_temperature} +"-"+$F{max_temperature}+ " °C"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="151" width="142" height="12" uuid="8cc90705-f5bc-4190-8dbd-d00be49518c8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[!($F{stage}.equals("Plant Tag") || $F{stage}.equals("Explant"))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Humidity: "+$F{min_humidity}+"-"+$F{max_humidity}+" g/kg"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="265" y="4" width="125" height="30" uuid="0e4475aa-f924-464f-9d08-18f91b7ff00d"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_uuid}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="292" y="172" width="1" height="26" uuid="00c02968-9f97-402d-b49f-2fc77c9df21d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{level} != 1]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="289" y="187" width="12" height="12" uuid="b1f82b5a-92a1-43bd-8ffe-702e99e6814f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{level} != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[V]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<noData>
+		<band height="50">
+			<textField>
+				<reportElement x="80" y="6" width="398" height="40" uuid="6c079f36-0791-46d7-9c3b-a0c50ab225c1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Records Found"]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

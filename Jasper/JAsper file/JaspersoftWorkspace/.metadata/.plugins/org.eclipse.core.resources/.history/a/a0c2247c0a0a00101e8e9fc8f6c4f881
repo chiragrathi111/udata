@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="user" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9eb18f70-e1b0-40e8-a34a-9ca4127a364a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinay111.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="256"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="732"/>
+	<parameter name="Name" class="java.lang.String"/>
+	<parameter name="Image" class="java.lang.Byte" isForPrompting="false"/>
+	<parameter name="Img" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="name" class="java.lang.String"/>
+	<field name="binarydata" class="byte[]"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="0" width="260" height="30" uuid="94ab255f-3f48-4ad5-89ff-eed9655203e4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="523" splitType="Stretch">
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement x="0" y="3" width="550" height="519" uuid="679d88b0-e201-456c-8748-50af86fa7e19"/>
+				<imageExpression><![CDATA[$F{binarydata}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="10" y="180" width="530" height="80" uuid="34a40200-2931-4b9f-a1e0-35cbd5212a89"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="36" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="522" width="97" height="1" uuid="885c34aa-ad55-43ec-80bc-93d98ab999c7">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</break>
+		</band>
+	</detail>
+</jasperReport>

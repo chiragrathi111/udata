@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cc" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fcb85093-29c4-4a34-9b53-7916a59a0fc4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[WITH ProductTotals AS (
+    SELECT
+        il.ad_client_id,
+        il.ad_org_id,
+        il.c_bpartner_id,
+        il.m_product_id,
+        adempiere.firstof(il.dateinvoiced::timestamp with time zone, 'DD'::character varying) AS dateinvoiced,
+        il.qtyentered AS qty,
+        il.priceactual AS unitprice,
+        sum(il.linenetamt) AS linenetamt
+    FROM
+        adempiere.rv_c_invoiceline il
+    JOIN
+        adempiere.c_invoice i ON i.c_invoice_id = il.c_invoice_id
+    GROUP BY
+        il.ad_client_id,
+        il.ad_org_id,
+        il.c_bpartner_id,
+        il.m_product_id,
+        adempiere.firstof(il.dateinvoiced::timestamp with time zone, 'DD'::character varying),
+        il.qtyentered,
+        il.priceactual
+)
+SELECT
+    ad_client_id,
+    ad_org_id,
+    c_bpartner_id,
+    m_product_id,
+    dateinvoiced,
+    qty,
+    unitprice::text,
+    linenetamt
+FROM
+    ProductTotals
+
+UNION ALL
+
+SELECT
+    ad_client_id,
+    ad_org_id,
+    c_bpartner_id,
+    null AS m_product_id,
+    null AS dateinvoiced,
+    sum(qty) AS qty,
+    'Total' AS unitprice,
+    sum(linenetamt) AS linenetamt
+FROM
+    ProductTotals
+GROUP BY
+    ad_client_id,
+    ad_org_id,
+    c_bpartner_id
+
+ORDER BY
+    c_bpartner_id,
+    m_product_id,
+    dateinvoiced;
+]]>
+	</queryString>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+	</field>
+	<field name="c_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_id"/>
+	</field>
+	<field name="m_product_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+	</field>
+	<field name="dateinvoiced" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="dateinvoiced"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateinvoiced"/>
+	</field>
+	<field name="qty" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="qty"/>
+		<property name="com.jaspersoft.studio.field.label" value="qty"/>
+	</field>
+	<field name="unitprice" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="unitprice"/>
+		<property name="com.jaspersoft.studio.field.label" value="unitprice"/>
+	</field>
+	<field name="linenetamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="linenetamt"/>
+	</field>
+	<group name="ad_client_id">
+		<groupExpression><![CDATA[$F{ad_client_id}]]></groupExpression>
+	</group>
+	<group name="ad_org_id">
+		<groupExpression><![CDATA[$F{ad_org_id}]]></groupExpression>
+	</group>
+	<group name="c_bpartner_id">
+		<groupExpression><![CDATA[$F{c_bpartner_id}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExpiryReportN" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="99d83c75-a4ff-40cf-8c24-cc2ffdaa8ce6">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[WITH subquery AS (SELECT 
+ps.codeno || ' ' || v.codeno || ' ' || cl.parentcultureline || ' ' || TO_CHAR(cl.culturedate, 'DD-MM-YY') || ' ' || ns.codeno AS cultureCode,
+cs.name || ' - ' || cl.cycleno AS cycle,DATE(cl.created) AS manufacturingDate,
+DATE(cl.created + INTERVAL '21 days') AS expiryDate,l.x AS room,l.y AS rack,l.z AS columns,
+(SELECT COUNT(*) FROM adempiere.tc_culturelabel cll WHERE cll.parentuuid = cl.c_uuid LIMIT 1) AS subquery_column
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_species_ids JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id
+JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id WHERE cl.ad_client_id = 1000000 
+AND cl.isdiscarded = 'N' AND cl.c_uuid IS NOT NULL AND cl.parentuuid IS NOT NULL )
+SELECT cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns,COUNT(*) AS count
+FROM subquery WHERE subquery_column = 0 AND expiryDate <= current_date
+GROUP BY cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns
+ORDER BY expiryDate,cycle,Room,Rack,columns;]]>
+	</queryString>
+	<field name="culturecode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturecode"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturecode"/>
+	</field>
+	<field name="cycle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cycle"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycle"/>
+	</field>
+	<field name="manufacturingdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="manufacturingdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="manufacturingdate"/>
+	</field>
+	<field name="expirydate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="expirydate"/>
+		<property name="com.jaspersoft.studio.field.label" value="expirydate"/>
+	</field>
+	<field name="room" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="room"/>
+		<property name="com.jaspersoft.studio.field.label" value="room"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="rack" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rack"/>
+		<property name="com.jaspersoft.studio.field.label" value="rack"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="columns" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="columns"/>
+		<property name="com.jaspersoft.studio.field.label" value="columns"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="count" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="count"/>
+		<property name="com.jaspersoft.studio.field.label" value="count"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

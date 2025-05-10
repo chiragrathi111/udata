@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="userReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="928c2c75-71ce-4ae0-85ae-060fcdea7082">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT u.name AS users,cl.createdby AS userId,u.personalcode AS personalCode,cl.created AS date,
+o.tc_order_id As orderID,cl.tc_culturelabel_id AS id,'Culture Label' AS labelName,COUNT(*) OVER (PARTITION BY cl.created, o.tc_order_id) AS countValue FROM adempiere.tc_culturelabel cl 
+JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+WHERE cl.AD_CLIENT_ID = 1000000 AND u.personalcode is not null order by u.name,cl.created;]]>
+	</queryString>
+	<field name="users" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="users"/>
+		<property name="com.jaspersoft.studio.field.label" value="users"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="userid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="userid"/>
+		<property name="com.jaspersoft.studio.field.label" value="userid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="orderid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="orderid"/>
+		<property name="com.jaspersoft.studio.field.label" value="orderid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="labelname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="labelname"/>
+		<property name="com.jaspersoft.studio.field.label" value="labelname"/>
+	</field>
+	<field name="countvalue" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="countvalue"/>
+		<property name="com.jaspersoft.studio.field.label" value="countvalue"/>
+	</field>
+	<variable name="orderWiseCount" class="java.math.BigDecimal" resetType="Group" resetGroup="OrderId" calculation="Sum">
+		<variableExpression><![CDATA[$F{countvalue}]]></variableExpression>
+	</variable>
+	<variable name="dateWiseCount" class="java.math.BigDecimal" resetType="Group" resetGroup="Date" calculation="Sum">
+		<variableExpression><![CDATA[$F{countvalue}]]></variableExpression>
+	</variable>
+	<variable name="UserWiseCount" class="java.math.BigDecimal" resetType="Group" resetGroup="User" calculation="Sum">
+		<variableExpression><![CDATA[$F{countvalue}]]></variableExpression>
+	</variable>
+	<group name="User">
+		<groupExpression><![CDATA[$F{userid}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="5" y="0" width="55" height="20" uuid="365d0997-fb06-4673-8911-2706339d7695">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{users}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="75" y="0" width="39" height="20" uuid="79c21d11-dc82-46b1-9686-8802bc26fabb">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{personalcode}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="395" y="1" width="50" height="20" uuid="687d4c78-9d80-4d4d-9cdb-8f76c420cc2e">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{UserWiseCount}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="260" y="0" width="180" height="1" forecolor="#000000" uuid="1e6f7d51-3a03-4c1f-af0c-b210a6cef2e7">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="260" y="21" width="180" height="1" forecolor="#000000" uuid="41d27f67-1e47-41b9-994d-f7852ef6f12f">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="240" y="5" width="140" height="15" uuid="c29ed542-b135-4cd6-bd07-126eb5d0fdfa">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["User Wise Total: "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Date">
+		<groupExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField>
+					<reportElement x="124" y="1" width="83" height="20" uuid="5d41bfa3-95f4-48e6-948f-94afc284c995">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="395" y="1" width="50" height="20" uuid="70e51833-21bc-4ae3-9e5f-fd3a6b733b1c">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{dateWiseCount}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="260" y="0" width="180" height="1" forecolor="#000000" uuid="267800ed-7a3c-40a8-a881-f30d3d5e7440">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="260" y="21" width="180" height="1" forecolor="#000000" uuid="67fd36fc-bffe-4e2f-b5a4-0ad238affe9e">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="240" y="5" width="140" height="15" uuid="a72b0f7d-2c5b-43e5-90f8-b202216564ec">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Date Wise Total: "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="OrderId">
+		<groupExpression><![CDATA[$F{orderid}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="206" y="0" width="100" height="20" uuid="54312b34-c0a3-40c7-954d-3481888f4ac9">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{orderid}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="25">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="395" y="1" width="50" height="20" uuid="9cd217e6-c6df-4b8f-90a9-fccfa3207e0a">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{orderWiseCount}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="260" y="0" width="180" height="1" forecolor="#000000" uuid="f0b904a4-803b-459f-b2b3-c87c97610ad1">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="260" y="21" width="180" height="1" forecolor="#000000" uuid="9c645d1c-bc98-4979-9b10-c335b9430d94">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="240" y="5" width="140" height="15" uuid="985e67ca-2076-49a2-adbf-07c876dd3f0d">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Order Wise Total: "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="292" y="0" width="100" height="20" uuid="442dd247-004e-4910-97c0-fbbec02ad421">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="395" y="0" width="50" height="20" uuid="27d9da54-ff91-4094-8be8-5b76f600335e">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{countvalue}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

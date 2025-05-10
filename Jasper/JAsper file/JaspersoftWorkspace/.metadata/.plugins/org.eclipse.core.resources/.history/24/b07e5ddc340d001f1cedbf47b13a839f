@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Light" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="65917b8c-9348-46c9-b775-a50ba5744fc5">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT l.tc_light_id As id,l.lighton As lightOn,l.lightoff AS lightOff,l.datelog As Date,l.m_locatortype_id As RoomId,lt.name As Room FROM adempiere.tc_light l
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+WHERE l.ad_client_id = 1000000 order by l.m_locatortype_id]]>
+	</queryString>
+	<field name="id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="lighton" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lighton"/>
+		<property name="com.jaspersoft.studio.field.label" value="lighton"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="lightoff" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lightoff"/>
+		<property name="com.jaspersoft.studio.field.label" value="lightoff"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="roomid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="roomid"/>
+		<property name="com.jaspersoft.studio.field.label" value="roomid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="room" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="room"/>
+		<property name="com.jaspersoft.studio.field.label" value="room"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locatortype"/>
+	</field>
+	<group name="Room">
+		<groupExpression><![CDATA[$F{roomid}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="0" y="5" width="100" height="20" uuid="b00dd13b-a305-4207-a07a-04ba32b65a67">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="110" y="2" width="100" height="20" uuid="8a3c1d79-72fb-40a5-9783-356f0b17c699">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="236" y="2" width="100" height="20" uuid="23fef526-4924-496b-88f1-e570d72e5a7e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{lighton}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="2" width="100" height="20" uuid="b4a7fcfe-6c30-4699-8c8c-9aca1d82a9d5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{lightoff}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StonexL" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ec4802ec-43d2-42d9-bf63-8b607d9640d0">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="report_title" class="java.lang.String"/>
+	<field name="report_binarydata" class="byte[]"/>
+	<field name="report_id" class="java.lang.Integer"/>
+	<field name="task_title" class="java.lang.String"/>
+	<field name="task_binarydata" class="byte[]"/>
+	<field name="subtask_id" class="java.lang.Integer"/>
+	<field name="subtask_title" class="java.lang.String"/>
+	<field name="subtask_binarydata" class="byte[]"/>
+	<field name="inspection" class="java.lang.Integer"/>
+	<field name="field_name" class="java.lang.String"/>
+	<field name="field_binarydata" class="byte[]"/>
+	<field name="task_id" class="java.lang.Integer"/>
+	<group name="Report">
+		<groupExpression><![CDATA[$F{report_id}]]></groupExpression>
+		<groupHeader>
+			<band height="484">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="0" width="792" height="470" uuid="3780f8f3-cf89-494c-aec9-a51c03f2c1ef"/>
+					<imageExpression><![CDATA[$F{report_binarydata}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="60" width="770" height="140" uuid="479f7f9f-dc93-4da3-b70d-7e41e8319ab5"/>
+					<textElement verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{report_title}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="f556def2-c5b3-4d01-8be4-692c011f2c3a"/>
+				</break>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Task">
+		<groupExpression><![CDATA[$F{task_id}]]></groupExpression>
+		<groupHeader>
+			<band height="484">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="0" width="791" height="470" uuid="ae7c3d2c-8dba-40d5-a12a-2b0bf79644db"/>
+					<imageExpression><![CDATA[$F{task_binarydata}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="60" width="770" height="140" uuid="22cfc9f0-96d8-45b8-b365-0327c2b2a56c"/>
+					<textElement verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{task_title}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="fab2f960-95c3-414d-8aad-6fd3d40687bf"/>
+				</break>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Subtask">
+		<groupExpression><![CDATA[$F{subtask_id}]]></groupExpression>
+		<groupHeader>
+			<band height="484">
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="0" width="791" height="470" uuid="de88c032-b1fb-42ef-9783-6bc06905f464"/>
+					<imageExpression><![CDATA[$F{subtask_binarydata}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="60" width="770" height="140" uuid="3c0745b4-642d-438a-8c67-7886e8f13b1d"/>
+					<textElement verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{subtask_title}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="2e1ebca4-4c0d-4ed2-ab4a-fc1999727a73"/>
+				</break>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Inspection">
+		<groupExpression><![CDATA[$F{inspection}]]></groupExpression>
+		<groupHeader>
+			<band height="484">
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="0" width="791" height="470" uuid="5bb27183-ff99-4a42-ac76-186fb7852c4a"/>
+					<imageExpression><![CDATA[""]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="60" width="770" height="140" uuid="1617749f-bec6-4ef0-a2ad-2d05142a1b9c"/>
+					<textElement verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{inspection}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="a694839e-bfe0-4f06-a5f0-513e89b52d17"/>
+				</break>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="43" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement x="0" y="0" width="791" height="41" uuid="8319e733-577e-41ee-b3aa-b812ff35a898">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="1" width="790" height="39" backcolor="#FFA500" uuid="46225473-a585-4872-b5e8-28cba7047e29">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="33" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stonex Reports]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="514" splitType="Stretch">
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement x="0" y="0" width="791" height="505" uuid="c8fe2147-95ee-4e67-8e6c-44e5f5a439a2"/>
+				<imageExpression><![CDATA[$F{field_binarydata}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="10" y="60" width="770" height="140" uuid="6cbdf97a-f0e0-421f-bee1-194e11ef701e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{field_name}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="510" width="100" height="1" uuid="20b273b6-3ad2-43e1-9201-4ff55148d9ae"/>
+			</break>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Traceability" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4f9adc84-03c5-4ea6-b031-f6d41acc2f65">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="OutUUId" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT cl.personal_code As personalCode,pr.versionno AS inCycle,p.description As outProductName,pr.description As inProductName,cs.name AS stageName,cl.cycleno As cycle,cl.cultureoperationdate AS cultureoperationdate,i.created As indate,o.created As outdate,pr.value AS inProduct,p.value As outProduct,ps.name As cropType,v.name AS varietyName,i.tc_in_id,o.tc_out_id,cl.tc_culturelabel_id,i.m_product_id,o.m_product_id FROM adempiere.tc_out o
+JOIN adempiere.tc_in i ON i.tc_in_id = o.tc_in_id
+JOIN adempiere.tc_culturelabel cl ON cl.tc_out_id = o.tc_out_id
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_species_ids
+JOIN adempiere.m_product p ON p.m_product_id = o.m_product_id
+JOIN adempiere.m_product pr ON pr.m_product_id = i.m_product_id
+WHERE o.ad_client_id =  $P{AD_CLIENT_ID}  AND o.c_uuid =  $P{OutUUId};]]>
+	</queryString>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="incycle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="incycle"/>
+		<property name="com.jaspersoft.studio.field.label" value="incycle"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="outproductname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="outproductname"/>
+		<property name="com.jaspersoft.studio.field.label" value="outproductname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="inproductname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inproductname"/>
+		<property name="com.jaspersoft.studio.field.label" value="inproductname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="stagename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stagename"/>
+		<property name="com.jaspersoft.studio.field.label" value="stagename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="cycle" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cycle"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycle"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="cultureoperationdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="cultureoperationdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="cultureoperationdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="indate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="indate"/>
+		<property name="com.jaspersoft.studio.field.label" value="indate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_in"/>
+	</field>
+	<field name="outdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="outdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="outdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="inproduct" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inproduct"/>
+		<property name="com.jaspersoft.studio.field.label" value="inproduct"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="outproduct" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="outproduct"/>
+		<property name="com.jaspersoft.studio.field.label" value="outproduct"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="croptype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.label" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="varietyname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="varietyname"/>
+		<property name="com.jaspersoft.studio.field.label" value="varietyname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="tc_in_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_in_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_in_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_in"/>
+	</field>
+	<field name="tc_out_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_out_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_out_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="tc_culturelabel_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tc_culturelabel_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_culturelabel_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="m_product_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_in"/>
+	</field>
+	<field name="COLUMN_18" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="35" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="3" width="528" height="30" forecolor="#298F60" backcolor="#298F60" uuid="899eaa76-7014-47cb-b110-9130a29475c6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="23" y="5" width="450" height="22" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="a60936eb-f469-4f79-8e2c-5bf037e469b8">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Traceability]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="235" splitType="Stretch">
+			<rectangle>
+				<reportElement x="207" y="8" width="143" height="90" backcolor="#FCF74C" uuid="776c022e-986c-407e-9cdc-1cd6b03d294e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="207" y="123" width="143" height="90" backcolor="#FCAC5B" uuid="535424a0-1607-42d0-9ae1-cc334a84b488">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<line>
+				<reportElement x="280" y="98" width="1" height="24" uuid="be6ea127-9610-422c-a2d7-af319ea692b9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="227" y="13" width="100" height="12" uuid="b48c307b-09de-4de8-88c3-67bf99d21e05">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{croptype}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="27" width="100" height="12" uuid="dc64a160-f654-4936-b378-f3d871722fad">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{varietyname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="127" width="100" height="12" uuid="751d4942-0131-455d-9a63-d0301eebbf9e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{croptype}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="141" width="100" height="12" uuid="017f6d14-5ffa-4f77-8c45-8dda8e182f61">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{varietyname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="234" y="197" width="100" height="12" uuid="c0f554e1-c6e2-425c-adff-eb26906ce656">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{cultureoperationdate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="232" y="84" width="100" height="12" uuid="a93af94b-b776-4d9e-99ed-22229ac54982">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{outdate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="42" width="124" height="12" uuid="c9499d39-3651-46e8-8f28-fe1c7f15935c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Stage: "+$F{outproductname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="154" width="100" height="12" uuid="bfda4803-5a81-4c39-aae2-0fdef2d80a5c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Stage: "+$F{inproductname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="57" width="100" height="12" uuid="10bd4f1c-3625-4969-9a66-6985126fc067">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Cycle: "+$F{cycle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="231" y="71" width="100" height="12" uuid="2aaf6f60-2608-4c68-a4f0-3f293d9ef3de">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["User: "+$F{personalcode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="168" width="100" height="12" uuid="ec1058a2-5c8f-4a44-b64a-f94ea4a09828">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Cycle: "+$F{incycle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="231" y="182" width="100" height="12" uuid="7fe1aaac-84e8-42cf-90e1-44cf9a23608c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["User: "+$F{personalcode}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

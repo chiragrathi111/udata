@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="productDetails" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c854e6ca-8c3f-4d0c-9fdc-6608b96d39a1">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[WITH InvoiceLineTotals AS (
+SELECT il.m_product_id,SUM(il.qtyinvoiced) AS TotalQty,
+SUM(il.linenetamt) AS TotalNetAmount FROM adempiere.c_invoice i
+JOIN adempiere.c_invoiceline il ON i.c_invoice_id = il.c_invoice_id
+WHERE i.ad_client_id = 1000002 AND i.issotrx = 'Y'
+GROUP BY il.m_product_id),
+StorageOnHandTotals AS (
+SELECT m_product_id,SUM(qtyonhand) AS AvailableQty
+FROM adempiere.m_storageonhand GROUP BY m_product_id),
+BasePrice AS (
+SELECT ol.m_product_id, MAX(ol.pricelimit) AS MaxPriceLimit
+FROM adempiere.c_orderline ol
+JOIN adempiere.c_order o ON o.c_order_id = ol.c_order_id
+WHERE ol.ad_client_id = 1000002 AND o.issotrx = 'N'
+GROUP BY m_product_id)
+SELECT pr.name AS ProductName,COALESCE(i.TotalQty, 0) AS TotalQty,
+ROUND(COALESCE(i.TotalNetAmount, 0),2) AS TotalNetAmount,
+Round(COALESCE(s.AvailableQty, 0),0) AS AQty,
+ROUND(COALESCE(b.MaxPriceLimit * s.AvailableQty, 0), 2) AS AValue
+FROM adempiere.m_product pr
+LEFT JOIN InvoiceLineTotals i ON pr.m_product_id = i.m_product_id
+LEFT JOIN StorageOnHandTotals s ON pr.m_product_id = s.m_product_id
+LEFT JOIN BasePrice b ON pr.m_product_id = b.m_product_id
+WHERE pr.ad_client_id = 1000002 ORDER BY pr.name]]>
+	</queryString>
+	<field name="productname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="productname"/>
+		<property name="com.jaspersoft.studio.field.label" value="productname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="totalqty" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="totalqty"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalqty"/>
+	</field>
+	<field name="totalnetamount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="totalnetamount"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalnetamount"/>
+	</field>
+	<field name="aqty" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="aqty"/>
+		<property name="com.jaspersoft.studio.field.label" value="aqty"/>
+	</field>
+	<field name="avalue" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="avalue"/>
+		<property name="com.jaspersoft.studio.field.label" value="avalue"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

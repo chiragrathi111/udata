@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="UserManagementReportForFieldOffiecr" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4949013e-12b4-4dba-8302-6b040862c660">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[select * from adempiere.tc_firstvisit;]]>
+	</queryString>
+	<field name="tc_firstvisit_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_firstvisit_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_firstvisit_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="plantno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="plantno"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="visitdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="visitdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="visitdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="isdefault" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="pesthistory" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pesthistory"/>
+		<property name="com.jaspersoft.studio.field.label" value="pesthistory"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="nextvisitdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="nextvisitdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="nextvisitdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_visit_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_visit_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_visit_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_farmer_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_farmer_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_farmer_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_fieldselection_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_fieldselection_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_fieldselection_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_soiltype_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_soiltype_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_soiltype_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_wateringtype_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_wateringtype_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_wateringtype_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="tc_fieldmanagement_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_fieldmanagement_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_fieldmanagement_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="c_uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<field name="enterdetailsofinfestation" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="enterdetailsofinfestation"/>
+		<property name="com.jaspersoft.studio.field.label" value="enterdetailsofinfestation"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_firstvisit"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

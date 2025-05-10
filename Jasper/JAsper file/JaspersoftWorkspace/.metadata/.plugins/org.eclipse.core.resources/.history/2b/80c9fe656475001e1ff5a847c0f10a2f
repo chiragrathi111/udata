@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="expire3" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8b1ae922-1da3-4ad5-9c3d-0e9bd2c24cf9">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#ED2654"/>
+		</conditionalStyle>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#2563EB">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#2563EB">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#F1F5F9"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="expiredProducts" uuid="c9b6f4bc-3a71-4a17-83e0-9780be5e33cd">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+		<parameter name="CLIENT_ID" class="java.lang.Integer"/>
+		<parameter name="month" class="java.sql.Timestamp"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT 
+    b.name AS Product_Name,
+    a.expirydate AS date,
+    e.qtyonhand AS ExpiryQTY,
+    att.lot AS Lot_No,
+    wh.value AS Warehouse_Name,
+    ll.value AS Locator_Name
+FROM 
+    adempiere.c_orderline a
+JOIN 
+    adempiere.m_product b ON a.m_product_id = b.m_product_id 
+JOIN 
+    adempiere.m_inoutline mil ON mil.c_orderline_id = a.c_orderline_id
+JOIN 
+    adempiere.m_storageonhand e ON mil.m_attributesetinstance_id = e.m_attributesetinstance_id
+JOIN 
+    adempiere.m_attributesetinstance att ON att.m_attributesetinstance_id = e.m_attributesetinstance_id
+JOIN 
+    adempiere.c_order f ON f.c_order_id = a.c_order_id
+JOIN 
+    adempiere.m_warehouse wh ON wh.m_warehouse_id = f.m_warehouse_id
+JOIN 
+    adempiere.m_locator ll ON ll.m_locator_id = e.m_locator_id
+WHERE 
+    a.ad_client_id = $P{CLIENT_ID} 
+    AND f.issotrx = 'N' 
+    AND a.expirydate > CURRENT_DATE
+    AND DATE(a.expirydate) <= $P{month}]]>
+		</queryString>
+		<field name="product_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="product_name"/>
+			<property name="com.jaspersoft.studio.field.label" value="product_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+		</field>
+		<field name="expirydate" class="java.sql.Date">
+			<property name="com.jaspersoft.studio.field.name" value="expirydate"/>
+			<property name="com.jaspersoft.studio.field.label" value="expirydate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+		</field>
+		<field name="expiryqty" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="expiryqty"/>
+			<property name="com.jaspersoft.studio.field.label" value="expiryqty"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="m_storageonhand"/>
+		</field>
+		<field name="lot_no" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="lot_no"/>
+			<property name="com.jaspersoft.studio.field.label" value="lot_no"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="m_lot"/>
+		</field>
+		<field name="warehouse_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="warehouse_name"/>
+			<property name="com.jaspersoft.studio.field.label" value="warehouse_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+		</field>
+		<field name="locator_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="locator_name"/>
+			<property name="com.jaspersoft.studio.field.name" value="locator_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+		</field>
+	</subDataset>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="expiredate" class="java.sql.Timestamp"/>
+	<queryString language="SQL">
+		<![CDATA[select * from m_inout]]>
+	</queryString>
+	<title>
+		<band height="347" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="552" height="40" forecolor="#FFFFFF" backcolor="#2563EB" uuid="44685037-6f17-47f2-9308-6436866befd1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Near Expiry]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="0" y="50" width="552" height="70" uuid="c53d88c8-a398-4394-82e9-5d001786d9e8">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="expiredProducts" uuid="a0d9b13b-b312-4449-8a1f-681b5c4d9398">
+						<datasetParameter name="CLIENT_ID">
+							<datasetParameterExpression><![CDATA[$P{AD_CLIENT_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="month">
+							<datasetParameterExpression><![CDATA[$P{expiredate}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="80" uuid="7202c2f9-184a-41dd-a0ac-bd63f152e146">
+						<jr:tableHeader style="Table 1_TH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="80" height="30" forecolor="#FCF3F2" backcolor="#FAF5F5" uuid="df8f067a-e391-4aed-bb29-6d2c0eb706e0"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="14" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Product]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="30" forecolor="#64748B" uuid="ef14925c-e7b8-4d2e-9447-bf856fe2bbe3"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="a5859de1-c4aa-46c5-bc22-c96b2401b2a4">
+						<jr:tableHeader style="Table 1_TH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="30" forecolor="#FCFAFA" uuid="6a4f5409-8831-41b3-9b13-5ab0efa3f98c"/>
+								<box>
+									<pen lineWidth="0.0" lineStyle="Dotted" lineColor="#FFFFFF"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="14" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Expiry Date]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" forecolor="#64748B" uuid="420d433a-7e0d-46fc-89b0-77306e120f19"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[(new SimpleDateFormat("yyyy/MM/dd").format($F{expirydate}))]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="80" uuid="9bad6938-87e6-440b-8e5f-0a3772bb2826">
+						<jr:tableHeader style="Table 1_TH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="80" height="30" forecolor="#FCF7F7" uuid="ce89c6da-6f01-469a-991b-50dbb528280b">
+									<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+								</reportElement>
+								<box>
+									<pen lineWidth="0.0" lineStyle="Dotted"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="14" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantity]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="30" forecolor="#64748B" uuid="ea6f9239-cd24-4bcd-9a63-1a04475157b8"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{expiryqty}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="301362d9-a174-4d5d-9774-62a69ed01277">
+						<jr:tableHeader style="Table 1_TH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="70" height="30" forecolor="#FCFAFA" uuid="84934b30-1e67-4060-b978-09cae59aa2f3"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="14" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Lot No]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="70" height="30" forecolor="#64748B" uuid="d1a2a423-322b-4d8d-a631-067d00179f28"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{lot_no}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="6ab9b067-ea4a-499a-bc48-af96ea946600">
+						<jr:tableHeader style="Table 1_TH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="30" forecolor="#FFFCFC" uuid="8a42b0a2-3339-49e2-8c85-3fc43cf892da"/>
+								<box>
+									<pen lineWidth="0.0" lineStyle="Dotted"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="14" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Warehouse]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" forecolor="#64748B" uuid="bc1ebb63-2128-4d9e-bf43-9fa3a1e8c951"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{warehouse_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="122" uuid="78b5b047-7fd3-4e23-a2c7-6d3a7d212aaa">
+						<jr:tableHeader style="Table 1_TH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="122" height="30" forecolor="#FFFFFF" uuid="b46f5d1b-103a-4b42-a3fc-cb5947c6d2b1"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="14" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Locator Name]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="122" height="30" forecolor="#64748B" uuid="411464ca-301e-49ad-99a5-777853a00c54"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{locator_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+</jasperReport>

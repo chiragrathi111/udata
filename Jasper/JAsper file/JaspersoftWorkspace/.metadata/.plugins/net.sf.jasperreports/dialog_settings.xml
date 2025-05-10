@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="com.jaspersoft.studio.property.descriptor.expression.dialog.JRExpressionEditor">
+		<item key="dialogX" value="620"/>
+		<item key="dialogY" value="100"/>
+		<item key="dialogWidth" value="750"/>
+		<item key="dialogHeight" value="680"/>
+		<item key="DIALOG_X_ORIGIN" value="550"/>
+		<item key="DIALOG_Y_ORIGIN" value="73"/>
+		<item key="DIALOG_WIDTH" value="750"/>
+		<item key="DIALOG_HEIGHT" value="680"/>
+		<item key="DIALOG_FONT_NAME" value="1|Ubuntu|11.0|0|GTK|1|"/>
+	</section>
+	<section name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog">
+		<item key="dialogX" value="589"/>
+		<item key="dialogY" value="69"/>
+		<item key="dialogWidth" value="816"/>
+		<item key="dialogHeight" value="727"/>
+		<item key="DIALOG_X_ORIGIN" value="519"/>
+		<item key="DIALOG_Y_ORIGIN" value="42"/>
+		<item key="DIALOG_WIDTH" value="816"/>
+		<item key="DIALOG_HEIGHT" value="727"/>
+		<item key="DIALOG_FONT_NAME" value="1|Ubuntu|11.0|0|GTK|1|"/>
+	</section>
+</section>

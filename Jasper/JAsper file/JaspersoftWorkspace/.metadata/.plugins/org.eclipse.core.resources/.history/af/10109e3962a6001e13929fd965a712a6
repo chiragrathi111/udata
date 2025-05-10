@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CR1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="75d25cd9-6088-4053-8a8d-b43fbf6a666e">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="FromDate" class="java.sql.Timestamp"/>
+	<parameter name="ToDate" class="java.sql.Timestamp"/>
+	<parameter name="ProductID" class="java.math.BigDecimal"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+    i.c_bpartner_id,
+    i.c_invoice_id AS InvoiceId,
+    DATE(i.dateinvoiced) AS InvoiceDate,
+    il.m_product_id,
+    il.pricelist,
+    il.qtyinvoiced,
+    il.linenetamt
+FROM
+    adempiere.c_invoice i
+JOIN
+    adempiere.c_invoiceline il ON i.c_invoice_id = il.c_invoice_id
+JOIN
+    adempiere.c_bpartner bp ON bp.c_bpartner_id = i.c_bpartner_id
+JOIN
+    adempiere.m_product pr ON pr.m_product_id = il.m_product_id
+WHERE
+    i.ad_client_id = 1000002
+    AND i.issotrx = 'Y'
+    AND i.dateinvoiced > '2023/12/24'
+    AND i.dateinvoiced < '2023/12/31'
+    AND il.m_product_id =   $P{ProductID} 
+ORDER BY
+    i.c_bpartner_id,
+    il.m_product_id]]>
+	</queryString>
+	<field name="c_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
+	</field>
+	<field name="invoiceid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="invoiceid"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoiceid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
+	</field>
+	<field name="invoicedate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="invoicedate"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoicedate"/>
+	</field>
+	<field name="m_product_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="pricelist" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pricelist"/>
+		<property name="com.jaspersoft.studio.field.label" value="pricelist"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="qtyinvoiced" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="qtyinvoiced"/>
+		<property name="com.jaspersoft.studio.field.label" value="qtyinvoiced"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<field name="linenetamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="linenetamt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoiceline"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="3" width="100" height="20" uuid="11349c72-d2e7-42ce-9d76-f9e0546e3149">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{invoiceid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="3" width="100" height="20" uuid="27768459-8b2d-43aa-82f5-59ffb951efb3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{invoicedate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="211" y="3" width="100" height="20" uuid="bd136e01-b438-4eef-b2f9-a8430ff5d5f4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{pricelist}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="318" y="3" width="100" height="20" uuid="279ee8e0-d785-4746-b63d-6b5bafc3124b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{qtyinvoiced}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="3" width="100" height="20" uuid="b52fc1e5-3033-4134-84eb-107bd452877c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{linenetamt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
