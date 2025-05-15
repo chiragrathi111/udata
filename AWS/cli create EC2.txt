@@ -100,6 +100,9 @@ linux.pem => ye file mai permissionchange karna most important hota hai, ise onl
 
 //////////////////// MOUNT A VOLUME IN EC2 INSTANCES \\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#df -Th (see your file system also)
+#sudo file -s /dev/nvme1n1 (check your file)
+
 #df-h
 #lsblk
 #sudo mkfs -t xfs volumePath (/dev/svdf)
@@ -112,6 +115,57 @@ linux.pem => ye file mai permissionchange karna most important hota hai, ise onl
 //////////////// UNMOUNT VOLUME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 sudo umount volumePath (/dev/svdf)
+
+===============================================
+Modify Volume Size like 8gb to 20gb:-
+
+#df -hT (old size see)
+#lsblk (Show actual size and partition size)
+#sudo growpart /dev/xvda 1
+ sudo growpart /dev/xvda (volume path) 1 (no of partition)
+#sudo lsblk (show new size)
+#df -hT (not come new size)
+#sudo resize2fs /dev/xvda (file System Ext4)
+
+if data not coming
+xvda     202:0    0   60G  0 disk 
+├─xvda1  202:1    0   59G  0 part /
+because your volume part is xvda1
+error:-
+{sudo resize2fs /dev/xvda
+resize2fs 1.47.0 (5-Feb-2023)
+resize2fs: Device or resource busy while trying to open /dev/xvda
+Couldn't find valid filesystem superblock.
+}
+
+#sudo resize2fs /dev/xvda1
+
+#df -hT (show new volume size)
+
+#sudo xfs_growfs -d (file system XFS)
+#df -hT (show new volume size)
+
+============================================
+SWAP file:-
+# 1. Create a 4 GB swap file
+sudo fallocate -l 4G /swapfile
+
+# 2. Set correct permissions
+sudo chmod 600 /swapfile
+
+# 3. Mark it as swap
+sudo mkswap /swapfile
+
+# 4. Enable the swap
+sudo swapon /swapfile
+
+# 5. Verify
+swapon --show
+free -h
+
+# 6. Make it permanent (persist on reboot)
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
