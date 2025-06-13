@@ -18,6 +18,7 @@ cd /opt/activemq/bin
 
 Check Active mq side:-
 http://13.233.84.2:8161/admin/index.jsp
+admin/admin 
 
 Restart Active mq
 sudo systemctl stop activemq
@@ -50,6 +51,8 @@ i added upgrade script in server first every time upgrade version in chaincode t
 
 nvm use 18
 node -v
+
+cd /home/ubuntu/fabric-samples/test-network
 
 ./network.sh down
 
@@ -95,3 +98,15 @@ export CORE_PEER_ADDRESS=localhost:7051
 
 main Invoke code
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}'
+
+
+===============================================
+Container:-
+* ./network.sh up -ca -s couchdb
+
+* 
+
+
+============================================
+find . -type f -name "*.xsd" -exec sed -i 's|http://idempiere.org/ADInterface/1_0|http://localhost/myfile.html|g' {} +
+

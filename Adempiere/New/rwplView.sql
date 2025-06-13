@@ -1,54 +1,5 @@
-Sales plan completed & pending list:-
-
-CREATE VIEW adempiere.pir_salesplanreport AS
-SELECT spl.status AS Status,sp.salesplandate AS salesDate,TO_CHAR(sp.salesplandate, 'DD-MM-YYYY') AS Date,
-spl.c_bpartner_id,spl.m_warehouse_id,u.name AS userName,spl.ad_client_id,spl.ad_org_id
-FROM adempiere.pi_salesplanline spl
-JOIN adempiere.pi_salesplan sp ON sp.pi_salesplan_id = spl.pi_salesplan_id
-JOIN adempiere.ad_user u ON u.ad_user_id = spl.createdby
-WHERE spl.status IN ('IP', 'CO');
-
-=======================================================================
-Total dispatch materials in qty & tons, value (With price)
-
--- CREATE OR REPLACE VIEW adempiere.pir_daily_product_labels AS
-SELECT 
-    DATE(pl.updated) AS report_date,
-    TO_CHAR(pl.updated, 'DD-MM-YYYY') AS formatted_date,
-    pl.m_product_id,
-    pr.name AS product_name,pl.issotrx,
-    SUM(pl.quantity) AS total_quantity,
-    pp.pricelist,
-    ROUND(SUM(pp.pricelist * pl.quantity), 2) AS total_price, -- Total price calculation
-    pr.weight AS unit_weight_kg,
-    ROUND(SUM(pr.weight * pl.quantity)/1000, 3) AS total_weight_ton, -- Convert kg to tons
-    pl.ad_client_id,
-    pl.ad_org_id
-FROM 
-    adempiere.pi_productlabel pl
-JOIN 
-    adempiere.M_InOutLine il ON il.M_InOutLine_id = pl.M_InOutLine_id
-JOIN 
-    adempiere.M_Product pr ON pr.M_Product_id = pl.M_product_id
-JOIN 
-    adempiere.M_ProductPrice pp ON pp.M_product_id = pr.M_product_id 
-WHERE 
-    pp.m_pricelist_version_id = 1000001
-GROUP BY 
-    DATE(pl.updated),
-    TO_CHAR(pl.updated, 'DD-MM-YYYY'),
-    pl.m_product_id,
-    pr.name,pl.issotrx,
-    pp.pricelist,
-    pr.weight,
-    pl.ad_client_id,
-    pl.ad_org_id
-ORDER BY 
-    DATE(pl.updated) DESC,
-    pr.name,pl.issotrx;
-
-========================================================================= OR
 Total dispatch materials in qty & tons, value (Without Price)
+Working:-
 
 CREATE OR REPLACE VIEW adempiere.pir_totalmaterials AS
 SELECT 
@@ -130,10 +81,55 @@ HAVING ROUND(SUM(sh.qtyonhand), 2) <> 0.00
 ORDER BY 
     l.m_warehouse_id, 
     l.m_locator_id;
-
-
-
 =========================================================================
+CREATE TABLE adempiere.pi_planitem (
+    pi_planitem_id numeric(10,0) NOT NULL,
+    ad_client_id numeric(10,0) NOT NULL,
+    ad_org_id numeric(10,0) NOT NULL,
+    created timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    updatedby numeric(10,0) NOT NULL,
+    pi_salesplanline_id numeric(10,0) DEFAULT NULL::numeric,
+    m_product_id numeric(10,0) DEFAULT NULL::numeric,
+    totalqnty numeric,
+    completedqnty numeric,
+    pi_planitem_uu character varying(50) DEFAULT NULL::character varying,
+    isactive character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    description character varying(255) DEFAULT NULL::character varying,
+    FOREIGN KEY (pi_salesplanline_id) REFERENCES adempiere.pi_salesplanline(pi_salesplanline_id),
+    FOREIGN KEY (m_product_id) REFERENCES adempiere.m_product(m_product_id)
+);
+
+===============================================================================
+CREATE TABLE adempiere.m_packline (
+    m_packline_id numeric(10,0) NOT NULL,
+	m_packline_uu character varying(50) DEFAULT NULL::character varying,
+    ad_client_id numeric(10,0) NOT NULL,
+    ad_org_id numeric(10,0) NOT NULL,
+    created timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    updatedby numeric(10,0) NOT NULL,
+    m_inoutline_id numeric(10,0) DEFAULT NULL::numeric,
+    quantity numeric,
+    isactive character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    label character varying(25) DEFAULT NULL::character varying,
+    FOREIGN KEY (m_inoutline_id) REFERENCES adempiere.m_inoutline(m_inoutline_id)
+);
+
+===============================================================================
+Added pi_productlabel
+go to finaldispatch column and remove mandatory and Default logic N 
+=========================================================================
+sales_plan_detail_view Report:-
+
+ALTER TABLE adempiere.pi_salesplanline ADD COLUMN m_warehouse_id NUMERIC(10,0) ;
+ALTER TABLE adempiere.pi_salesplanline
+ADD CONSTRAINT pi_salesplanline_m_warehouse_id_fkey
+FOREIGN KEY (m_warehouse_id)
+REFERENCES adempiere.m_warehouse(m_warehouse_id);
+
 CREATE OR REPLACE VIEW adempiere.sales_plan_detail_view AS
 SELECT spl.m_warehouse_id,spl.c_bpartner_id,pi.m_product_id,sp.salesplandate,
 SUM(pi.totalqnty) AS total_quantity,
@@ -150,6 +146,47 @@ ORDER BY sp.salesplandate DESC,spl.m_warehouse_id,spl.c_bpartner_id,pi.m_product
 
 
 ========================================================================    
+Empty Locator:-
+
+CREATE OR REPLACE VIEW adempiere.pir_emptylocator AS
+SELECT l.m_locator_id,l.value AS locator_name,l.ad_client_id,l.ad_org_id
+FROM adempiere.m_locator l LEFT JOIN adempiere.pi_productlabel s ON l.m_locator_id = s.m_locator_id
+WHERE NOT (EXISTS ( SELECT 1 FROM adempiere.pi_productlabel pp_sales
+WHERE pp_sales.labeluuid = s.labeluuid AND pp_sales.issotrx = 'Y'))
+GROUP BY l.m_locator_id, l.value, s.ad_client_id, s.ad_org_id
+HAVING COALESCE(sum(s.quantity), 0) = 0 ORDER BY l.m_locator_id;
+========================================================================
+Inventory Report for email:-
+
+CREATE OR REPLACE VIEW adempiere.pi_inventoryviewforemail AS
+SELECT pr.m_product_category_id,pp.m_product_id,pr.erpcode,
+sum(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availablecount,
+pr.weight AS unitweight,pr.weight * sum(CASE
+WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitweight,
+pr.value,pp.ad_client_id,pp.ad_org_id FROM adempiere.pi_productlabel pp
+JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+WHERE NOT (EXISTS ( SELECT 1 FROM adempiere.pi_productlabel pp_sales
+WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'))
+GROUP BY pp.m_product_id, pr.weight, pr.m_product_category_id, pr.erpcode, pr.value, pp.ad_client_id, pp.ad_org_id
+ORDER BY pp.m_product_id DESC;
+
+======================================================================================
+Total Tons:-
+
+CREATE OR REPLACE VIEW adempiere.pir_totaltons AS
+SELECT w.m_warehouse_id,pp.m_locator_id,
+sum(CASE WHEN pp.issotrx::text = 'N'::text THEN pp.quantity ELSE 0::numeric END) AS availablecount,
+pr.weight AS unitweight,round(sum(pr.weight * pp.quantity) / 1000::numeric, 3) AS total_weight_ton,
+pp.ad_client_id,pp.ad_org_id FROM adempiere.pi_productlabel pp
+JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+WHERE NOT (EXISTS ( SELECT 1 FROM adempiere.pi_productlabel pp_sales
+WHERE pp_sales.labeluuid::text = pp.labeluuid::text AND pp_sales.issotrx::text = 'Y'::text))
+GROUP BY w.m_warehouse_id, pp.m_locator_id, pp.ad_client_id, pp.ad_org_id, pr.weight
+ORDER BY pp.m_locator_id DESC;	
+
+======================================================================================
 
 CREATE TABLE adempiere.pi_email(
     pi_email_id NUMERIC(10,0) NOT NULL PRIMARY KEY,

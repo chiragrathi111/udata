@@ -810,6 +810,12 @@ One Api created deletd all Tissue Culture Data:-
             String sqlUpdateMediaOrder = "UPDATE adempiere.TC_MediaOrder SET docstatus = 'DR', docaction = 'CO', processed = 'N' WHERE AD_Client_ID = ?";
             String sqlDeleteMediaLine = "DELETE FROM adempiere.TC_MediaLine WHERE TC_MediaOrder_id IN (SELECT TC_MediaOrder_id FROM adempiere.TC_MediaOrder WHERE AD_Client_ID = ?)";
             String sqlDeleteMediaOrder = "DELETE FROM adempiere.TC_MediaOrder WHERE AD_Client_ID = ?";
+
+            DELETE FROM adempiere.TC_MediaLabelQR WHERE tc_medialine_id = 1000442;
+
+-- Then delete the parent
+DELETE FROM adempiere.TC_MediaLine WHERE TC_MediaLine_id = 1000442;
+
             
             DB.executeUpdateEx(sqlDeleteMediaLabelQR, new Object[]{client_id}, trxName);
             DB.executeUpdateEx(sqlUpdateMediaOrder, new Object[]{client_id}, trxName);

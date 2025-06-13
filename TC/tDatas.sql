@@ -1351,6 +1351,9 @@ ADD COLUMN IF NOT EXISTS issuckercollectcollection CHAR(1) NOT NULL DEFAULT 'N':
 ALTER TABLE adempiere.tc_intermediatevisit
 ADD COLUMN IF NOT EXISTS isattachedintermediatetocollection CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
 
+ALTER TABLE adempiere.tc_devicedata ADD COLUMN sensonType VARCHAR(25);
+
+
 if(description.getValue() != null){
    if (!description.getValue().includes("@"))
         result = "Invalid email: The value must contain '@'";
@@ -1561,7 +1564,67 @@ CREATE TABLE adempiere.m_inward_window_processline (
     );   
 
 =======================================================================================================================================
+Tracebility Running Query with trim:-
 
+WITH RECURSIVE cte AS (
+SELECT cl.parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,cl.cycleno,ps.name AS cropType,cs.name AS stage,
+var.name AS variety, cl.personal_code,ts.temperature AS temp, ts.humidity AS humidity, 1 AS level
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = loc.m_locatortype_id JOIN adempiere.tc_temperaturestatus ts ON ts.m_locatortype_id = lt.m_locatortype_id
+WHERE TRIM(cl.c_uuid) = TRIM(' b291eeb3-9d7f-4340-9ea4-20754fe7a208') AND cl.ad_client_id = 1000000
+AND DATE(ts.created) = (SELECT MAX(DATE(created)) FROM adempiere.tc_temperaturestatus WHERE ad_client_id = 1000000)
+UNION ALL
+SELECT cl2.parentuuid,cl2.tc_in_id,cl2.tc_out_id,cl2.c_uuid,loc.value AS location,cl2.created,cl2.cycleno,ps.name AS cropType,cs.name AS stage,
+var.name AS variety,cl2.personal_code,ts.temperature AS temp,ts.humidity AS humidity,cte.level + 1 AS level FROM cte
+JOIN adempiere.tc_culturelabel cl2 ON TRIM(cte.parentuuid) = TRIM(cl2.c_uuid) JOIN adempiere.tc_out o ON o.tc_out_id = cl2.tc_out_id
+JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl2.tc_species_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl2.tc_culturestage_id JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = loc.m_locatortype_id JOIN adempiere.tc_temperaturestatus ts ON ts.m_locatortype_id = lt.m_locatortype_id
+WHERE DATE(ts.created) = (SELECT MAX(DATE(created)) FROM adempiere.tc_temperaturestatus WHERE created = ts.created)),
+culture_result AS (
+SELECT cte.parentuuid,cte.tc_in_id,cte.tc_out_id,cte.c_uuid,cte.location,cte.created,cte.cycleno,cte.cropType,cte.stage,cte.variety,cte.personal_code, 
+MIN(cte.temp) AS min_temperature,MAX(cte.temp) AS max_temperature,MIN(cte.humidity) AS min_humidity, MAX(cte.humidity) AS max_humidity,cte.level FROM cte
+GROUP BY cte.parentuuid, cte.tc_in_id, cte.tc_out_id, cte.c_uuid, cte.location,cte.created, cte.cycleno, cte.cropType, cte.stage, cte.variety,cte.personal_code, cte.level
+UNION ALL
+SELECT DISTINCT tcc.parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,cte.cropType,pr.name AS stage,
+cte.variety,tcc.personalcode AS personal_code,NULL AS min_temperature,NULL AS max_temperature,NULL AS min_humidity,NULL AS max_humidity,cte.level 
+FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON TRIM(cte.parentuuid) = TRIM(tcc.c_uuid) JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
+JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id JOIN adempiere.m_product pr ON pr.m_product_id = eo.m_product_id
+UNION ALL
+SELECT DISTINCT NULL AS parentuuid,0 AS tc_in_id,0 AS tc_out_id,tpt.c_uuid,NULL AS location,tpt.created,0 AS cycleno,cte.cropType,'Plant Tag' AS stage, 
+cte.variety,NULL AS personal_code,NULL AS min_temperature,NULL AS max_temperature,NULL AS min_humidity,NULL AS max_humidity,cte.level 
+FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON TRIM(cte.parentuuid) = TRIM(tcc.c_uuid) LEFT JOIN adempiere.tc_planttag tpt ON TRIM(tcc.parentuuid) = TRIM(tpt.c_uuid)
+WHERE tpt.c_uuid IS NOT NULL ORDER BY created ASC
+),
+explant_result AS (
+SELECT DISTINCT tcc.parentuuid, tcc.tc_in_id, tcc.tc_out_id, tcc.c_uuid, loc.value AS location,tcc.created, 0 AS cycleno, ps.name AS cropType,
+pr.name AS stage, var.name AS variety,tcc.personalcode AS personal_code, NULL AS min_temperature, NULL AS max_temperature, 
+NULL AS min_humidity, NULL AS max_humidity, 1 AS level FROM adempiere.tc_explantlabel tcc
+JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = tcc.tc_species_id JOIN adempiere.tc_variety var ON var.tc_variety_id = tcc.tc_variety_id
+JOIN adempiere.m_product pr ON pr.m_product_id = eo.m_product_id WHERE TRIM(tcc.c_uuid) = TRIM(' b291eeb3-9d7f-4340-9ea4-20754fe7a208') AND tcc.ad_client_id = 1000000
+UNION ALL
+SELECT DISTINCT NULL AS parentuuid, 0 AS tc_in_id, 0 AS tc_out_id, tpt.c_uuid, NULL AS location,tpt.created, 0 AS cycleno, ps.name AS cropType,
+'Plant Tag' AS stage, var.name AS variety,NULL AS personal_code, NULL AS min_temperature, NULL AS max_temperature,NULL AS min_humidity, NULL AS max_humidity, 2 AS level
+FROM adempiere.tc_planttag tpt JOIN adempiere.tc_explantlabel tcc ON TRIM(tcc.parentuuid) = TRIM(tpt.c_uuid)
+JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id
+JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id WHERE TRIM(tcc.c_uuid) = TRIM(' b291eeb3-9d7f-4340-9ea4-20754fe7a208') AND tcc.ad_client_id = 1000000 AND tpt.c_uuid IS NOT NULL
+),
+plant_tag_result AS (
+SELECT DISTINCT NULL AS parentuuid, 0 AS tc_in_id, 0 AS tc_out_id, tpt.c_uuid, NULL AS location,tpt.created, 0 AS cycleno, ps.name AS cropType,
+'Plant Tag' AS stage, var.name AS variety,NULL AS personal_code, NULL AS min_temperature, NULL AS max_temperature,NULL AS min_humidity, NULL AS max_humidity, 1 AS level
+FROM adempiere.tc_planttag tpt JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id 
+WHERE TRIM(tpt.c_uuid) = TRIM(' b291eeb3-9d7f-4340-9ea4-20754fe7a208') AND tpt.ad_client_id = 1000000 AND NOT EXISTS (SELECT 1 FROM explant_result)
+)   
+SELECT * FROM culture_result
+UNION ALL
+SELECT * FROM explant_result WHERE NOT EXISTS (SELECT 1 FROM culture_result)
+UNION ALL
+SELECT * FROM plant_tag_result WHERE NOT EXISTS (SELECT 1 FROM explant_result) AND NOT EXISTS (SELECT 1 FROM culture_result)
+ORDER BY created ASC;
 
 
 
