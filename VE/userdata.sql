@@ -1,3 +1,9 @@
+M_Product[Value], PP_Product_BOM>M_Product_ID[Value], PP_Product_BOMLine>Line, PP_Product_BOMLine>ComponentType,
+PP_Product_BOM>PP_Product_BOMLine.M_Product_ID[Value], PP_Product_BOM>PP_Product_BOMLine.Line, PP_Product_BOM>PP_Product_BOMLine.ComponentType
+
+-------------------------------------------------------------------------------------
+
+
 ALTER TABLE adempiere.pi_productlabel ADD COLUMN ismanufacturing CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
 
 ALTER TABLE adempiere.pi_productlabel ADD COLUMN pp_order_id INTEGER;

@@ -120,7 +120,6 @@ Chaincode:-
 	# npm start
 	# forever start dist/app.js
 	# forever logs
-	# forever logs 0
 	# forever list
 		OR
 	# pm2 start dist/app.js	

@@ -43,7 +43,8 @@ hit PAOrderRequest api and operation is UPDATE and this api
 "processed": false,
 "packagingOrder": true,
 "packingQty": 3,  //enter qty
-"fgReceivedQty": 3,  //enter qty
+"receivedQty": 3,  //enter qty
+"isReceived": true,
 
 this api hit then update qty their according show how much panding qty show or that order is id paritial or not
 
@@ -123,7 +124,15 @@ Assembly to Packing flow:-
 	processed = false
 	status = packingReceived
 	statusLine = fgReceived
+	isReceived = true
+	receivedQty = 3
 
+	======================
+
+	packingQty
+	statusLine
+	isReceived
+	receivedQty
 
 =====================================================================
 select packingQty from adempiere.pi_paorderpackingqty
@@ -143,6 +152,7 @@ CREATE TABLE adempiere.pi_paorderpackingqty (
     description VARCHAR(255),
     isactive CHAR(1) NOT NULL DEFAULT 'Y'::bpchar,
     packingQty NUMERIC(10, 0),
+    statusline VARCHAR(50),
     pi_paorder_id INTEGER,
     FOREIGN KEY (pi_paorder_id) REFERENCES adempiere.pi_paorder(pi_paorder_id)
 );
