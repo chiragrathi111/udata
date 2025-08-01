@@ -384,6 +384,14 @@ WHERE m_inout_id BETWEEN 1000000 AND 1001500;
 SELECT * FROM adempiere.m_inout WHERE m_inout_id = 1000028;
 SELECT * FROM adempiere.m_inoutline WHERE m_inout_id = 1000028;
 
+{
+This is for vinay & RWPL
+DELETE FROM adempiere.m_packline
+WHERE m_inoutline_id = 1000546;
+
+DELETE FROM adempiere.pi_productlabel
+WHERE m_inoutline_id = 1000546;}
+
 =======================================================================================================
 c_order table :-
 
@@ -679,7 +687,17 @@ WHERE ad_client_id = 1000002;
 
 
 
+==============================================================================================================================================
+Sales Plan Windows:-
 
+DELETE FROM adempiere.pi_salesplan
+WHERE pi_salesplan_ID  = 1000068;
+
+DELETE FROM adempiere.pi_salesplanline
+WHERE pi_salesplan_ID  = 1000068;
+
+DELETE FROM adempiere.pi_planitem
+WHERE pi_salesplanline_ID  = 1000081;
 ==============================================================================================================================================
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ==============================================================================================================================================

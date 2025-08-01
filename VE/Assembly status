@@ -74,21 +74,21 @@ Assembly to Packing flow:-
 1. kishan create a assembly order
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = false
+	packagingOrder = false
 	status = switchSocketAssemblyPick
 	processed = false
 
 2. kishan login issue brass product 
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = false
+	packagingOrder = false
 	status = mouldingAssemblyPick
 	processed = false
 
 3. sitaram login issue moulding product
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = true
+	packagingOrder = true
 	processed = false
 	status = mouldingAssemblyPicked 
 	this status through show in jatin login receving app
@@ -96,7 +96,7 @@ Assembly to Packing flow:-
 4. jatin login receving app
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = true
+	packagingOrder = true
 	processed = false
 	status = packagingAssemblyAgentPick
 	receiving app only received order and update status then order show in satish login
@@ -104,7 +104,7 @@ Assembly to Packing flow:-
 5. satish login scan label and generate carton label and mark as completed
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = true
+	packagingOrder = true
 	processed = false
 	status = packagingAssemblySuperVisorPick
 	packingQty = 3
@@ -112,7 +112,7 @@ Assembly to Packing flow:-
 6. jatin login transfer app
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = true
+	packagingOrder = true
 	processed = false
 	status = packagingAssemblyPicked
 	statusLine = fgSupervisor
@@ -120,7 +120,7 @@ Assembly to Packing flow:-
 7. pranshu login receiving app
 	update paorder api :-
 	pAOrderId = 1000448
-	isPackagingOrder = true
+	packagingOrder = true
 	processed = false
 	status = packingReceived
 	statusLine = fgReceived
@@ -201,3 +201,45 @@ FROM information_schema.columns
 WHERE table_name = 'ad_user' AND column_name = 'ad_user_id';
 
 =============================================================
+Jishnu order:-
+1. Jishnu create a assembly order
+	Create paorder api :-
+	status = switchSocketAssemblyPick
+	processed = false
+
+2. kishan login issue brass product 
+	update paorder api :-
+	pAOrderId = 1000448
+	status = mouldingAssemblyPick
+	processed = false
+
+3. sitaram login issue moulding product
+	update paorder api :-
+	pAOrderId = 1000448
+	processed = false
+	status = mouldingAssemblyPicked 
+	this status through show in Jishnu login	
+
+
+4. Jishnu login issue moulding product
+	update paorder api :-
+	pAOrderId = 1000448
+	processed = true
+	status = AutomationRawPicked 
+
+=============================================================
+Added Role :-
+ALTER TABLE adempiere.ad_role 
+ADD returnapp VARCHAR(25);
+
+Alter table adempiere.pi_productLabel
+add column status VARCHAR(25);
+
+ALTER TABLE adempiere.m_product
+ADD COLUMN second_department CHAR(1) not null DEFAULT 'N'::bpchar;
+
+ALTER TABLE adempiere.ad_role 
+ADD COLUMN courierapp CHAR(1) not null DEFAULT 'N'::bpchar;
+
+ALTER TABLE adempiere.c_order
+ADD COLUMN iscourier CHAR(1) not null DEFAULT 'N'::bpchar;

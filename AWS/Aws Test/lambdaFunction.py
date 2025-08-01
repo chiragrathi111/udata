@@ -37,7 +37,7 @@ def lambda_handler(event, context):
         s3_file_name = record['s3']['object']['key']
         size = record['s3']['object'].get('size',-1)
         event_name = record['eventName']
-        event_name = record['eventTime']
+        event_time = record['eventTime']
         try:
                 dynamoTable.put_item(
                         Item = {
@@ -50,3 +50,34 @@ def lambda_handler(event, context):
         except Exception as e:
                 print("End of file")        
 =========================================================================
+import boto3
+from uuid import uuid4
+
+s3 = boto3.client("s3")
+dynamodb = boto3.resource('dynamodb')
+dynamoTable = dynamodb.Table('testdb')
+
+def lambda_handler(event, context):   
+    if 'Records' not in event:
+        return {"error": "No 'Records' in event. Check trigger or test payload."}
+
+    for record in event['Records']:   
+        bucket_name = record['s3']['bucket']['name']
+        s3_file_name = record['s3']['object']['key']
+        size = record['s3']['object'].get('size', -1)
+        event_time = record['eventTime']
+
+        try:
+            dynamoTable.put_item(
+                Item={
+                    "cid": str(uuid4()),
+                    "Bucket": bucket_name,
+                    "Object": s3_file_name,
+                    "Size": size,
+                    "EventTime": event_time
+                }
+            )
+        except Exception as e:
+            print("Error inserting into DynamoDB:", str(e))
+
+    return {"message": "Success"}

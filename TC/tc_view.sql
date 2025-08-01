@@ -54,5 +54,201 @@ JOIN adempiere.m_product_category pc ON pr.m_product_category_id = pc.m_product_
 WHERE pc.name = 'BMedia';
 
 =============================================================================================
+SELECT t.humidityStatus,ts.name AS status,
+CASE 
+    WHEN t.humidityStatus IS NULL OR t.humidityStatus = '' THEN ts.name
+    WHEN t.humidityStatus = 'Normal' AND ts.name = 'Normal' THEN 'Normal'
+    WHEN t.humidityStatus = 'Less Humidity' AND ts.name = 'Over Cool' THEN CONCAT('Less Humidity,' || ts.name)
+    WHEN t.humidityStatus = 'High Humidity' AND ts.name = 'Over Heat' THEN ts.name || ',High Humidity'
+    WHEN t.humidityStatus = 'High Humidity' AND ts.name = 'Over Cool' THEN ts.name || ',High Humidity'
+    WHEN t.humidityStatus = 'Less Humidity' AND ts.name = 'Over Heat' THEN ts.name || ',Less Humidity'
+    WHEN t.humidityStatus = 'High Humidity' AND ts.name = 'Normal' THEN 'High Humidity'
+    WHEN t.humidityStatus = 'Less Humidity' AND ts.name = 'Normal' THEN 'Less Humidity'
+    WHEN t.humidityStatus = 'Normal' AND ts.name = 'Over Cool' THEN 'Over Cool'
+    WHEN t.humidityStatus = 'Normal' AND ts.name = 'Over Heat' THEN 'Over Heat'
+    ELSE ts.name
+END AS final_status,
+    t.name AS deviceName, 
+    TO_CHAR(t.created, 'DD/MM/YY') AS Dates, 
+    TO_CHAR(t.created, 'HH12:MI AM') AS Time,
+    lt.name AS RoomType,
+    dd.tc_devicedata_id,
+    dd.value,
+    t.m_locatortype_id,
+    ts.tc_tempstatus_id,
+    t.temperature,
+    t.humidity,
+    t.created AS dateTime, 
+    t.created::Date AS Date,
 
+    COALESCE((
+        SELECT tts.min_temperature
+        FROM adempiere.tc_tempstatus tts
+        WHERE tts.name = 'Normal' AND tts.ad_client_id = 1000002
+        LIMIT 1
+    ), '21') AS min_temp_for_normal,
 
+    COALESCE((
+        SELECT tts.max_temperature
+        FROM adempiere.tc_tempstatus tts
+        WHERE tts.name = 'Normal' AND tts.ad_client_id = 1000002
+        LIMIT 1
+    ), '35') AS max_temp_for_normal
+    
+
+FROM 
+    adempiere.tc_temperatureStatus t
+JOIN 
+    adempiere.m_locatortype lt ON lt.m_locatortype_id = t.m_locatortype_id
+JOIN 
+    adempiere.tc_tempstatus ts ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+JOIN 
+    adempiere.tc_devicedata dd ON dd.tc_devicedata_id = t.tc_devicedata_id
+WHERE 
+    t.ad_client_id = 1000002 
+ORDER BY 
+    t.m_locatortype_id, t.created;
+
+=============================================================================================
+Working temperature report:-
+
+SELECT 
+    t.humidityStatus,
+    ts.name AS status,
+    CASE
+        WHEN TRIM(COALESCE(t.humidityStatus, '')) = '' THEN ts.name
+        WHEN LOWER(TRIM(t.humidityStatus)) = 'normal' AND LOWER(TRIM(ts.name)) = 'normal' THEN 'Normal'
+        
+        -- If one is Normal, return the other
+        WHEN LOWER(TRIM(t.humidityStatus)) = 'normal' THEN ts.name
+        WHEN LOWER(TRIM(ts.name)) = 'normal' THEN t.humidityStatus
+        
+        -- If both are not normal, return both combined
+        ELSE ts.name || ',' || t.humidityStatus
+    END AS final_status,
+
+    -- Other columns unchanged
+    t.name AS deviceName, 
+    TO_CHAR(t.created, 'DD/MM/YY') AS Dates, 
+    TO_CHAR(t.created, 'HH12:MI AM') AS Time,
+    lt.name AS RoomType,
+    dd.tc_devicedata_id,
+    dd.value,
+    t.m_locatortype_id,
+    ts.tc_tempstatus_id,
+    t.temperature,
+    t.humidity,
+    t.created AS dateTime, 
+    t.created::Date AS Date,
+
+    COALESCE((
+        SELECT tts.min_temperature
+        FROM adempiere.tc_tempstatus tts
+        WHERE tts.name = 'Normal' AND tts.ad_client_id = 1000002
+        LIMIT 1
+    ), '21') AS min_temp_for_normal,
+
+    COALESCE((
+        SELECT tts.max_temperature
+        FROM adempiere.tc_tempstatus tts
+        WHERE tts.name = 'Normal' AND tts.ad_client_id = 1000002
+        LIMIT 1
+    ), '35') AS max_temp_for_normal
+
+FROM 
+    adempiere.tc_temperatureStatus t
+JOIN 
+    adempiere.m_locatortype lt ON lt.m_locatortype_id = t.m_locatortype_id
+JOIN 
+    adempiere.tc_tempstatus ts ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+JOIN 
+    adempiere.tc_devicedata dd ON dd.tc_devicedata_id = t.tc_devicedata_id
+WHERE 
+    t.ad_client_id = 1000002 
+ORDER BY 
+    t.m_locatortype_id, t.created;
+==============================================================================
+Changes IOT Query:-
+SELECT 
+    lt.name AS RoomType, 
+    ts.temperature, 
+    ts.humidity,
+    l.lighton AS time,
+    ls.name AS lightstatus,
+    ts.updated::DATE AS updated_date,
+    TO_CHAR(ts.updated, 'DD-MM-YYYY') AS date
+FROM (
+    SELECT DISTINCT ON (ts.m_locatortype_id) *
+    FROM adempiere.tc_temperaturestatus ts
+    WHERE ts.ad_client_id = 1000000
+    ORDER BY ts.m_locatortype_id, ts.updated DESC
+) ts
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = ts.m_locatortype_id
+JOIN (
+    SELECT DISTINCT ON (l.m_locatortype_id) *
+    FROM adempiere.tc_light l
+    ORDER BY l.m_locatortype_id, l.updated DESC
+) l ON l.m_locatortype_id = lt.m_locatortype_id
+JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id;
+==============================================================================    
+OLD IOT Dashboard Query:-
+SELECT * 
+FROM (
+    SELECT 
+        lt.name AS RoomType, 
+        ts.temperature, 
+        ts.humidity,l.lighton As time,ls.name As lightstatus,l.updated::Date, 
+        TO_CHAR(ts.updated, 'DD-MM-YYYY') AS date,
+        ROW_NUMBER() OVER (PARTITION BY ts.m_locatortype_id ORDER BY ts.updated DESC) AS rn,
+        ROW_NUMBER() OVER (PARTITION BY l.m_locatortype_id ORDER BY l.updated DESC) AS rn1 
+    FROM 
+        adempiere.tc_temperaturestatus ts 
+    JOIN 
+        adempiere.m_locatortype lt ON lt.m_locatortype_id = ts.m_locatortype_id
+    Join adempiere.tc_light l ON l.m_locatortype_id = lt.m_locatortype_id
+    JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+    WHERE 
+        ts.ad_client_id = 1000002
+) subquery 
+WHERE 
+    subquery.rn = 1;
+==============================================================================    
+INSERT INTO adempiere.ad_toolbarbuttonrestrict (
+    ad_toolbarbuttonrestrict_id,
+    ad_client_id,
+    ad_org_id,
+    isactive,
+    created,
+    createdby,
+    updated,
+    updatedby,
+    ad_window_id,
+    ad_tab_id,
+    ad_role_id,
+    ad_toolbarbutton_id,
+    isexclude,
+    ad_toolbarbuttonrestrict_uu,
+    action,
+    ad_process_id
+) VALUES (
+    1000001,                        -- your unique ID
+    1000000,                        -- your client ID
+    1000000,                              -- system org
+    'Y',
+    now(),
+    100,                            -- your user ID
+    now(),
+    100,
+    1000004,                        -- TC_SoilType window ID
+    1000007,                        -- specific Tab ID (you can leave null to apply to all tabs)
+    1000000,                        -- role ID (use 0 for all roles, or specific role)
+    200039,                         -- toolbar button ID (e.g., 200039 = Attachment)
+    'Y',                            -- isexclude = 'Y' disables it
+    '94642da0-e66b-4d13-8031-751c8493chir', -- unique UUID
+    'W',                            -- action type, keep as 'W'
+    NULL                            -- ad_process_id, only needed for specific buttons
+);
+
+This have window,so don'y need to use query
+Name - Role Toolbar Button Access
+===========================================================================================

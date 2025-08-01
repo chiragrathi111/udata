@@ -3,6 +3,12 @@ Install Chef using Command:-
  * which chef
  * chef --version
 
+ 
+ 
+ 
+ * wget https://packages.chef.io/files/stable/chef-workstation/25.5.1084/ubuntu/22.04/chef-workstation_25.5.1084-1_amd64.deb
+ * 
+
  =========================================
 Commands:-
   * mkdir cookbooks

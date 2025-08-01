@@ -48,6 +48,17 @@ RootPassword: l__3rVXT#aX-
 Main IP: 45.120.137.143
 DB - vinayERP
 
+===========================================================
+New server RAM -12 GB
+Server IP: 45.120.138.56
+Username: root
+Password: l__3rVXT#aX-
+ssh -l root 45.120.138.56
+DB - vinayERPNew
+
+==============================================================
+
+
 
 Connection=xyzCConnection[name\=0.0.0.0{13.235.255.17-erpVe-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=13.235.255.17,DBport\=5432,DBname\=erpVe,BQ\=false,FW\=false,FWhost\=,FWport\=0,UID\=adempiere]
 another postgres system added 
@@ -59,6 +70,8 @@ file send vinay server
 scp /home/mahe/Downloads/serverCode/download1.deb root@45.120.137.143:/root/WarePro/
 
 scp /home/chirag/Downloads/ExpDat.dmp  root@45.120.137.143:/root/WarePro/
+
+scp /home/chirag/vinayERPlatest4.dmp root@45.120.138.56:/root/
 
 psql -U adempiere -d vinayERP < /root/WarePro/ExpDat.dmp
 

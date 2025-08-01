@@ -1108,6 +1108,9 @@ CREATE TABLE adempiere.tc_light (
 Alter table adempiere.tc_light
 add column lightoff VARCHAR(36);
 
+Alter table adempiere.tc_temperatureStatus
+add column humidityStatus VARCHAR(30);
+
 Alter table adempiere.tc_light
 add column lighton VARCHAR(36);
 
@@ -1123,6 +1126,18 @@ ADD COLUMN enterDetailsOfInfestation VARCHAR(30);
 Alter table adempiere.tc_visit add column reason VARCHAR(36);
 
 Alter table adempiere.tc_plantdetails add column reason VARCHAR(36);
+
+ALTER TABLE adempiere.tc_light 
+ADD appearance VARCHAR(10);
+
+Alter table adempiere.tc_temperatureStatus
+add column battery_percentage VARCHAR(10);
+
+Alter table adempiere.tc_tempstatus
+add column dead_value VARCHAR(10);
+
+Alter table adempiere.tc_tempstatus
+add column high_value VARCHAR(10);
 
 CREATE TABLE adempiere.tc_firstjoinplant (
     tc_firstjoinplant_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
@@ -1327,6 +1342,17 @@ ADD cultureCode VARCHAR(255);
 
 ALTER TABLE adempiere.tc_order
 ADD COLUMN tc_variety_id NUMERIC(10,0);
+
+ALTER TABLE adempiere.tc_tempstatus 
+ADD min_temperature VARCHAR(2),
+ADD max_temperature VARCHAR(2);
+
+ALTER TABLE adempiere.tc_tempstatus 
+ADD min_humidity VARCHAR(5),
+ADD max_humidity VARCHAR(5);
+
+ALTER TABLE adempiere.TC_devicedata 
+ADD value varchar(25);
 
 ALTER TABLE adempiere.tc_order
 ADD CONSTRAINT tc_order_tc_variety_id_fkey

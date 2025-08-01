@@ -1,0 +1,63 @@
+#How can access inside file data like a file have rathi word i want access so i using below command 
+
+output "printfile" {
+    value = file("${path.module}/file.txt")
+}
+
+#We explain this command what are using
+#${path.module}  = show your working directory like .(means current working directory)
+#/file.txt = ./file.txt (you enter file actual path)
+#file() = if you enter file path inside file bresses then you show file data like (rathi)
+#if i want terraform file format then use below command 
+#terraform fmt 
+
+#If i want getting ami_id not hard code it is possible follow below steps:-
+data "aws_ami" "ubuntu" {
+    most_recent = true
+    owners = ["491085410969"]  #copy this owner id means AWS ID
+
+    filter {
+        name = "name"
+        values = ["amazon/ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"] #copy image name this is also show on ami,please remove last no of id and press *
+    }
+    filter {
+        name = "root-device-type"
+        values = ["ebs"]
+    }
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+}
+#how can get id
+output "ami_id" {
+    value = data.aws_ami.id
+}
+
+
+#How to craete terraform Workspace like (prod,dev environment)
+#terraform Workspace list (show list of workspace)
+#terraform Workspace new dev (create and switch your Workspace)
+#terraform workspace show (show current workspace)
+#terraform workspace select dev (select your workspace)
+
+# if you create a variable file prod and dev environment accroding then you facing issue if 
+# you not use workspace because both environment have different infra so we are using 
+# terraform apply command so .terraform.tfstate.lock.info file create a same place both different
+# environment so we are confuse so my suggest use craete a workspace and run  command
+# terraform apply --auto-approve --verfile dev-terraform.tfvars
+# so this command run your dev workspace so lock file also craete dev workspace
+# same think if you use prod then prod workspace so no conflict issue.
+
+# How to use module what is benifit
+# if we are using module so we are create any place folder and file and use file using module 
+# below give examples
+module "any_name" {
+    source = "./actual path your directory"
+}
+# if you run first time so run 
+# terraform init command so module also updated
+
+# Go to Extensions (Ctrl + Shift + X).
+# Search for "Terraform" (look for the one by HashiCorp).
+# Click Install.
