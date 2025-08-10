@@ -39,7 +39,6 @@ If mvn clean install is not working first go to plugin and mfg plugin mvn clean 
 Tissue culture :-
 scomp -javasource 11 -out lib/idempiere-xmlbeans.jar WEB-INF/xsd/idempiere-schema.xsd
 
-
 Vinay Client Server Login:
 ssh -l root 45.120.137.143
 l__3rVXT#aX-
@@ -57,9 +56,6 @@ ssh -l root 45.120.138.56
 DB - vinayERPNew
 
 ==============================================================
-
-
-
 Connection=xyzCConnection[name\=0.0.0.0{13.235.255.17-erpVe-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=13.235.255.17,DBport\=5432,DBname\=erpVe,BQ\=false,FW\=false,FWhost\=,FWport\=0,UID\=adempiere]
 another postgres system added 
 
@@ -163,3 +159,20 @@ VE - I merge FG open locator above the fg rack area, first building
 VE - I create rack for brass store and merge first building 1 st floor
 
 VE - I create open locator for brass store and merge first building first floor
+
+
+=====================================================================
+AWS 
+https://d-9066358f24.awsapps.com/start
+humadevqureshi@gmail.com
+Pipra$1234
+
+Gmail 
+humadevqureshi@gmail.com / Pipra$1234
+
+Udemy 
+Login using gmail 
+
+Claude Desktop 
+Login using Gmail
+=====================================================================

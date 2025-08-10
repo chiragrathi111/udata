@@ -243,3 +243,10 @@ ADD COLUMN courierapp CHAR(1) not null DEFAULT 'N'::bpchar;
 
 ALTER TABLE adempiere.c_order
 ADD COLUMN iscourier CHAR(1) not null DEFAULT 'N'::bpchar;
+
+====================================================================
+SELECT DISTINCT d.pi_deptartment_id ,d.value from adempiere.pi_deptartment d
+JOIN adempiere.m_locatortype lt ON d.pi_deptartment_id = lt.pi_deptartment_id
+JOIN adempiere.m_locator l ON l.m_locatortype_id = lt.m_locatortype_id
+JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+where d.ad_client_id = 1000000 AND w.m_warehouse_id = 1000001;

@@ -5,7 +5,8 @@ scp -i /home/mahe/Downloads/democ.pem /home/mahe/pipra/wms/3DLayout/3DLayoutDemo
 
 command to run in server:
 node 14 req.
- nohup npx serve . &
+npx serve . (local)
+ nohup npx serve . & (server side)
 
 
 ================================================

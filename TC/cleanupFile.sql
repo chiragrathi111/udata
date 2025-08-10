@@ -698,6 +698,26 @@ WHERE pi_salesplan_ID  = 1000068;
 
 DELETE FROM adempiere.pi_planitem
 WHERE pi_salesplanline_ID  = 1000081;
+
+
+====================================================
+UPDATE adempiere.pi_paorder
+SET processed = 'N'
+WHERE pi_paorder_id = 1000448;
+
+-- 2. Delete child records first
+DELETE FROM adempiere.pi_paorderreceiveqty
+WHERE pi_paorder_id = 1000448;
+
+DELETE FROM adempiere.pi_paorderpackingqty
+WHERE pi_paorder_id = 1000448;
+
+DELETE FROM adempiere.pi_productlabel
+WHERE pi_paorder_id = 1000448;
+
+-- 3. Delete the parent record
+DELETE FROM adempiere.pi_paorder
+WHERE pi_paorder_id = 1000448;
 ==============================================================================================================================================
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ==============================================================================================================================================

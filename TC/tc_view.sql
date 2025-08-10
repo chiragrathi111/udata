@@ -249,6 +249,42 @@ INSERT INTO adempiere.ad_toolbarbuttonrestrict (
     NULL                            -- ad_process_id, only needed for specific buttons
 );
 
-This have window,so don'y need to use query
+This have window,so dont need to use query
 Name - Role Toolbar Button Access
 ===========================================================================================
+SELECT 
+    TO_CHAR(t.created::date, 'YYYY-MM-DD') AS date,
+    lt.name AS room_name,
+    dd.value AS device_name,
+    ROUND(AVG(t.temperature::numeric), 2) AS avg_temperature,
+    ROUND(AVG(t.humidity::numeric), 2) AS avg_humidity,
+    COUNT(*) AS reading_count
+FROM 
+    adempiere.tc_temperatureStatus t
+JOIN 
+    adempiere.tc_devicedata dd ON dd.tc_devicedata_id = t.tc_devicedata_id
+JOIN 
+    adempiere.m_locatortype lt ON lt.m_locatortype_id = t.m_locatortype_id
+WHERE 
+    t.ad_client_id = 1000000
+GROUP BY 
+    t.created::date, lt.name, dd.value
+ORDER BY 
+    t.created::date DESC, lt.name, dd.value;
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Working Query for Temperature date,deviceName according give one records:-
+WITH last_battery AS (SELECT DISTINCT ON (t.tc_devicedata_id, t.created::date)
+t.tc_devicedata_id,t.created::date AS date,
+COALESCE(NULLIF(t.battery_percentage, ''), '0') AS battery_percentage
+FROM adempiere.tc_temperatureStatus t WHERE t.ad_client_id = 1000000
+ORDER BY t.tc_devicedata_id, t.created::date, t.created DESC)
+SELECT TO_CHAR(t.created::date, 'YYYY-MM-DD') AS date,lt.name AS room_name,
+dd.value AS device_name,ROUND(AVG(t.temperature::numeric), 2) AS avg_temperature,
+ROUND(AVG(t.humidity::numeric), 2) AS avg_humidity,COUNT(*) AS reading_count,
+COALESCE(lb.battery_percentage, '0') AS battery_percentage
+FROM adempiere.tc_temperatureStatus t
+JOIN adempiere.tc_devicedata dd ON dd.tc_devicedata_id = t.tc_devicedata_id
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = t.m_locatortype_id
+LEFT JOIN last_battery lb ON lb.tc_devicedata_id = t.tc_devicedata_id AND lb.date = t.created::date
+WHERE t.ad_client_id = 1000000
+GROUP BY t.created::date, lt.name, dd.value, lb.battery_percentage ORDER BY t.created::date DESC, lt.name, dd.value;    
