@@ -37,6 +37,8 @@ hyper ledger fabric path
 cd /home/ubuntu/fabric-samples/asset-transfer-basic/application-gateway-typescript
 pm2 start dist/app.js
 
+pm2 delete <id>
+
 this above two line using then background working start 
 
 if you stop and restart

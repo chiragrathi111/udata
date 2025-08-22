@@ -205,27 +205,27 @@ This below query remove c_invoice records:-
 
 UPDATE adempiere.c_invoice
 SET docstatus = 'DR', docaction = 'CO', processed = 'N'
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 -- 2. Delete dependent records
 DELETE FROM adempiere.c_invoiceline
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 DELETE FROM adempiere.c_allocationline
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 DELETE FROM adempiere.c_invoicetax
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 UPDATE adempiere.c_invoice
 SET c_payment_id = NULL
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 DELETE FROM adempiere.c_payment
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 -- 3. Delete the invoice itself
 DELETE FROM adempiere.c_invoice
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 ===============================================================================================================
 m_inout
 
@@ -391,6 +391,177 @@ WHERE m_inoutline_id = 1000546;
 
 DELETE FROM adempiere.pi_productlabel
 WHERE m_inoutline_id = 1000546;}
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Facing Issue:-
+UPDATE adempiere.m_inout
+SET docstatus = 'DR', docaction = 'CO', processed = 'N'
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- 1. Delete dependent records from M_Transaction
+DELETE FROM adempiere.m_transaction
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+-- 2. Delete dependent records from M_InOutLineMA
+DELETE FROM adempiere.m_inoutlinema
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_matchpo
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_matchinv
+WHERE c_invoiceline_id IN (
+    SELECT c_invoiceline_id
+    FROM adempiere.c_invoiceline
+    WHERE m_inoutline_id BETWEEN 1000000 AND 1001500
+);
+
+DELETE FROM adempiere.m_costhistory
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id
+    FROM adempiere.m_costdetail
+    WHERE c_invoiceline_id IN (
+        SELECT c_invoiceline_id
+        FROM adempiere.c_invoiceline
+        WHERE m_inoutline_id IN (
+            SELECT m_inoutline_id
+            FROM adempiere.m_inoutline
+            WHERE m_inout_id BETWEEN 1000000 AND 1001500
+        )
+    )
+);
+
+-- 2. Delete cost detail
+DELETE FROM adempiere.m_costdetail
+WHERE c_invoiceline_id IN (
+    SELECT c_invoiceline_id
+    FROM adempiere.c_invoiceline
+    WHERE m_inoutline_id IN (
+        SELECT m_inoutline_id
+        FROM adempiere.m_inoutline
+        WHERE m_inout_id BETWEEN 1000000 AND 1001500
+    )
+);
+
+-- 3. Delete match invoice
+DELETE FROM adempiere.m_matchinv
+WHERE c_invoiceline_id IN (
+    SELECT c_invoiceline_id
+    FROM adempiere.c_invoiceline
+    WHERE m_inoutline_id IN (
+        SELECT m_inoutline_id
+        FROM adempiere.m_inoutline
+        WHERE m_inout_id BETWEEN 1000000 AND 1001500
+    )
+);
+
+-- 4. Delete invoice lines
+DELETE FROM adempiere.c_invoiceline
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id
+    FROM adempiere.m_inoutline
+    WHERE m_inout_id BETWEEN 1000000 AND 1001500
+);
+
+-- 5. Finally delete inout lines
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.c_invoiceline
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+-- 3. Delete dependent M_InOutLine records
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- 4. Delete the main M_InOut record
+DELETE FROM adempiere.m_inout
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+select * from adempiere.m_inout
+where ad_client_id = 1000002
+
+DELETE FROM adempiere.m_costhistory
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id FROM adempiere.m_costdetail
+    WHERE m_inoutline_id BETWEEN 1000004 AND 1000999
+);
+
+
+DELETE FROM adempiere.m_costhistory
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id
+    FROM adempiere.m_costdetail
+    WHERE m_inoutline_id BETWEEN 1000000 AND 1001500
+);
+
+DELETE FROM adempiere.m_costdetail
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+SELECT rma.*
+FROM adempiere.m_rmaline rma
+WHERE rma.m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_rmaline
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+-- Step 1: Delete RMA lines
+DELETE FROM adempiere.m_rmaline
+WHERE m_rma_id IN (
+    SELECT m_rma_id FROM adempiere.m_rma
+    WHERE m_inout_id BETWEEN 1000000 AND 1001500
+);
+
+-- Step 2: Delete RMA
+DELETE FROM adempiere.m_rma
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- Step 3: Delete Cost Details
+DELETE FROM adempiere.m_costdetail
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id FROM adempiere.m_inoutline
+    WHERE m_inout_id BETWEEN 1000000 AND 1001500
+);
+
+-- Step 4: Delete InOut Lines
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- Step 5: Delete InOut Header
+DELETE FROM adempiere.m_inout
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+SELECT *
+FROM adempiere.m_rma
+WHERE m_inout_id = 1000005;
+
+-- 1. Delete dependent RMA Taxes
+DELETE FROM adempiere.m_rmatax
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- 2. Delete dependent RMA Lines
+DELETE FROM adempiere.m_rmaline
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- 3. Delete RMAs
+DELETE FROM adempiere.m_rma
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- 4. Delete InOut Lines (if needed)
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- 5. Delete InOut
+DELETE FROM adempiere.m_inout
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+
+
+
+
 
 =======================================================================================================
 c_order table :-

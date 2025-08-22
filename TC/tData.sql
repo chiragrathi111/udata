@@ -832,7 +832,8 @@ ADD CONSTRAINT tc_explantLabel_tc_out_id_fkey
 FOREIGN KEY (tc_out_id)
 REFERENCES adempiere.tc_out(tc_out_id);
 
-
+Alter table adempiere.TC_SecondaryHardeningLabel
+Add column parentuuid VARCHAR(36) DEFAULT NULL::bpchar;
 
 
 ALTER TABLE adempiere.tc_primaryhardeningLabel add column lotNumber VARCHAR(1);

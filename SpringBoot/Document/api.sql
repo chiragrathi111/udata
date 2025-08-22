@@ -119,7 +119,28 @@ If we want use this annotation,so first added annotation to main class
 @EnableTransactionManagement
 
 @Bean 
+-------------------------------------------------------------------------------
+API security
+@EnableWebSecurity
 
+Example:-
+@Configuration
+@EnableWebSecurity
+public class SpringSecurity extends WebSecurityConfigurerAdapter {
 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/journal/**").authenticated()
+                .anyRequest().permitAll()
+                .and()
+                .httpBasic();
+    }
+}
 
 -------------------------------------------------------------------------------
+API Auth Security:-
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-security</artifactId>
+</dependency>	

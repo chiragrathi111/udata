@@ -54,6 +54,11 @@ Username: root
 Password: l__3rVXT#aX-
 ssh -l root 45.120.138.56
 DB - vinayERPNew
+==============================================================
+pm2:-
+nvm use 14
+pm2 start "npx serve ."
+pm2 list
 
 ==============================================================
 Connection=xyzCConnection[name\=0.0.0.0{13.235.255.17-erpVe-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=13.235.255.17,DBport\=5432,DBname\=erpVe,BQ\=false,FW\=false,FWhost\=,FWport\=0,UID\=adempiere]

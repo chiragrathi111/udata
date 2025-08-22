@@ -288,3 +288,105 @@ JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = t.m_locatortype_id
 LEFT JOIN last_battery lb ON lb.tc_devicedata_id = t.tc_devicedata_id AND lb.date = t.created::date
 WHERE t.ad_client_id = 1000000
 GROUP BY t.created::date, lt.name, dd.value, lb.battery_percentage ORDER BY t.created::date DESC, lt.name, dd.value;    
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Current:-
+WITH status_durations AS (
+    SELECT
+        l.m_locatortype_id,
+        lt.name AS room_name,
+        dd.value AS device_name,
+        ls.name AS status_name,
+        l.created::date AS only_date,  -- just the date for grouping
+        l.created AS created_ts,       -- keep timestamp for duration math
+        COALESCE(NULLIF(l.appearance, ''), '0')::numeric AS ampere,
+        LEAD(l.created) OVER (PARTITION BY l.tc_devicedata_id ORDER BY l.created) AS next_time
+    FROM 
+        adempiere.tc_light l
+    JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+    JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+    JOIN adempiere.tc_devicedata dd ON dd.tc_devicedata_id = l.tc_devicedata_id
+    WHERE 
+        l.ad_client_id = 1000000
+)
+SELECT
+    only_date AS date,
+    m_locatortype_id,
+    room_name,
+    device_name,
+    status_name,
+    COUNT(*) AS status_count,
+    ROUND(AVG(ampere), 2) AS avg_ampere,
+    FLOOR(COALESCE(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 0) / 60) 
+        || ' hour ' || 
+    FLOOR(COALESCE(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 0) % 60) 
+        || ' min' AS duration
+FROM 
+    status_durations
+GROUP BY
+    only_date,
+    m_locatortype_id,
+    room_name,
+    device_name,
+    status_name
+ORDER BY
+    only_date DESC, room_name, device_name, status_name;
+========================================================================================
+Working:-
+WITH status_durations AS (
+    SELECT
+        l.m_locatortype_id,
+        lt.name AS room_name,
+        dd.value AS device_name,
+        ls.name AS status_name,
+        l.created::date AS only_date,  -- just the date for grouping
+        l.created AS created_ts,       -- keep timestamp for duration math
+        COALESCE(NULLIF(l.appearance, ''), '0')::numeric AS ampere,
+        LEAD(l.created) OVER (PARTITION BY l.tc_devicedata_id ORDER BY l.created) AS next_time
+    FROM 
+        adempiere.tc_light l
+    JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+    JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+    JOIN adempiere.tc_devicedata dd ON dd.tc_devicedata_id = l.tc_devicedata_id
+    WHERE 
+        l.ad_client_id = 1000000
+)
+SELECT
+    only_date AS date,
+    m_locatortype_id,
+    room_name,
+    device_name,
+    status_name,
+    COUNT(*) AS status_count,
+    ROUND(AVG(ampere), 2) AS avg_ampere,
+    FLOOR(LEAST(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 1440) / 60) || ' hour ' ||
+    FLOOR(LEAST(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 1440) % 60) || ' min' AS duration
+FROM 
+    status_durations
+GROUP BY
+    only_date,
+    m_locatortype_id,
+    room_name,
+    device_name,
+    status_name
+ORDER BY
+    only_date DESC, room_name, device_name, status_name;
+===============================================================================================
+WITH status_durations AS (SELECT l.m_locatortype_id,l.tc_devicedata_id,lt.name AS room_name,TO_CHAR(l.created::date, 'DD-MM-YYYY') AS dates,
+dd.value AS device_name,ls.name AS status_name,l.created::date AS only_date,l.created AS created_ts,
+COALESCE(NULLIF(l.appearance, ''), '0')::numeric AS ampere,LEAD(l.created) OVER (PARTITION BY l.tc_devicedata_id ORDER BY l.created) AS next_time
+FROM adempiere.tc_light l JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+JOIN adempiere.tc_devicedata dd ON dd.tc_devicedata_id = l.tc_devicedata_id
+WHERE l.ad_client_id =  $P{AD_CLIENT_ID}  AND l.created >= $P{FromDate} 
+AND l.created < ($P{ToDate}::timestamp + INTERVAL '1 day')
+AND ($P{deviceId} IS NULL OR dd.tc_devicedata_id IN ($P!{deviceId}))
+AND ($P{RoomType} IS NULL OR lt.name = $P{RoomType}) 
+AND  ($P{LightStatus}  IS NULL OR ls.name =  $P{LightStatus}))
+SELECT only_date AS date,dates,m_locatortype_id,tc_devicedata_id,room_name,device_name,status_name,COUNT(*) AS status_count,
+ROUND(AVG(ampere), 2) AS avg_ampere,FLOOR(LEAST(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 1440) / 60) || ' hour ' ||
+FLOOR(LEAST(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 1440) % 60) || ' min' AS duration
+FROM status_durations GROUP BY m_locatortype_id,tc_devicedata_id,only_date,room_name,device_name,status_name,dates
+ORDER BY  room_name, device_name,only_date DESC, status_name;
+
+===============================================================================================
