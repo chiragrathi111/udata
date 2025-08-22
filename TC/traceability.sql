@@ -838,7 +838,7 @@ cte AS (
     -- 1. Start from CULTURE UUID
     SELECT cl.parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
-           cl.personal_code,1 AS level,
+           cl.personal_code,1 AS level,u.name As user,
            'culture' as source_type
     FROM adempiere.tc_culturelabel cl
     JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
@@ -846,6 +846,7 @@ cte AS (
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
     WHERE TRIM(cl.c_uuid) = TRIM( $P{CultureLabelUUId} )
       AND cl.ad_client_id =  $P{AD_CLIENT_ID} 
 
@@ -853,7 +854,7 @@ cte AS (
     -- 2. Primary Hardening → Rooting culture
     SELECT phs.cultureuuid AS parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
-           cl.personal_code,2 AS level,  -- Culture becomes level 2 when coming from Primary
+           cl.personal_code,2 AS level,u.name As user,  -- Culture becomes level 2 when coming from Primary
            'culture' as source_type
     FROM adempiere.TC_PrimaryHardeningLabel ph
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
@@ -863,6 +864,7 @@ cte AS (
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
     WHERE TRIM(ph.c_uuid) = TRIM( $P{CultureLabelUUId} )
       AND ph.ad_client_id =  $P{AD_CLIENT_ID} 
 
@@ -870,7 +872,7 @@ cte AS (
     -- 3. Secondary Hardening → Primary Hardening → Culture
     SELECT phs.cultureuuid AS parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
-           cl.personal_code,3 AS level,  -- Culture becomes level 3 when coming from Secondary
+           cl.personal_code,3 AS level,u.name As user,  -- Culture becomes level 3 when coming from Secondary
            'culture' as source_type
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
@@ -881,6 +883,7 @@ cte AS (
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
     WHERE TRIM(sh.c_uuid) = TRIM( $P{CultureLabelUUId} )
       AND sh.ad_client_id =  $P{AD_CLIENT_ID} 
 
@@ -888,7 +891,7 @@ cte AS (
     -- 4. Recursive step: culture → parent culture
     SELECT cl2.parentuuid,cl2.tc_in_id,cl2.tc_out_id,cl2.c_uuid,loc.value AS location,cl2.created,
            cl2.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
-           cl2.personal_code,cte.level + 1 AS level,
+           cl2.personal_code,cte.level + 1 AS level,u.name As user,
            'culture' as source_type
     FROM cte
     JOIN adempiere.tc_culturelabel cl2 ON cte.parentuuid = cl2.c_uuid
@@ -897,40 +900,43 @@ cte AS (
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl2.tc_species_id
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl2.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = cl2.createdby
 ),
 ----------------------------------------------------------------
 -- Culture stage aggregation
 ----------------------------------------------------------------
 culture_result AS (
     SELECT cte.parentuuid,cte.tc_in_id,cte.tc_out_id,cte.c_uuid,cte.location,cte.created,cte.cycleno,
-           cte.cropType,cte.stage,cte.variety,cte.personal_code,cte.level AS level,
+           cte.cropType,cte.stage,cte.variety,cte.personal_code,cte.level AS level,cte.user,
            cte.source_type
     FROM cte
     GROUP BY cte.parentuuid, cte.tc_in_id, cte.tc_out_id, cte.c_uuid,cte.location,
              cte.created, cte.cycleno, cte.cropType, cte.stage, cte.variety,
-             cte.personal_code, cte.level, cte.source_type
+             cte.personal_code, cte.level,cte.user, cte.source_type
 
     UNION ALL
     -- Explant from culture
     SELECT DISTINCT tcc.parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,
            cte.cropType,pr.name AS stage,cte.variety,tcc.personalcode AS personal_code,
-           cte.level + 1 AS level,  -- Explant is always one level below culture
+           cte.level + 1 AS level,u.name As user,  -- Explant is always one level below culture
            'explant' as source_type
     FROM cte
     LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
     JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id
     JOIN adempiere.m_product pr ON pr.m_product_id = eo.m_product_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = tcc.createdby
 
     UNION ALL
     -- Plant tag from explant
     SELECT DISTINCT NULL,0,0,tpt.c_uuid,NULL,tpt.created,0 AS cycleno,
            cte.cropType,'Plant Tag' AS stage,cte.variety,NULL,
-           cte.level + 2 AS level,  -- Plant tag is two levels below culture
+           cte.level + 2 AS level,u.name As user,  -- Plant tag is two levels below culture
            'plant_tag' as source_type
     FROM cte
     LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
     LEFT JOIN adempiere.tc_planttag tpt ON tcc.parentuuid = tpt.c_uuid
+    LEFT JOIN adempiere.ad_user u ON u.ad_user_id = tpt.createdby
     WHERE tpt.c_uuid IS NOT NULL
 ),
 ----------------------------------------------------------------
@@ -938,7 +944,7 @@ culture_result AS (
 ----------------------------------------------------------------
 explant_result AS (
     SELECT DISTINCT tcc.parentuuid AS parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,
-           ps.name AS cropType,pr.name AS stage,var.name AS variety,tcc.personalcode,1 AS level,
+           ps.name AS cropType,pr.name AS stage,var.name AS variety,tcc.personalcode,1 AS level,u.name As user,
            'explant' as source_type
     FROM adempiere.tc_explantlabel tcc
     JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
@@ -946,18 +952,20 @@ explant_result AS (
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = tcc.tc_species_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = tcc.tc_variety_id
     JOIN adempiere.m_product pr ON pr.m_product_id = eo.m_product_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = tcc.createdby
     WHERE TRIM(tcc.c_uuid) = TRIM( $P{CultureLabelUUId} )
       AND tcc.ad_client_id =  $P{AD_CLIENT_ID} 
 
     UNION ALL
     SELECT DISTINCT NULL AS parentuuid,0,0,tpt.c_uuid,NULL,tpt.created,0 AS cycleno,
-           ps.name AS cropType,'Plant Tag' AS stage,var.name AS variety,NULL,2 AS level,
+           ps.name AS cropType,'Plant Tag' AS stage,var.name AS variety,NULL,2 AS level,u.name As user,
            'plant_tag' as source_type
     FROM adempiere.tc_planttag tpt
     JOIN adempiere.tc_explantlabel tcc ON tcc.parentuuid = tpt.c_uuid
     JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = tpt.createdby
     WHERE TRIM(tcc.c_uuid) = TRIM( $P{CultureLabelUUId} )
       AND tpt.c_uuid IS NOT NULL
 ),
@@ -966,12 +974,13 @@ explant_result AS (
 ----------------------------------------------------------------
 plant_tag_result AS (
     SELECT DISTINCT NULL AS parentuuid,0,0,tpt.c_uuid,NULL,tpt.created,0 AS cycleno,
-           ps.name AS cropType,'Plant Tag' AS stage,var.name AS variety,NULL,1 AS level,
+           ps.name AS cropType,'Plant Tag' AS stage,var.name AS variety,NULL,1 AS level,u.name As user,
            'plant_tag' as source_type
     FROM adempiere.tc_planttag tpt
     JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id
+    JOIN adempiere.ad_user u ON u.ad_user_id = tpt.createdby
     WHERE TRIM(tpt.c_uuid) = TRIM( $P{CultureLabelUUId} )
       AND tpt.ad_client_id =  $P{AD_CLIENT_ID} 
 ),
@@ -981,7 +990,7 @@ plant_tag_result AS (
 primary_result AS (
     SELECT phs.cultureuuid AS parentuuid,ph.tc_in_id,ph.tc_out_id,ph.c_uuid,loc.value,ph.created,0 AS cycleno,
            ps.name AS cropType,'Primary Hardening' AS stage,var.name AS variety,
-           u.personalcode,1 AS level,  -- Primary Hardening as level 1
+           u.personalcode,1 AS level,u.name As user,  -- Primary Hardening as level 1
            'primary' as source_type
     FROM adempiere.TC_PrimaryHardeningLabel ph
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
@@ -1000,7 +1009,7 @@ secondary_result AS (
     -- Secondary Hardening record itself
     SELECT sh.parentuuid,sh.tc_in_id,sh.tc_out_id,sh.c_uuid,loc.value AS location,sh.created,0 AS cycleno,
            ps.name AS cropType,'Secondary Hardening' AS stage,var.name AS variety,
-           u.personalcode,1 AS level,  -- Secondary Hardening as level 1
+           u.personalcode,1 AS level,u.name As user,  -- Secondary Hardening as level 1
            'secondary' as source_type
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.tc_out o ON o.tc_out_id = sh.tc_out_id
@@ -1015,7 +1024,7 @@ secondary_result AS (
     -- Linked Primary Hardening record
     SELECT phs.cultureuuid AS parentuuid,ph.tc_in_id,ph.tc_out_id,ph.c_uuid,loc.value AS location,ph.created,0 AS cycleno,
            ps.name AS cropType,'Primary Hardening' AS stage,var.name AS variety,
-           u.personalcode,2 AS level,  -- Primary becomes level 2 when linked from Secondary
+           u.personalcode,2 AS level,u.name As user,  -- Primary becomes level 2 when linked from Secondary
            'primary' as source_type
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
