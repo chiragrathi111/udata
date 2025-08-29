@@ -1,17 +1,18 @@
-IOC Container - This is using to getting object. IOC spring boot have one tool their according 
-get object not need to create a new onject because without using spring boot we craeted object.
-
+IOC Container - This is using to getting object. IOC spring boot have one tool 
+their according get object not need to create a new object because without 
+using spring boot we craeted object.
 
 @SpringBootApplication (This annotation using main class)
 (above annotation generaly using for three work)
 @Configuration,@EnableAutoCongiguration,@ComponentScan
 
 @Component (IOC Container using this annotation)
-(This Container using any class so class,interface,method and field all value getting object)  
-
+(This Container using any class so class,interface,method and field all value 
+getting object)  
 
 @Autowired
-this annotation using if any other class create obj on antoer class so using this annotation
+this annotation using if any other class create obj on another class so 
+using this annotation
 
 @RestController
 This annotation using for rest api class
@@ -45,8 +46,8 @@ public JournalEntry getJournalEntryById(@PathVariable Long myid){
 }
 
 Explanation:-
-If you want any specific id thriugh get any data so using this path ("/id/{myid}")
-@PathVariable = out spring understand this have any value
+If you want any specific id through get any data so using this path ("/id/{myid}")
+@PathVariable = our spring understand this have any value
 Long = Data type
 myid = value
 journalEntry = Mapping object
@@ -88,11 +89,10 @@ object class:-
 @DBRef (This annotation using for two different table link)
 -------------------------------------------------------------------------------
 ResponseEntity<?>
-if using ? so we use this methos any object
+if using ? so we use this method any object
 and if you want any specific object so fill object name
 
 ResponseEntity<JournalEntry>
-
 -------------------------------------------------------------------------------
 Lombok:-
 Lombok as tool,this using we dont need to create any getter,setter,and constructor

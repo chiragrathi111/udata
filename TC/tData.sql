@@ -688,9 +688,17 @@ REFERENCES adempiere.ad_user(ad_user_id);
     isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
     c_uuId VARCHAR(36) DEFAULT NULL::bpchar,
     tc_hardeningtraytag_uu VARCHAR(36) NOT NULL);
+##########################
+Updated:-
+Alter table adempiere.c_order
+Add column isculture CHAR(1) not null DEFAULT 'N'::bpchar;
 
+Alter table adempiere.c_orderline
+Add column cultureuuid VARCHAR(36) DEFAULT NULL::bpchar;
 
-###
+Alter table adempiere.tc_cultureLabel
+Add column issold CHAR(1) not null DEFAULT 'N'::bpchar;
+##########################
         CREATE TABLE adempiere.tc_cultureLabel (
     tc_cultureLabel_id SERIAL PRIMARY KEY,
     tc_cultureLabel_uu VARCHAR(36) DEFAULT NULL::bpchar,

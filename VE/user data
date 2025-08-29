@@ -74,6 +74,8 @@ scp /home/chirag/Downloads/ExpDat.dmp  root@45.120.137.143:/root/WarePro/
 
 scp /home/chirag/vinayERPlatest4.dmp root@45.120.138.56:/root/
 
+scp root@45.120.138.56:/root/vinayERPlatestN2025.dmp /home/chirag/
+
 psql -U adempiere -d vinayERP < /root/WarePro/ExpDat.dmp
 
 cd /opt/idempiere-server# cat idempiere.properties

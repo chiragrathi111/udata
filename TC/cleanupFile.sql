@@ -889,6 +889,74 @@ WHERE pi_paorder_id = 1000448;
 -- 3. Delete the parent record
 DELETE FROM adempiere.pi_paorder
 WHERE pi_paorder_id = 1000448;
+
+==============================================================================================================================================
+Deleted Role and User:-
+
+select * from adempiere.ad_role where ad_client_id = 1000000 and name = 'RM-Wire Supervisor'
+
+DELETE FROM adempiere.ws_webservicetypeaccess
+WHERE ad_role_id = 1000014;
+
+DELETE FROM adempiere.ad_changelog
+WHERE ad_session_id IN (
+    SELECT ad_session_id
+    FROM adempiere.ad_session
+    WHERE ad_role_id = 1000014
+);
+DELETE FROM adempiere.ad_session
+WHERE ad_role_id = 1000014;
+
+DELETE FROM adempiere.pa_dashboardpreference
+WHERE ad_role_id = 1000014;
+
+delete from adempiere.ad_role
+where ad_role_id = 1000014;
+--------------------------------------
+User:-
+select * from adempiere.ad_user where ad_client_id = 1000000 and name = 'srikant'
+
+UPDATE adempiere.pi_productlabel
+SET createdby = 1000002,
+    updatedby = 1000002
+WHERE createdby = 1000004
+   OR updatedby = 1000004;
+
+UPDATE adempiere.pi_orderreceipt
+SET createdby = 1000002,
+    updatedby = 1000002
+WHERE createdby = 1000004
+   OR updatedby = 1000004;   
+
+UPDATE adempiere.pi_paorder
+SET createdby = 1000002,
+    updatedby = 1000002
+WHERE createdby = 1000004
+   OR updatedby = 1000004;    
+
+DELETE FROM adempiere.pi_usertoken 
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_preference WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_note
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_tree_favorite 
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_user_orgaccess
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.pa_dashboardpreference
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.m_storagereservationlog
+WHERE createdby = 1000004;
+
+DELETE FROM adempiere.ad_user 
+WHERE ad_user_id = 1000004;
+   
 ==============================================================================================================================================
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ==============================================================================================================================================

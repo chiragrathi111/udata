@@ -1,4 +1,4 @@
-If you added any dependency on your pom file and if you want to chekc your dependency right or not
+If you added any dependency on your pom file and if you want to check your dependency right or not
 * mvn validate
 
 If you want compile mvn
@@ -14,3 +14,5 @@ If you want run jar
 * java -jar name.jar
 
 *mvn install (run this command so this jar file added our local .m2 folder)
+
+* mvn clean install

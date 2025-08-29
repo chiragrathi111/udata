@@ -10,7 +10,7 @@ MongoDb using Dependency:-
 			<version>3.5.4</version>
 </dependency>	
 
-Query Methos DSL
+Query Method DSL
 Criteria API
 (This two way know you every think on Database)
 
