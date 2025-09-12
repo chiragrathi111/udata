@@ -6,6 +6,13 @@
 path - /layout
 port - 3000
 
+Restrt server:-
+sudo nginx -t
+
+sudo systemctl reload nginx
+
+
+
 }
 
 location /layout {

@@ -41,6 +41,17 @@ Mongo Install:-
 * db.students.deleteOne({"name":"chirag"})
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Terminal through created manually collection:-
+* mongosh
+* use dbs
+* db.createCollection("config_journal_app")
+* db.config_journal_app.insertOne({
+  key: "theme",
+  value: "dark"
+})
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 userName - chiragrathi111
 password - ywvldDcMJLO569Dn
 

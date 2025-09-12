@@ -29,7 +29,8 @@ sudo service idempiere restart
 
 
 Background run pm2:-
-npm i -g pm2
+npm i -g pm2  or 
+sudo npm install -g pm2
 pm2 -v
 pm2 list
 

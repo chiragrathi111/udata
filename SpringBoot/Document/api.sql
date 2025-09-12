@@ -138,6 +138,31 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
     }
 }
 
+----------------------------------------------------------------------------
+@Profile("dev/prod")
+This annotation using any api to restriction our envirnment according
+This annotationusing for SpringSecurity class
+
+================================================
+@Component   and @Service
+both are same creating Bean but if use anotation to business logic 
+so one of the best annotation like @Service
+That means if we have any service class and this class have write a BL
+so we are using @Service anotation instead of @Component annotation. 
+
+=================================================
+If we want any value not directly enter business logic class 
+so using application.yml and use annotation so you getting same value
+
+application.yml or application.properties (author.name=Chirag Rathi)
+author:
+  name: Chirag Rathi (if any place you want to use this name so using below tech)
+
+Any class
+@Value("${author.name}")
+private String name; (If any place you want author name so use this name obj)
+this method not a static and final otherwise getting error  
+(Useing for sensitive data)
 -------------------------------------------------------------------------------
 API Auth Security:-
 <dependency>
