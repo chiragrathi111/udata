@@ -163,6 +163,18 @@ Any class
 private String name; (If any place you want author name so use this name obj)
 this method not a static and final otherwise getting error  
 (Useing for sensitive data)
+
+-----------------------------------------------------------------------------
+Change Swagger api contrller name
+Controller class use this anotation
+@Tag(name = "User Apis")
+
+
+-----------------------------------------------------------------------------------
+Scheduled:- Using any method auto call
+@Scheduled(cron = "0 0 9 * * SUN") (means every sunday 9 am this method are called)
+
+@EnableScheduling  (this anotation call to any main method then our Scheduled working other wise not working)
 -------------------------------------------------------------------------------
 API Auth Security:-
 <dependency>

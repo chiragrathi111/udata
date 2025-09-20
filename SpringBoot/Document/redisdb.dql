@@ -1,0 +1,26 @@
+Redis Db:-
+
+sudo apt update
+
+sudo apt install redis-server
+
+sudo systemctl status redis
+
+sudo nano /etc/redis/redis.conf
+
+sudo systemctl restart redis
+
+redis-cli
+
+redis-cli info memory
+
+
+port 6379
+
+if terminal close then use that command for redis:-
+
+sudo systemctl start redis
+
+redis-cli
+
+ping
