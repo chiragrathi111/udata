@@ -54,7 +54,6 @@ FLUSH PRIVILEGES;
 
 <<<<<<< HEAD
 
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 cd ~/Pipra_Internet/pipra-intranet/backend/
 mvn clean package -DskipTests
 pm2 start "java -jar intranet-backend-1.0.0.jar" --name backend
@@ -69,3 +68,12 @@ sudo cp -R ~/Pipra_Internet/pipra-intranet/frontend/dist/* /var/www/pi.pipra.sol
 
 
 >>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
+
+cd ~/Pipra_Internet/pipra-intranet/backend/
+mvn clean package -DskipTests
+pm2 start "java -jar intranet-backend-1.0.0.jar" --name backend
+
+cd ../frontend
+npm install
+npm run build
+sudo cp -R ~/Pipra_Internet/pipra-intranet/frontend/dist/* /var/www/pi.pipra.solutions/

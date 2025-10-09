@@ -183,3 +183,98 @@ API Auth Security:-
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-starter-security</artifactId>
 </dependency>	
+
+
+<<<<<<< HEAD
+@Data (This one annotation use all Getter,setter,ToStrin)		
+@NoArgsConstructor  (If use Data annotation so this is need)
+@AllArgsConstructor
+=======
+@Data (This one annotation use all Getter,setter,ToStrin,constructor)		
+@NoArgsConstructor  (If use Data annotation so this is need)
+>>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
+
+-------------------------------------------------------------------------------
+@Transactional  (if have two method one crete and one failed
+and both are relation so this problem,I use this annotation so one failed means all failed
+Success method automatic Roleback)
+
+If we want use this annotation,so first added annotation to main class
+@EnableTransactionManagement
+
+@Bean 
+-------------------------------------------------------------------------------
+<<<<<<< HEAD
+If you want your table any colume not null then using blow dependency
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+@NotBlank(message = "Account holder name cannot be blank")
+@Column(name = "account_holder_name", nullable = false, unique = true)
+-------------------------------------------------------------------------------
+
+=======
+>>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
+API security
+@EnableWebSecurity
+
+Example:-
+@Configuration
+@EnableWebSecurity
+public class SpringSecurity extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/journal/**").authenticated()
+                .anyRequest().permitAll()
+                .and()
+                .httpBasic();
+    }
+}
+
+----------------------------------------------------------------------------
+@Profile("dev/prod")
+This annotation using any api to restriction our envirnment according
+This annotationusing for SpringSecurity class
+
+================================================
+@Component   and @Service
+both are same creating Bean but if use anotation to business logic 
+so one of the best annotation like @Service
+That means if we have any service class and this class have write a BL
+so we are using @Service anotation instead of @Component annotation. 
+
+=================================================
+If we want any value not directly enter business logic class 
+so using application.yml and use annotation so you getting same value
+
+application.yml or application.properties (author.name=Chirag Rathi)
+author:
+  name: Chirag Rathi (if any place you want to use this name so using below tech)
+
+Any class
+@Value("${author.name}")
+private String name; (If any place you want author name so use this name obj)
+this method not a static and final otherwise getting error  
+(Useing for sensitive data)
+
+-----------------------------------------------------------------------------
+Change Swagger api contrller name
+Controller class use this anotation
+@Tag(name = "User Apis")
+
+
+-----------------------------------------------------------------------------------
+Scheduled:- Using any method auto call
+@Scheduled(cron = "0 0 9 * * SUN") (means every sunday 9 am this method are called)
+
+@EnableScheduling  (this anotation call to any main method then our Scheduled working other wise not working)
+-------------------------------------------------------------------------------
+API Auth Security:-
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-security</artifactId>
+</dependency>	
