@@ -107,9 +107,8 @@ and i added depency first time
 			<version>1.18.38</version>
 		</dependency>
 
-@Data (This one annotation use all Getter,setter,ToStrin)		
-@NoArgsConstructor  (If use Data annotation so this is need)
-@AllArgsConstructor
+<<<<<<< HEAD
+>>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 
 -------------------------------------------------------------------------------
 @Transactional  (if have two method one crete and one failed
@@ -121,16 +120,8 @@ If we want use this annotation,so first added annotation to main class
 
 @Bean 
 -------------------------------------------------------------------------------
-If you want your table any colume not null then using blow dependency
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-validation</artifactId>
-</dependency>
-
-@NotBlank(message = "Account holder name cannot be blank")
-@Column(name = "account_holder_name", nullable = false, unique = true)
--------------------------------------------------------------------------------
-
+<<<<<<< HEAD
+>>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 API security
 @EnableWebSecurity
 

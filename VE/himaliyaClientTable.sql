@@ -27,11 +27,5 @@ Alter table adempiere.ad_role
 Alter table adempiere.pi_items_inout
 Add column processed character(1) NOT NULL DEFAULT 'N'::bpchar;
 ========================================================================================================
-WarePro Db Modify:-
-
-Alter table adempiere.ad_role
-Add column supervisorputaway character(1) NOT NULL DEFAULT 'N'::bpchar,
-Add column qccheckapp character(1) NOT NULL DEFAULT 'N'::bpchar,
-Add column labourputaway character(1) NOT NULL DEFAULT 'N'::bpchar;
-
-
+<<<<<<< HEAD
+>>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697

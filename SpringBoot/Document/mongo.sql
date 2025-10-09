@@ -44,7 +44,8 @@ Mongo Install:-
 Terminal through created manually collection:-
 * mongosh
 * use dbs
-* use journaldb
+<<<<<<< HEAD=======
+>>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 * db.createCollection("config_journal_app")
 * db.config_journal_app.insertOne({
   key: "theme",
