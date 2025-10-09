@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Light" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="65917b8c-9348-46c9-b775-a50ba5744fc5">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="FromDate" class="java.sql.Date"/>
+	<parameter name="ToDate" class="java.sql.Date"/>
+	<parameter name="RoomType" class="java.lang.String"/>
+	<parameter name="LightStatus" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT l.tc_light_id As id,l.lighton As lightOn,l.lightoff AS lightOff,l.created As Date,l.m_locatortype_id As RoomId,lt.name As Room,ls.name As lightStatus FROM adempiere.tc_light l
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+WHERE l.ad_client_id =  $P{AD_CLIENT_ID}   AND l.created >= $P{FromDate} 
+    AND l.created <= ($P{ToDate}::timestamp + INTERVAL '1 day')
+AND ($P{RoomType} IS NULL OR lt.name = $P{RoomType}) 
+AND  ($P{LightStatus}  IS NULL OR ls.name =  $P{LightStatus} ) order by l.m_locatortype_id,Date;]]>
+	</queryString>
+	<field name="id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="lighton" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lighton"/>
+		<property name="com.jaspersoft.studio.field.label" value="lighton"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="lightoff" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lightoff"/>
+		<property name="com.jaspersoft.studio.field.label" value="lightoff"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="roomid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="roomid"/>
+		<property name="com.jaspersoft.studio.field.label" value="roomid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_light"/>
+	</field>
+	<field name="room" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="room"/>
+		<property name="com.jaspersoft.studio.field.label" value="room"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locatortype"/>
+	</field>
+	<field name="lightstatus" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lightstatus"/>
+		<property name="com.jaspersoft.studio.field.label" value="lightstatus"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_lightstatus"/>
+	</field>
+	<group name="Room">
+		<groupExpression><![CDATA[$F{roomid}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="23" y="0" width="59" height="20" uuid="b00dd13b-a305-4207-a07a-04ba32b65a67">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="59" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="2" width="528" height="55" forecolor="#298F60" backcolor="#298F60" uuid="02e45dc2-d818-4fd3-b56f-3434c74fb36b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="3" y="5" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="16cae69e-4804-49cb-b620-f1bbf48c8c8d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Growth Room Light Sensor Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="324" y="35" width="81" height="20" forecolor="#FFFFFF" uuid="f379e439-7782-4170-b388-4781dc312a87">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Light Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="35" width="60" height="20" forecolor="#FFFFFF" uuid="011e8204-2ddf-4481-9cd7-f41e193ab744">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Time(H)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="35" width="60" height="20" forecolor="#FFFFFF" uuid="87cd9b40-fe20-48b1-88ee-d90f1660dbe1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Room]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="35" width="90" height="20" forecolor="#FFFFFF" uuid="bc364424-96af-4208-ae58-3de8eb9f2ddc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date & Time]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="127" y="0" width="86" height="20" uuid="8a3c1d79-72fb-40a5-9783-356f0b17c699">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="236" y="0" width="35" height="20" uuid="23fef526-4924-496b-88f1-e570d72e5a7e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{lighton}+" H"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="319" y="0" width="42" height="20" uuid="b4a7fcfe-6c30-4699-8c8c-9aca1d82a9d5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{lightstatus}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

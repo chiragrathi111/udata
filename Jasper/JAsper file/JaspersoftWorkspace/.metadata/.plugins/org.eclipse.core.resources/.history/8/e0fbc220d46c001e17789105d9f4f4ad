@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AustrakEx" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="99ada8b0-4bbd-4e02-8ef2-d830e3c01eb7">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT * FROM m_inout]]>
+	</queryString>
+	<field name="m_inout_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_inout_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_inout_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="issotrx" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="issotrx"/>
+		<property name="com.jaspersoft.studio.field.label" value="issotrx"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="documentno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="documentno"/>
+		<property name="com.jaspersoft.studio.field.label" value="documentno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="docaction" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="docaction"/>
+		<property name="com.jaspersoft.studio.field.label" value="docaction"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="docstatus" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="docstatus"/>
+		<property name="com.jaspersoft.studio.field.label" value="docstatus"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="posted" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="posted"/>
+		<property name="com.jaspersoft.studio.field.label" value="posted"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="processing" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="processing"/>
+		<property name="com.jaspersoft.studio.field.label" value="processing"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="processed" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="processed"/>
+		<property name="com.jaspersoft.studio.field.label" value="processed"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_doctype_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_doctype_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_doctype_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_order_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="dateordered" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateordered"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateordered"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isprinted" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isprinted"/>
+		<property name="com.jaspersoft.studio.field.label" value="isprinted"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="movementtype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="movementtype"/>
+		<property name="com.jaspersoft.studio.field.label" value="movementtype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="movementdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="movementdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="movementdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="dateacct" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateacct"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateacct"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_bpartner_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_location_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="m_warehouse_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_warehouse_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_warehouse_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="poreference" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="poreference"/>
+		<property name="com.jaspersoft.studio.field.label" value="poreference"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="deliveryrule" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="deliveryrule"/>
+		<property name="com.jaspersoft.studio.field.label" value="deliveryrule"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="freightcostrule" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="freightcostrule"/>
+		<property name="com.jaspersoft.studio.field.label" value="freightcostrule"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="freightamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="freightamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="freightamt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="deliveryviarule" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="deliveryviarule"/>
+		<property name="com.jaspersoft.studio.field.label" value="deliveryviarule"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="m_shipper_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_shipper_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_shipper_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_charge_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_charge_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_charge_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="chargeamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="chargeamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="chargeamt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="priorityrule" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="priorityrule"/>
+		<property name="com.jaspersoft.studio.field.label" value="priorityrule"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="dateprinted" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateprinted"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateprinted"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_invoice_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_invoice_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_invoice_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="createfrom" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createfrom"/>
+		<property name="com.jaspersoft.studio.field.label" value="createfrom"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="generateto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="generateto"/>
+		<property name="com.jaspersoft.studio.field.label" value="generateto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="sendemail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sendemail"/>
+		<property name="com.jaspersoft.studio.field.label" value="sendemail"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="ad_user_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="salesrep_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salesrep_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="salesrep_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="nopackages" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="nopackages"/>
+		<property name="com.jaspersoft.studio.field.label" value="nopackages"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="pickdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="pickdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="pickdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="shipdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="shipdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="shipdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="trackingno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="trackingno"/>
+		<property name="com.jaspersoft.studio.field.label" value="trackingno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="ad_orgtrx_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_orgtrx_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_orgtrx_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_project_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_project_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_project_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_campaign_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_campaign_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_campaign_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="c_activity_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_activity_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_activity_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="user1_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="user1_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="user1_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="user2_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="user2_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="user2_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="datereceived" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="datereceived"/>
+		<property name="com.jaspersoft.studio.field.label" value="datereceived"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isintransit" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isintransit"/>
+		<property name="com.jaspersoft.studio.field.label" value="isintransit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="ref_inout_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ref_inout_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ref_inout_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="createconfirm" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createconfirm"/>
+		<property name="com.jaspersoft.studio.field.label" value="createconfirm"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="createpackage" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createpackage"/>
+		<property name="com.jaspersoft.studio.field.label" value="createpackage"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isapproved" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isapproved"/>
+		<property name="com.jaspersoft.studio.field.label" value="isapproved"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isindispute" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isindispute"/>
+		<property name="com.jaspersoft.studio.field.label" value="isindispute"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="volume" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="volume"/>
+		<property name="com.jaspersoft.studio.field.label" value="volume"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="weight" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="weight"/>
+		<property name="com.jaspersoft.studio.field.label" value="weight"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="m_rma_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_rma_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_rma_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="reversal_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="reversal_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="reversal_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isdropship" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdropship"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdropship"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="dropship_bpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dropship_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="dropship_bpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="dropship_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dropship_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="dropship_location_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="dropship_user_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dropship_user_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="dropship_user_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="processedon" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="processedon"/>
+		<property name="com.jaspersoft.studio.field.label" value="processedon"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="m_inout_uu" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_inout_uu"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_inout_uu"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="freightcharges" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="freightcharges"/>
+		<property name="com.jaspersoft.studio.field.label" value="freightcharges"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="shipperaccount" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="shipperaccount"/>
+		<property name="com.jaspersoft.studio.field.label" value="shipperaccount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="insurance" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="insurance"/>
+		<property name="com.jaspersoft.studio.field.label" value="insurance"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="fob" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fob"/>
+		<property name="com.jaspersoft.studio.field.label" value="fob"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="isalternatereturnaddress" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isalternatereturnaddress"/>
+		<property name="com.jaspersoft.studio.field.label" value="isalternatereturnaddress"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="returnbpartner_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="returnbpartner_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnbpartner_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="returnlocation_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="returnlocation_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnlocation_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="returnuser_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="returnuser_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="returnuser_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="createlinesfrom" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createlinesfrom"/>
+		<property name="com.jaspersoft.studio.field.label" value="createlinesfrom"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<field name="createreturntrx" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createreturntrx"/>
+		<property name="com.jaspersoft.studio.field.label" value="createreturntrx"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inout"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

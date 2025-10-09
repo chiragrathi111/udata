@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+  <name>New Data Adapter</name>
+  <driver>org.postgresql.Driver</driver>
+  <username>adempiere</username>
+  <password>adempiere</password>
+  <url>jdbc:postgresql://localhost:5432/idempiere</url>
+  <database/>
+  <savePassword>true</savePassword>
+  <serverAddress/>
+</jdbcDataAdapter>

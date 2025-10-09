@@ -11,3 +11,10 @@ Why are use psql and pg_restore
 scp -i "pemFile/democ.pem" ubuntu@13.235.255.17:/home/ubuntu/datavinayNew.dmp /home/chirag/
 
 pg_dump -U adempiere -W vinayERP > /root/vinaydatas.dmp
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+I we want condition value like first value null 
+then data getting second value not showing any null return:-
+# COALESCE(t.user_timestamp, t.created) 
+is a simple function that checks the first argument and returns the second 
+only if the first is NULL

@@ -4,10 +4,12 @@ command to send file to server
 scp -i /home/mahe/Downloads/democ.pem /home/mahe/pipra/wms/3DLayout/3DLayoutDemoInstance.zip ubuntu@3.7.97.129:/home/ubuntu/repos
 
 command to run in server:
- nohup npx serve . &
+node 14 req.
+npx serve . (local)
+ nohup npx serve . & (server side)
 
 
-
+================================================
 // values in this format: [x, y, z, w, h, color, name, isOpen]
             [-35, -3, 7, 15, 5, 0xc0d6e4, 'Storage1', true],
             [-37, -3, 13, 11, 5, 0xc39797, 'Storage2', true],

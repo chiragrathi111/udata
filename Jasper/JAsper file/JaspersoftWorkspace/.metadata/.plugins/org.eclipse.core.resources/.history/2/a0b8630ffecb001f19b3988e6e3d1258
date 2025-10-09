@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rwplLocator" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="0" uuid="98787f9d-a45c-45eb-9193-fef3976a8973">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="rwpl.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select * from adempiere.m_locator  
+where ad_client_id =  $P{AD_CLIENT_ID} and m_locator_id =  $P{RECORD_ID}]]>
+	</queryString>
+	<field name="m_locator_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_locator_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_locator_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="m_warehouse_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_warehouse_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_warehouse_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="priorityno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="priorityno"/>
+		<property name="com.jaspersoft.studio.field.label" value="priorityno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="isdefault" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="x" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="x"/>
+		<property name="com.jaspersoft.studio.field.label" value="x"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="y" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="y"/>
+		<property name="com.jaspersoft.studio.field.label" value="y"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="z" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="z"/>
+		<property name="com.jaspersoft.studio.field.label" value="z"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="m_locator_uu" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_locator_uu"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_locator_uu"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="m_locatortype_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_locatortype_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_locatortype_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="718" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement x="5" y="0" width="579" height="650" uuid="4bfcbad6-f60f-4ef9-8f93-f0d9eb13226f"/>
+			</rectangle>
+			<textField>
+				<reportElement x="20" y="7" width="554" height="73" uuid="e1122197-dcf8-4c53-bab4-10018b3a0c88"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="40" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Locator Name : " + $F{value}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="93" width="553" height="43" uuid="c7cf1aca-f06c-4e2c-b287-72cf9cd1aab5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Locator ID : " + $F{m_locator_id}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="11" y="94" width="563" height="546" uuid="cfc18f42-b29d-44b5-9f23-90a9de2a93fe">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" qrVersion="1">
+					<jr:codeExpression><![CDATA[$F{m_locator_id}]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

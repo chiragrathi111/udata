@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="userMulti" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9c858a62-fa2b-46f2-9dab-da8611061004">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TissueServer.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<queryString>
+		<![CDATA[SELECT f.name AS farmerName, encode(a.binarydata,'base64') AS image_binarydata 
+FROM adempiere.ad_attachment a
+JOIN adempiere.tc_farmer f ON f.tc_farmer_id = a.record_id
+WHERE a.ad_table_id = 1000001 AND a.binarydata IS NOT NULL;
+]]>
+	</queryString>
+	<field name="farmername" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="farmername"/>
+		<property name="com.jaspersoft.studio.field.label" value="farmername"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_farmer"/>
+	</field>
+	<field name="image_binarydata" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="image_binarydata"/>
+		<property name="com.jaspersoft.studio.field.label" value="image_binarydata"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="280" height="30" uuid="55233135-7c2b-4a0a-bd09-92a8c2e8b6bc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Farmer Name:-]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="128" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="20" width="270" height="50" uuid="f42ae7a4-b357-40bd-b29e-e5bb79aced15"/>
+				<textElement>
+					<font size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{farmername}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="370" y="2" width="112" height="118" uuid="053c6862-4499-4117-8a04-42ecb5c169de"/>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.getInstance(new SimpleJasperReportsContext()).loadAwtImageFromBytes(javax.xml.bind.DatatypeConverter.parseBase64Binary($F{image_binarydata}))]]></imageExpression>
+			</image>
+			<line>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="127" width="555" height="1" forecolor="#000000" uuid="07077ebb-d0e8-4a7a-9668-24eac515da12"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

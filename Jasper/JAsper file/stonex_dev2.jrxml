@@ -1,0 +1,211 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="stonex_dev2" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3bfab1f1-5726-4249-9fbd-1f824dec4bf4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="stonex dev"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<query language="sql"><![CDATA[SELECT 
+    pr.pi_report_ID AS report_id,
+    pr.projecttitle AS project_title,
+    pr.reporttitle AS report_title,
+    pr.status AS report_status,
+    
+    prt.pi_report_task_ID AS task_id,
+    prt.name AS task_name,
+    prt.description AS task_description,
+    prt.status AS task_status,
+    
+    prs.pi_report_subtask_ID AS subtask_id,
+    prs.name AS subtask_name,
+    prs.description AS subtask_description,
+    prs.status AS subtask_status,
+    prs.assignedto AS subtask_assigned_to,
+    u.name AS assigned_user_name,
+    
+    prsf.inspection AS inspection_number,
+    
+    prsf.pi_report_subtask_field_ID AS field_id,
+    prsf.name AS field_name,
+    prsf.description AS field_description,
+    prsf.labelname AS field_label,
+    prsf.helptext AS field_help,
+    prsf.isrequired AS field_required,
+    prsf.stepno AS step_number,
+    prsf.stepname AS step_name
+    
+FROM adempiere.pi_report pr
+JOIN adempiere.pi_report_task prt ON pr.pi_report_ID = prt.pi_report_ID
+JOIN adempiere.pi_report_subtask prs ON prt.pi_report_task_ID = prs.pi_report_task_ID
+JOIN adempiere.pi_report_subtask_field prsf ON prs.pi_report_subtask_ID = prsf.pi_report_subtask_ID
+LEFT JOIN adempiere.ad_user u ON prs.assignedto = u.ad_user_id
+
+WHERE  pr.pi_report_id =1000047
+
+ORDER BY 
+    pr.pi_report_ID,
+    prt.pi_report_task_ID,
+    prs.pi_report_subtask_ID,
+    prsf.inspection,
+    prsf.stepno,
+    prsf.pi_report_subtask_field_ID]]></query>
+	<field name="report_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="report_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="report_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report"/>
+	</field>
+	<field name="project_title" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="project_title"/>
+		<property name="com.jaspersoft.studio.field.label" value="project_title"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report"/>
+	</field>
+	<field name="report_title" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="report_title"/>
+		<property name="com.jaspersoft.studio.field.label" value="report_title"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report"/>
+	</field>
+	<field name="report_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="report_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="report_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report"/>
+	</field>
+	<field name="task_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="task_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="task_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_task"/>
+	</field>
+	<field name="task_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="task_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="task_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_task"/>
+	</field>
+	<field name="task_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="task_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="task_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_task"/>
+	</field>
+	<field name="task_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="task_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="task_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_task"/>
+	</field>
+	<field name="subtask_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="subtask_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="subtask_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask"/>
+	</field>
+	<field name="subtask_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="subtask_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="subtask_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask"/>
+	</field>
+	<field name="subtask_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="subtask_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="subtask_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask"/>
+	</field>
+	<field name="subtask_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="subtask_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="subtask_status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask"/>
+	</field>
+	<field name="subtask_assigned_to" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="subtask_assigned_to"/>
+		<property name="com.jaspersoft.studio.field.label" value="subtask_assigned_to"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask"/>
+	</field>
+	<field name="assigned_user_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assigned_user_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="assigned_user_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="inspection_number" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="inspection_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="inspection_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="field_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="field_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="field_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="field_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="field_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="field_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="field_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="field_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="field_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="field_label" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="field_label"/>
+		<property name="com.jaspersoft.studio.field.label" value="field_label"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="field_help" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="field_help"/>
+		<property name="com.jaspersoft.studio.field.label" value="field_help"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="field_required" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="field_required"/>
+		<property name="com.jaspersoft.studio.field.label" value="field_required"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="step_number" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="step_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="step_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<field name="step_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="step_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="step_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_report_subtask_field"/>
+	</field>
+	<group name="Group1">
+		<expression><![CDATA[$F{task_id}]]></expression>
+		<groupHeader>
+			<band height="116">
+				<element kind="textField" uuid="38d802c2-afd0-4ad2-8f05-66cd15714d02" x="195" y="23" width="260" height="30">
+					<expression><![CDATA[$F{task_name} + $F{task_id}]]></expression>
+				</element>
+				<element kind="break" uuid="d5e8f53f-735b-4a4f-85a9-a60a04ed9d9c" x="0" y="64" width="100" height="1"/>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group2">
+		<expression><![CDATA[$F{subtask_id}]]></expression>
+		<groupHeader>
+			<band height="115">
+				<element kind="textField" uuid="ce71eb5b-f72e-466e-96bf-e8938b424e61" x="205" y="20" width="378" height="30">
+					<expression><![CDATA[$F{subtask_name} + $F{subtask_id}]]></expression>
+				</element>
+				<element kind="break" uuid="9cd3af5e-1c56-4753-9fe4-e74b7bbe0cb7" x="0" y="70" width="100" height="1"/>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group3">
+		<expression><![CDATA[$F{inspection_number}]]></expression>
+		<groupHeader>
+			<band height="104">
+				<element kind="textField" uuid="da7f0075-1edf-4c2a-a011-b28cafd051ab" x="294" y="6" width="100" height="30">
+					<expression><![CDATA[$F{inspection_number}]]></expression>
+				</element>
+				<element kind="break" uuid="fea14db5-2d64-40a2-aec2-c4125d17e146" x="0" y="62" width="100" height="1"/>
+			</band>
+		</groupHeader>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="79" splitType="Stretch">
+		<element kind="textField" uuid="23fdc133-00e0-4e8f-a641-a367f7407f27" x="320" y="24" width="100" height="30">
+			<expression><![CDATA[$F{report_title}]]></expression>
+		</element>
+		<element kind="break" uuid="17e036d9-8203-499c-b48e-74e766c41fde" x="0" y="55" width="100" height="1"/>
+	</title>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<element kind="textField" uuid="837a1e44-79f6-4462-997b-cd22ce71a771" x="221" y="30" width="100" height="30">
+				<expression><![CDATA[$F{field_name}]]></expression>
+			</element>
+		</band>
+	</detail>
+</jasperReport>

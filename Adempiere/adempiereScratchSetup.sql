@@ -88,7 +88,18 @@ Fro Vinay Electricals:-
 
 	scp -i "Downloads/democ.pem" ubuntu@3.28.239.34:/home/ubuntu/stonex_template.dmp /home/chirag/
 
-	
+	===================================
+	Delete DB:-
+	DROP DATABASE idempiere2;
+
+
+	if getting error run below command:-
+	SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = 'rwpl_prod'
+  AND pid <> pg_backend_pid();
+
+	====================================	
 
 Server to Local copy:-
 scp -i "pemFile/democ.pem" ubuntu@13.235.255.17:/home/ubuntu/dataveN.dmp /home/chirag/

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_8" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1d0f59b1-0b58-4312-8acd-466d9c8abbf7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="aint" class="java.math.BigDecimal"/>
+	<queryString language="SQL">
+		<![CDATA[select tc_planttag_id As plantId,c_uuid as plantUUId 
+from adempiere.tc_planttag 
+where ad_client_id =  $P{AD_CLIENT_ID}  
+order by tc_planttag_id desc LIMIT  $P{aint}]]>
+	</queryString>
+	<field name="plantid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="plantid"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="plantuuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="plantuuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantuuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="540" height="69" forecolor="#298F60" backcolor="#298F60" uuid="e07c02a3-a5d5-4d3f-bbf6-9b1829b9a8eb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="4" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="15621c0f-c02e-4ac8-bc79-b103af0f8f2f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plant Tag List]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="34" width="86" height="30" forecolor="#FFFFFF" uuid="e0fec12e-9926-4ed9-ac40-33d94942725e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plant Tag ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="112" y="34" width="200" height="30" forecolor="#FFFFFF" uuid="70e65f4d-860a-4cc2-bd11-1286ec4302e9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plant Tag UUID]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="392">
+			<componentElement>
+				<reportElement x="38" y="19" width="438" height="372" uuid="b2e0487d-7ec7-457f-a5a5-6f43139f76d0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["{"  +
+  "\"Id\": \"" + $F{plantid} + "\"," +
+  "\"PlantTagUUId\": \"" + $F{plantuuid}+ "\"" +
+"}"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="0" y="32" width="80" height="30" uuid="17935410-c3e7-4f6f-88d2-2275be7f9343">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plantid}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="80" y="32" width="340" height="30" uuid="7d51dcf7-b0b1-478b-be6d-294e59a84b36">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plantuuid}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

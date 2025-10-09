@@ -205,27 +205,27 @@ This below query remove c_invoice records:-
 
 UPDATE adempiere.c_invoice
 SET docstatus = 'DR', docaction = 'CO', processed = 'N'
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 -- 2. Delete dependent records
 DELETE FROM adempiere.c_invoiceline
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 DELETE FROM adempiere.c_allocationline
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 DELETE FROM adempiere.c_invoicetax
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 UPDATE adempiere.c_invoice
 SET c_payment_id = NULL
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 
 DELETE FROM adempiere.c_payment
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 -- 3. Delete the invoice itself
 DELETE FROM adempiere.c_invoice
-WHERE c_invoice_id BETWEEN 1000000 AND 1001500;
+WHERE c_invoice_id BETWEEN 1000027 AND 1000030;
 ===============================================================================================================
 m_inout
 
@@ -383,6 +383,185 @@ WHERE m_inout_id BETWEEN 1000000 AND 1001500;
 -- 5. Validate the cleanup
 SELECT * FROM adempiere.m_inout WHERE m_inout_id = 1000028;
 SELECT * FROM adempiere.m_inoutline WHERE m_inout_id = 1000028;
+
+{
+This is for vinay & RWPL
+DELETE FROM adempiere.m_packline
+WHERE m_inoutline_id = 1000546;
+
+DELETE FROM adempiere.pi_productlabel
+WHERE m_inoutline_id = 1000546;}
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Facing Issue:-
+UPDATE adempiere.m_inout
+SET docstatus = 'DR', docaction = 'CO', processed = 'N'
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- 1. Delete dependent records from M_Transaction
+DELETE FROM adempiere.m_transaction
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+-- 2. Delete dependent records from M_InOutLineMA
+DELETE FROM adempiere.m_inoutlinema
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_matchpo
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_matchinv
+WHERE c_invoiceline_id IN (
+    SELECT c_invoiceline_id
+    FROM adempiere.c_invoiceline
+    WHERE m_inoutline_id BETWEEN 1000000 AND 1001500
+);
+
+DELETE FROM adempiere.m_costhistory
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id
+    FROM adempiere.m_costdetail
+    WHERE c_invoiceline_id IN (
+        SELECT c_invoiceline_id
+        FROM adempiere.c_invoiceline
+        WHERE m_inoutline_id IN (
+            SELECT m_inoutline_id
+            FROM adempiere.m_inoutline
+            WHERE m_inout_id BETWEEN 1000000 AND 1001500
+        )
+    )
+);
+
+-- 2. Delete cost detail
+DELETE FROM adempiere.m_costdetail
+WHERE c_invoiceline_id IN (
+    SELECT c_invoiceline_id
+    FROM adempiere.c_invoiceline
+    WHERE m_inoutline_id IN (
+        SELECT m_inoutline_id
+        FROM adempiere.m_inoutline
+        WHERE m_inout_id BETWEEN 1000000 AND 1001500
+    )
+);
+
+-- 3. Delete match invoice
+DELETE FROM adempiere.m_matchinv
+WHERE c_invoiceline_id IN (
+    SELECT c_invoiceline_id
+    FROM adempiere.c_invoiceline
+    WHERE m_inoutline_id IN (
+        SELECT m_inoutline_id
+        FROM adempiere.m_inoutline
+        WHERE m_inout_id BETWEEN 1000000 AND 1001500
+    )
+);
+
+-- 4. Delete invoice lines
+DELETE FROM adempiere.c_invoiceline
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id
+    FROM adempiere.m_inoutline
+    WHERE m_inout_id BETWEEN 1000000 AND 1001500
+);
+
+-- 5. Finally delete inout lines
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.c_invoiceline
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+-- 3. Delete dependent M_InOutLine records
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- 4. Delete the main M_InOut record
+DELETE FROM adempiere.m_inout
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+select * from adempiere.m_inout
+where ad_client_id = 1000002
+
+DELETE FROM adempiere.m_costhistory
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id FROM adempiere.m_costdetail
+    WHERE m_inoutline_id BETWEEN 1000004 AND 1000999
+);
+
+
+DELETE FROM adempiere.m_costhistory
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id
+    FROM adempiere.m_costdetail
+    WHERE m_inoutline_id BETWEEN 1000000 AND 1001500
+);
+
+DELETE FROM adempiere.m_costdetail
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+SELECT rma.*
+FROM adempiere.m_rmaline rma
+WHERE rma.m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+DELETE FROM adempiere.m_rmaline
+WHERE m_inoutline_id BETWEEN 1000000 AND 1001500;
+
+-- Step 1: Delete RMA lines
+DELETE FROM adempiere.m_rmaline
+WHERE m_rma_id IN (
+    SELECT m_rma_id FROM adempiere.m_rma
+    WHERE m_inout_id BETWEEN 1000000 AND 1001500
+);
+
+-- Step 2: Delete RMA
+DELETE FROM adempiere.m_rma
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- Step 3: Delete Cost Details
+DELETE FROM adempiere.m_costdetail
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id FROM adempiere.m_inoutline
+    WHERE m_inout_id BETWEEN 1000000 AND 1001500
+);
+
+-- Step 4: Delete InOut Lines
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- Step 5: Delete InOut Header
+DELETE FROM adempiere.m_inout
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+SELECT *
+FROM adempiere.m_rma
+WHERE m_inout_id = 1000005;
+
+-- 1. Delete dependent RMA Taxes
+DELETE FROM adempiere.m_rmatax
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- 2. Delete dependent RMA Lines
+DELETE FROM adempiere.m_rmaline
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- 3. Delete RMAs
+DELETE FROM adempiere.m_rma
+WHERE m_rma_id BETWEEN 1000000 AND 1001500;
+
+-- 4. Delete InOut Lines (if needed)
+DELETE FROM adempiere.m_inoutline
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+-- 5. Delete InOut
+DELETE FROM adempiere.m_inout
+WHERE m_inout_id BETWEEN 1000000 AND 1001500;
+
+
+
+
+
 
 =======================================================================================================
 c_order table :-
@@ -679,7 +858,105 @@ WHERE ad_client_id = 1000002;
 
 
 
+==============================================================================================================================================
+Sales Plan Windows:-
 
+DELETE FROM adempiere.pi_salesplan
+WHERE pi_salesplan_ID  = 1000068;
+
+DELETE FROM adempiere.pi_salesplanline
+WHERE pi_salesplan_ID  = 1000068;
+
+DELETE FROM adempiere.pi_planitem
+WHERE pi_salesplanline_ID  = 1000081;
+
+
+====================================================
+UPDATE adempiere.pi_paorder
+SET processed = 'N'
+WHERE pi_paorder_id = 1000448;
+
+-- 2. Delete child records first
+DELETE FROM adempiere.pi_paorderreceiveqty
+WHERE pi_paorder_id = 1000448;
+
+DELETE FROM adempiere.pi_paorderpackingqty
+WHERE pi_paorder_id = 1000448;
+
+DELETE FROM adempiere.pi_productlabel
+WHERE pi_paorder_id = 1000448;
+
+-- 3. Delete the parent record
+DELETE FROM adempiere.pi_paorder
+WHERE pi_paorder_id = 1000448;
+
+==============================================================================================================================================
+Deleted Role and User:-
+
+select * from adempiere.ad_role where ad_client_id = 1000000 and name = 'RM-Wire Supervisor'
+
+DELETE FROM adempiere.ws_webservicetypeaccess
+WHERE ad_role_id = 1000014;
+
+DELETE FROM adempiere.ad_changelog
+WHERE ad_session_id IN (
+    SELECT ad_session_id
+    FROM adempiere.ad_session
+    WHERE ad_role_id = 1000014
+);
+DELETE FROM adempiere.ad_session
+WHERE ad_role_id = 1000014;
+
+DELETE FROM adempiere.pa_dashboardpreference
+WHERE ad_role_id = 1000014;
+
+delete from adempiere.ad_role
+where ad_role_id = 1000014;
+--------------------------------------
+User:-
+select * from adempiere.ad_user where ad_client_id = 1000000 and name = 'srikant'
+
+UPDATE adempiere.pi_productlabel
+SET createdby = 1000002,
+    updatedby = 1000002
+WHERE createdby = 1000004
+   OR updatedby = 1000004;
+
+UPDATE adempiere.pi_orderreceipt
+SET createdby = 1000002,
+    updatedby = 1000002
+WHERE createdby = 1000004
+   OR updatedby = 1000004;   
+
+UPDATE adempiere.pi_paorder
+SET createdby = 1000002,
+    updatedby = 1000002
+WHERE createdby = 1000004
+   OR updatedby = 1000004;    
+
+DELETE FROM adempiere.pi_usertoken 
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_preference WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_note
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_tree_favorite 
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.ad_user_orgaccess
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.pa_dashboardpreference
+WHERE ad_user_id = 1000004;
+
+DELETE FROM adempiere.m_storagereservationlog
+WHERE createdby = 1000004;
+
+DELETE FROM adempiere.ad_user 
+WHERE ad_user_id = 1000004;
+   
 ==============================================================================================================================================
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ==============================================================================================================================================
@@ -810,6 +1087,12 @@ One Api created deletd all Tissue Culture Data:-
             String sqlUpdateMediaOrder = "UPDATE adempiere.TC_MediaOrder SET docstatus = 'DR', docaction = 'CO', processed = 'N' WHERE AD_Client_ID = ?";
             String sqlDeleteMediaLine = "DELETE FROM adempiere.TC_MediaLine WHERE TC_MediaOrder_id IN (SELECT TC_MediaOrder_id FROM adempiere.TC_MediaOrder WHERE AD_Client_ID = ?)";
             String sqlDeleteMediaOrder = "DELETE FROM adempiere.TC_MediaOrder WHERE AD_Client_ID = ?";
+
+            DELETE FROM adempiere.TC_MediaLabelQR WHERE tc_medialine_id = 1000442;
+
+-- Then delete the parent
+DELETE FROM adempiere.TC_MediaLine WHERE TC_MediaLine_id = 1000442;
+
             
             DB.executeUpdateEx(sqlDeleteMediaLabelQR, new Object[]{client_id}, trxName);
             DB.executeUpdateEx(sqlUpdateMediaOrder, new Object[]{client_id}, trxName);

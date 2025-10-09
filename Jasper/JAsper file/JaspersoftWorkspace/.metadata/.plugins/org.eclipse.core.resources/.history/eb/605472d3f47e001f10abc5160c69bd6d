@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+  <name>Tissue New DB</name>
+  <driver>org.postgresql.Driver</driver>
+  <username>tissueData</username>
+  <password>adempiere</password>
+  <url>jdbc:postgresql://localhost:5432/database/</url>
+  <database></database>
+  <savePassword>true</savePassword>
+  <serverAddress></serverAddress>
+</jdbcDataAdapter>

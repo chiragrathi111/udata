@@ -1,11 +1,12 @@
 #!/bin/bash
+sudo su
 sudo apt-get upgrade -y
 sudo apt update -y
 sudo apt install apache2 -y
 sudo systemctl enable apache2
 sudo chmod 777 /var/www
 sudo chmod 777 /var/www/html/index.html
-echo "Hello World CHIRAG RATHI  OM from $(hostname -f)" > /var/www/html/index.html
+echo "Hello World CHIRAG RATHI Server Ip from $(hostname -f)" > /var/www/html/index.html
 
 //aws mai vertical scale up easy process hai:-
 1 stop ec2 instances

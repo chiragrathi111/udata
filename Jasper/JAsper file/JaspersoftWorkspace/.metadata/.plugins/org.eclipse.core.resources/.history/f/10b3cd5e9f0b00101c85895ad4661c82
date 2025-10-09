@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StonexL" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ec4802ec-43d2-42d9-bf63-8b607d9640d0">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<parameter name="Background_color" class="java.lang.String" isForPrompting="false"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="report_title" class="java.lang.String"/>
+	<field name="report_binarydata" class="byte[]"/>
+	<field name="report_id" class="java.lang.Integer"/>
+	<field name="task_title" class="java.lang.String"/>
+	<field name="task_binarydata" class="byte[]"/>
+	<field name="subtask_id" class="java.lang.Integer"/>
+	<field name="subtask_title" class="java.lang.String"/>
+	<field name="subtask_binarydata" class="byte[]"/>
+	<field name="inspection" class="java.lang.Integer"/>
+	<field name="field_name" class="java.lang.String"/>
+	<field name="field_binarydata" class="byte[]"/>
+	<field name="task_id" class="java.lang.Integer"/>
+	<field name="field_comments" class="java.lang.String"/>
+	<field name="field_config" class="java.lang.String"/>
+	<field name="stonex_icon" class="byte[]"/>
+	<field name="report_address" class="java.lang.String"/>
+	<field name="report_date" class="java.lang.String"/>
+	<field name="report_createdby" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="project_title" class="java.lang.String"/>
+	<field name="color" class="java.lang.String"/>
+	<group name="Report">
+		<groupExpression><![CDATA[$F{report_id}]]></groupExpression>
+		<groupHeader>
+			<band height="534">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="0" width="792" height="467" uuid="3780f8f3-cf89-494c-aec9-a51c03f2c1ef"/>
+					<imageExpression><![CDATA[$F{report_binarydata}]]></imageExpression>
+				</image>
+				<break>
+					<reportElement x="0" y="508" width="100" height="1" uuid="f556def2-c5b3-4d01-8be4-692c011f2c3a"/>
+				</break>
+				<rectangle>
+					<reportElement x="220" y="110" width="340" height="190" uuid="2d95f797-bdfe-4daf-bc76-3fd55f3be111"/>
+				</rectangle>
+				<textField>
+					<reportElement x="220" y="110" width="340" height="70" uuid="d7db569b-10ff-4a44-85be-36a98815135e"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{report_title}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="220" y="180" width="340" height="40" uuid="5e2b0042-273b-4d1e-854f-fbb008390623"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="20" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{report_address}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="220" y="220" width="340" height="20" uuid="f3d5b599-c169-4615-a39e-52d185efd897"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{report_date}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="220" y="248" width="340" height="24" forecolor="#F8B200" uuid="28d8ce61-771f-4e36-8786-1436b93bf934"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="15" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Report prepared by]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="220" y="272" width="340" height="28" forecolor="#F8B200" uuid="58ceb6b7-3339-4e34-b5b3-c7168ffcc616"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="15" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{report_createdby}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement key="" mode="Opaque" x="0" y="468" width="591" height="40" uuid="de313401-ba51-4b1d-ade0-f8bd128eb4f9">
+						<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$P{Background_color}]]></propertyExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="592" y="470" width="200" height="37" uuid="bce16e24-b90d-489d-aa40-a0aee0937019">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA[$F{stonex_icon}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="468" width="200" height="19" uuid="3fb0b424-4360-4a55-b593-5425bf3390b4">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Client: "+$F{client_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="487" width="200" height="19" uuid="b31719de-7436-41d6-a926-0e48b6bc2489">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Project: "+$F{project_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Task">
+		<groupExpression><![CDATA[$F{task_id}]]></groupExpression>
+		<groupHeader>
+			<band height="508">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="42" width="791" height="395" uuid="ae7c3d2c-8dba-40d5-a12a-2b0bf79644db"/>
+					<imageExpression><![CDATA[$F{task_binarydata}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="0" y="2" width="791" height="40" uuid="22cfc9f0-96d8-45b8-b365-0327c2b2a56c"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{task_title}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="fab2f960-95c3-414d-8aad-6fd3d40687bf"/>
+				</break>
+				<rectangle>
+					<reportElement key="" mode="Opaque" x="-1" y="437" width="593" height="40" uuid="8728757a-306b-4bf1-92f4-e99f3ea35bb5">
+						<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$P{Background_color}]]></propertyExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="591" y="440" width="200" height="37" uuid="7685fe68-0626-418b-b75f-63b3c6666031">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA[$F{stonex_icon}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="438" width="200" height="19" uuid="287c68ab-e0a8-45dc-91a7-3df8779df24d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Client: "+$F{client_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="457" width="200" height="19" uuid="a0ee7890-e17b-4b1a-ae8f-fec957794ffb">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Project: "+$F{project_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Subtask">
+		<groupExpression><![CDATA[$F{subtask_id}]]></groupExpression>
+		<groupHeader>
+			<band height="508">
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="0" y="40" width="791" height="398" uuid="de88c032-b1fb-42ef-9783-6bc06905f464"/>
+					<imageExpression><![CDATA[$F{subtask_binarydata}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="0" y="0" width="791" height="40" uuid="3c0745b4-642d-438a-8c67-7886e8f13b1d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{subtask_title}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="2e1ebca4-4c0d-4ed2-ab4a-fc1999727a73"/>
+				</break>
+				<rectangle>
+					<reportElement key="" mode="Opaque" x="0" y="438" width="592" height="40" uuid="7132917e-85d1-4248-b775-8996bb61744d">
+						<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$P{Background_color}]]></propertyExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="592" y="441" width="200" height="37" uuid="a03f74e5-65cf-46f3-a1dc-c4e705483d7f">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA[$F{stonex_icon}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="439" width="200" height="19" uuid="282f99a3-bd03-4554-9bab-dcdc9d41c33d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Client: "+$F{client_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="458" width="200" height="19" uuid="a639c42e-5953-4599-aa1c-a2942058bbd8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Project: "+$F{project_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Inspection">
+		<groupExpression><![CDATA[$F{inspection}]]></groupExpression>
+		<groupHeader>
+			<band height="508">
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="20" y="61" width="791" height="396" uuid="5bb27183-ff99-4a42-ac76-186fb7852c4a"/>
+					<imageExpression><![CDATA[""]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="0" y="0" width="791" height="40" uuid="1617749f-bec6-4ef0-a2ad-2d05142a1b9c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="30" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{inspection}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="480" width="100" height="1" uuid="a694839e-bfe0-4f06-a5f0-513e89b52d17"/>
+				</break>
+				<rectangle>
+					<reportElement x="0" y="436" width="592" height="40" uuid="db46a48b-a4a9-473f-8e5e-d99a3ed6685e"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$P{Background_color}]]></propertyExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<image scaleImage="FillFrame" onErrorType="Blank">
+					<reportElement x="592" y="439" width="200" height="37" uuid="e257895f-af7a-41dc-8938-e46ce2ee1fc2">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA[$F{stonex_icon}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="10" y="438" width="200" height="19" uuid="3856574f-cba0-4e44-a942-7128ee5df2f5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Client: "+$F{client_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="457" width="200" height="19" uuid="350b8bcf-df09-4bae-b53a-400458c1318e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Project: "+$F{project_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="519" splitType="Stretch">
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement x="50" y="50" width="530" height="440" uuid="c8fe2147-95ee-4e67-8e6c-44e5f5a439a2"/>
+				<imageExpression><![CDATA[$F{field_binarydata}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="53" y="60" width="520" height="430" uuid="5a8d92c3-1953-4e41-a439-fcc9daa8e4d9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="25" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{field_config}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="515" width="100" height="1" uuid="fa77645d-5b75-4d9a-989d-590c62e133e6"/>
+			</break>
+			<rectangle>
+				<reportElement x="600" y="40" width="180" height="360" uuid="5e129e1e-3aa9-4f56-bc02-fbc2cc0f9cfa"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="640" y="0" width="182" height="40" backcolor="#F8B200" uuid="12bc778c-54fe-40bf-9951-91a773155320"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="779" y="40" width="43" height="80" forecolor="#F7CE00" backcolor="#F7CE00" uuid="c16423d3-fdde-48f2-a912-53b1ad4e24ba"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="780" y="120" width="43" height="80" forecolor="#FCDC3D" backcolor="#FCDC3D" uuid="fcb6ddf9-44bc-4805-b404-cd38bd41ce5d"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="780" y="200" width="43" height="80" forecolor="#FCE779" backcolor="#FCE779" uuid="7f90e22c-c1c0-464d-a0f9-3a59753b11b8"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="620" y="60" width="130" height="30" uuid="0e0355eb-a198-4ea8-9c97-769fc3db87ad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comments:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="610" y="110" width="160" height="280" uuid="4106efb5-40ee-4d39-9066-31dd46336983"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{field_comments}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement x="610" y="480" width="200" height="37" uuid="8f47f65c-d138-4958-b19d-bc9490d685a6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{stonex_icon}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

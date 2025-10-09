@@ -1,0 +1,3214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://idempiere.org/ADInterface/1_0"
+  xmlns:tns="http://idempiere.org/ADInterface/1_0"
+  elementFormDefault="qualified">
+
+   <xsd:element name="WindowTabData" type="tns:WindowTabData"/>
+
+   <xsd:complexType name="WindowTabData">
+   	<xsd:sequence>
+   		<xsd:element name="DataSet" type="tns:DataSet" minOccurs="0" maxOccurs="1"/>
+   		<xsd:element name="RowCount" type="xsd:int" minOccurs="0" maxOccurs="1"/>   		
+   		<xsd:element name="Success" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+   		<xsd:element name="Error" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   		<xsd:element name="ErrorInfo" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   		<xsd:element name="Status" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   		<xsd:element name="StatusError" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+   	</xsd:sequence>
+   	<xsd:attribute name="NumRows" type="xsd:int" />
+   	<xsd:attribute name="TotalRows" type="xsd:int" />   	
+   	<xsd:attribute name="StartRow" type="xsd:int" />    	
+   </xsd:complexType>
+
+   <xsd:complexType name="DataSet">
+   	<xsd:sequence>
+   		<xsd:element name="DataRow" type="tns:DataRow" minOccurs="0" maxOccurs="unbounded"/>
+   	</xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="DataRow">
+   	<xsd:sequence>
+   		<xsd:element name="field" type="tns:DataField" minOccurs="0" maxOccurs="unbounded"/>
+   	</xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="DataField">
+   	<xsd:sequence>
+ 	  		<xsd:element name="val" type="xsd:string" />
+ 	  		<xsd:element name="lookup" type="tns:LookupValues" minOccurs="0" maxOccurs="1"/>
+   	</xsd:sequence>
+   	<xsd:attribute name="type" type="xsd:string" use="optional"/>
+   	<xsd:attribute name="column" type="xsd:string" />   	
+   	<xsd:attribute name="lval" type="xsd:string" use="optional"/>
+   	<xsd:attribute name="disp" type="xsd:boolean" use="optional"/>
+   	<xsd:attribute name="edit" type="xsd:boolean" use="optional"/>
+   	<xsd:attribute name="error" type="xsd:boolean" use="optional"/>
+   	<xsd:attribute name="errorVal" type="xsd:string" use="optional"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="LookupValues">
+   	<xsd:sequence>
+   		<xsd:element name="lv" type="tns:LookupValue" minOccurs="0" maxOccurs="unbounded"/>
+   	</xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="LookupValue">
+   	<xsd:sequence>
+   	</xsd:sequence>
+   	<xsd:attribute name="val" type="xsd:string"/>
+   	<xsd:attribute name="key" type="xsd:string"/>
+   </xsd:complexType>
+
+   <xsd:element name="GetProcessParams" type="tns:GetProcessParams"/>
+   <xsd:element name="ProcessParams" type="tns:ProcessParams"/>
+   <xsd:element name="RunProcess" type="tns:RunProcess"/>
+   <xsd:element name="RunProcessResponse" type="tns:RunProcessResponse"/>
+
+   <xsd:complexType name="ProcessParams">
+   	<xsd:sequence>
+   	  <xsd:element name="Params" type="tns:ProcessParamList" />
+	  <xsd:element name="Description" type="xsd:string"/>   	
+	  <xsd:element name="Name" type="xsd:string"/>   	
+	  <xsd:element name="Help" type="xsd:string"/>   	  	
+   	</xsd:sequence>
+   	<xsd:attribute name="AD_Process_ID" type="xsd:int"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="GetProcessParams">
+   	<xsd:sequence>
+   	</xsd:sequence>
+   	<xsd:attribute name="AD_Process_ID" type="xsd:int"/>
+   	<xsd:attribute name="AD_Menu_ID" type="xsd:int"/>
+   	<xsd:attribute name="AD_Record_ID" type="xsd:int"/> 	
+   </xsd:complexType>
+
+   <xsd:complexType name="RunProcess">
+   <xsd:sequence>
+   	<xsd:element name="ParamValues" type="tns:DataRow"/>
+   </xsd:sequence>
+   	<xsd:attribute name="AD_Process_ID" type="xsd:int"/>
+   	<xsd:attribute name="AD_Menu_ID" type="xsd:int"/>
+   	<xsd:attribute name="AD_Record_ID" type="xsd:int"/> 	
+   	<xsd:attribute name="DocAction" type="xsd:string"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="RunProcessResponse">
+   <xsd:sequence>
+   	<xsd:element name="Error" type="xsd:string"/>   	
+   	<xsd:element name="Summary" type="xsd:string"/>
+   	<xsd:element name="LogInfo" type="xsd:string"/>
+   	<xsd:element name="Data" type="xsd:hexBinary"/>
+   </xsd:sequence>
+   <xsd:attribute name="IsError" type="xsd:boolean"/>
+   <xsd:attribute name="IsReport" type="xsd:boolean"/>
+   <xsd:attribute name="ReportFormat" type="xsd:string"/>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="ProcessParamList">
+   	<xsd:sequence>
+   		<xsd:element name="Param" type="tns:ProcessParam" minOccurs="0" maxOccurs="unbounded"/>
+   	</xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="ProcessParam">
+   	<xsd:sequence>
+   		<xsd:element name="Description" type="xsd:string"/>
+	   	<xsd:element name="Help" type="xsd:string"/>   	
+ 		<xsd:element name="lookup" type="tns:LookupValues" minOccurs="0" maxOccurs="1"/>
+   	</xsd:sequence>
+   	<xsd:attribute name="Name" type="xsd:string"/>
+   	<xsd:attribute name="DefaultValue" type="xsd:string"/>	
+   	<xsd:attribute name="DefaultValue2" type="xsd:string"/>	
+   	<xsd:attribute name="IsMandatory" type="xsd:boolean"/>
+   	<xsd:attribute name="IsRange" type="xsd:boolean"/>   	
+   	<xsd:attribute name="FieldLength" type="xsd:int"/>
+   	<xsd:attribute name="DisplayType" type="xsd:int"/>   	   	
+	<xsd:attribute name="ColumnName" type="xsd:string"/>    	
+   </xsd:complexType>
+
+
+<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest"/>
+<xsd:element name="ADLoginResponse" type="tns:ADLoginResponse"/>
+
+<xsd:complexType name="ADLoginRequest">
+<xsd:sequence>
+  <xsd:element name="user" type="xsd:string"/>
+  <xsd:element name="pass" type="xsd:string"/>
+  <xsd:element name="lang" type="xsd:string"/>
+  <xsd:element name="ClientID" type="xsd:int"/>
+  <xsd:element name="RoleID" type="xsd:int"/>
+  <xsd:element name="OrgID" type="xsd:int"/>
+  <xsd:element name="WarehouseID" type="xsd:int"/>
+  <xsd:element name="stage" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="ADLoginResponse">
+<xsd:sequence>
+  <xsd:element name="status" type="xsd:int"/>
+  <xsd:element name="roles" type="tns:LookupValues"/>
+  <xsd:element name="langs" type="tns:LookupValues"/>
+  <xsd:element name="orgs" type="tns:LookupValues"/>
+  <xsd:element name="clients" type="tns:LookupValues"/>
+  <xsd:element name="warehouses" type="tns:LookupValues"/>
+</xsd:sequence>
+</xsd:complexType>
+
+	<xsd:complexType name="StandardResponse">
+		<xsd:sequence>
+			<xsd:element name="error" type="xsd:string" minOccurs="0" />
+			<xsd:element name="outputFields" type="tns:outputFields" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="RunProcessResponse" type="tns:RunProcessResponse"  minOccurs="0"/>
+			<xsd:element name="WindowTabData" type="tns:WindowTabData"   minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="isError" type="xsd:boolean" />
+		<xsd:attribute name="isRolledBack" type="xsd:boolean" />
+		<xsd:attribute name="recordID" type="xsd:int" />
+	</xsd:complexType>
+
+	<xsd:complexType name="outputFields">
+		<xsd:sequence>
+			<xsd:element name="outputField" type="tns:outputField" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="outputField">
+		<xsd:attribute name="column" type="xsd:string" />
+		<xsd:attribute name="value" type="xsd:string" />
+		<xsd:attribute name="Text" type="xsd:string" />
+	</xsd:complexType>
+
+
+<xsd:element name="StandardResponse" type="tns:StandardResponse"/>
+
+<!-- Elements added for model web services -->
+
+   <xsd:element name="ModelSetDocActionRequest" type="tns:ModelSetDocActionRequest"/>
+
+   <xsd:complexType name="ModelSetDocAction">
+   <xsd:sequence>
+     <xsd:element name="serviceType" type="xsd:string"/>
+     <xsd:element name="tableName" type="xsd:string"/>
+     <xsd:element name="recordID" type="xsd:int"/>
+     <xsd:element name="recordIDVariable" type="xsd:string" minOccurs="0"/>
+     <xsd:element name="docAction" type="xsd:string"/>
+   </xsd:sequence>
+   </xsd:complexType>
+ 
+   <xsd:complexType name="ModelSetDocActionRequest">
+   <xsd:sequence>
+     <xsd:element name="ModelSetDocAction" type="tns:ModelSetDocAction" minOccurs="1" maxOccurs="1"/>
+     <xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>
+   </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:element name="ModelRunProcess" type="tns:ModelRunProcess"/>
+
+   <xsd:complexType name="ModelRunProcess">
+    <xsd:sequence>
+      <xsd:element name="serviceType" type="xsd:string"/>
+   	  <xsd:element name="ParamValues" type="tns:DataRow"/>
+    </xsd:sequence>
+   	<xsd:attribute name="AD_Process_ID" type="xsd:int"/>
+   	<xsd:attribute name="AD_Menu_ID" type="xsd:int"/>
+   	<xsd:attribute name="AD_Record_ID" type="xsd:int"/> 	
+   	<xsd:attribute name="DocAction" type="xsd:string"/>
+   </xsd:complexType>
+
+   <xsd:element name="ModelRunProcessRequest" type="tns:ModelRunProcessRequest"/>
+
+   <xsd:complexType name="ModelRunProcessRequest">
+   <xsd:sequence>
+     <xsd:element name="ModelRunProcess" type="tns:ModelRunProcess" minOccurs="1" maxOccurs="1"/>
+     <xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>
+   </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:element name="ModelGetListRequest" type="tns:ModelGetListRequest"/>
+
+   <xsd:complexType name="ModelGetList">
+   <xsd:sequence>
+     <xsd:element name="serviceType" type="xsd:string"/>
+     <xsd:element name="AD_Reference_ID" type="xsd:int"/>
+     <xsd:element name="Filter" type="xsd:string"/>
+   </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="ModelGetListRequest">
+   <xsd:sequence>
+     <xsd:element name="ModelGetList" type="tns:ModelGetList" minOccurs="1" maxOccurs="1"/>
+     <xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>
+   </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:element name="ModelCRUDRequest" type="tns:ModelCRUDRequest"/>
+
+   <xsd:complexType name="ModelCRUD">
+   <xsd:sequence>
+     <xsd:element name="serviceType" type="xsd:string"/>
+     <xsd:element name="TableName" type="xsd:string"/>
+     <xsd:element name="RecordID" type="xsd:int"/>
+     <xsd:element name="recordIDVariable" type="xsd:string" minOccurs="0"/>
+     <xsd:element name="Filter" type="xsd:string"  minOccurs="0" maxOccurs="1"/>
+     <xsd:element name="Action">
+     	<xsd:simpleType>
+     		<xsd:restriction base="xsd:string">
+     			<xsd:enumeration value="Create"></xsd:enumeration>
+     			<xsd:enumeration value="Read"></xsd:enumeration>
+     			<xsd:enumeration value="Update"></xsd:enumeration>
+     			<xsd:enumeration value="Delete"></xsd:enumeration>
+     			<xsd:enumeration value="CreateUpdate"></xsd:enumeration>
+     		</xsd:restriction>
+     	</xsd:simpleType>
+     </xsd:element>
+     <xsd:element name="Offset" type="xsd:int" maxOccurs="1" minOccurs="0"/>
+     <xsd:element name="Limit" type="xsd:int" maxOccurs="1" minOccurs="0"/>
+     <xsd:element name="DataRow" type="tns:DataRow" minOccurs="0" maxOccurs="1"/>
+   </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="ModelCRUDRequest">
+   <xsd:sequence>
+     <xsd:element name="ModelCRUD" type="tns:ModelCRUD" minOccurs="1" maxOccurs="1"/>
+     <xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>
+   </xsd:sequence>
+ </xsd:complexType>
+
+
+	<xsd:complexType name="operations">
+		<xsd:sequence>
+			<xsd:element name="operation" type="tns:operation" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="operation">
+		<xsd:sequence>
+			<xsd:element name="TargetPort">
+		     	<xsd:simpleType>
+		     		<xsd:restriction base="xsd:string">
+		     			<xsd:enumeration value="createData"></xsd:enumeration>
+		     			<xsd:enumeration value="readData"></xsd:enumeration>
+		     			<xsd:enumeration value="updateData"></xsd:enumeration>
+		     			<xsd:enumeration value="deleteData"></xsd:enumeration>
+		     			<xsd:enumeration value="runProcess"></xsd:enumeration>
+		     			<xsd:enumeration value="setDocAction"></xsd:enumeration>
+		     			<xsd:enumeration value="createUpdateData"></xsd:enumeration>
+		     			<xsd:enumeration value="loginApi"></xsd:enumeration>
+		     		</xsd:restriction>
+		     	</xsd:simpleType>
+		     </xsd:element>
+			<xsd:element name="ModelCRUD" type="tns:ModelCRUD" minOccurs="0"></xsd:element>
+			<xsd:element name="ModelSetDocAction" type="tns:ModelSetDocAction" minOccurs="0"></xsd:element>
+			<xsd:element name="LoginApiRequest" type="tns:LoginApiRequest" minOccurs="0"></xsd:element>
+			<xsd:element name="LoginApiResponse" type="tns:LoginApiResponse" minOccurs="0"></xsd:element>			
+			<xsd:element name="ModelRunProcess" type="tns:ModelRunProcess" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="preCommit" type="xsd:boolean" default="false"></xsd:attribute>
+		<xsd:attribute name="postCommit" type="xsd:boolean" default="false"></xsd:attribute>
+	</xsd:complexType>
+	<xsd:element name="CompositeRequest" type="tns:CompositeRequest"></xsd:element>
+	<xsd:complexType name="CompositeRequest">
+		<xsd:sequence>
+			<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest"></xsd:element>
+		     <xsd:element name="serviceType" type="xsd:string"/>
+			<xsd:element name="operations" type="tns:operations" maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+<xsd:element name="CompositeResponses" type="tns:CompositeResponses"></xsd:element>
+
+<xsd:complexType name="CompositeResponses">
+	<xsd:sequence>
+		<xsd:element name="CompositeResponse" type="tns:CompositeResponse" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+	</xsd:sequence>
+</xsd:complexType>
+
+
+<xsd:complexType name="CompositeResponse">
+	<xsd:sequence>
+		<xsd:element name="StandardResponse" type="tns:StandardResponse" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+	</xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="LoginApiRequest" type="tns:LoginApiRequest"></xsd:element>
+<xsd:element name="LoginApiResponse" type="tns:LoginApiResponse"></xsd:element>
+
+<xsd:complexType name="LoginApiRequest">
+  <xsd:sequence>
+    <xsd:element name="serviceType" type="xsd:string"/>
+    <xsd:element name="user" type="xsd:string" />
+    <xsd:element name="password" type="xsd:string" />
+    <xsd:element name="deviceToken" type="xsd:string" />
+  </xsd:sequence>
+</xsd:complexType>
+
+  <xsd:complexType name="LoginApiResponse">
+    <xsd:sequence>
+		<xsd:element name="Error" type="xsd:string" minOccurs="0" />
+			<xsd:element name="userType" type="xsd:string" />
+		<xsd:element name="Client" type="tns:Client" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+    </xsd:sequence>
+		<xsd:attribute name="IsError" type="xsd:boolean" />
+  </xsd:complexType>
+  
+ <xsd:element name="Client" type="tns:Client"></xsd:element>	
+ <xsd:element name="Role" type="tns:Role"></xsd:element>	
+ <xsd:element name="Organization" type="tns:Organization"></xsd:element>			
+ <xsd:element name="Warehouse" type="tns:Warehouse"></xsd:element>			
+  
+      <xsd:complexType name="Client">
+    <xsd:sequence>
+      <xsd:element name="clientId" type="xsd:string" />
+      <xsd:element name="client" type="xsd:string" />
+     <xsd:element name="roleList" type="tns:Role" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+  </xsd:complexType>
+  
+    <xsd:complexType name="Role">
+    <xsd:sequence>
+      <xsd:element name="roleId" type="xsd:string" />
+      <xsd:element name="role" type="xsd:string" />
+     <xsd:element name="orgList" type="tns:Organization" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+  </xsd:complexType>
+  
+    <xsd:complexType name="Organization">
+    <xsd:sequence>
+      <xsd:element name="orgId" type="xsd:string" />
+      <xsd:element name="org" type="xsd:string" />
+     <xsd:element name="Warehouse" type="tns:Warehouse" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+  </xsd:complexType>
+  
+    <xsd:complexType name="Warehouse">
+    <xsd:sequence>
+      <xsd:element name="warehouseId" type="xsd:string" />
+      <xsd:element name="warehouse" type="xsd:string" />
+        </xsd:sequence>
+  </xsd:complexType>
+  
+  	<xsd:element name="GetListRequest" type="tns:GetListRequest"></xsd:element>
+	<xsd:element name="GetListResponse" type="tns:GetListResponse"></xsd:element>
+	<xsd:element name="GetCodeListRequest" type="tns:GetCodeListRequest"></xsd:element>
+	<xsd:element name="GetCodeListResponse" type="tns:GetCodeListResponse"></xsd:element>
+	<xsd:element name="FarmerRegisterRequest" type="tns:FarmerRegisterRequest"></xsd:element>
+	<xsd:element name="FarmerRegisterResponse" type="tns:FarmerRegisterResponse"></xsd:element>
+	<xsd:element name="GetVisitRequest" type="tns:GetVisitRequest"></xsd:element>
+	<xsd:element name="GetVisitResponse" type="tns:GetVisitResponse"></xsd:element>
+	<xsd:element name="AddVisitRequest" type="tns:AddVisitRequest"></xsd:element>
+	<xsd:element name="AddVisitResponse" type="tns:AddVisitResponse"></xsd:element>
+	<xsd:element name="UpdateFirstVisitRequest" type="tns:UpdateFirstVisitRequest"></xsd:element>
+	<xsd:element name="UpdateFirstVisitResponse" type="tns:UpdateFirstVisitResponse"></xsd:element>
+	<xsd:element name="AddPlantDetailRequest" type="tns:AddPlantDetailRequest"></xsd:element>
+	<xsd:element name="AddPlantDetailResponse" type="tns:AddPlantDetailResponse"></xsd:element>
+	<xsd:element name="ImageAttachmentRequest" type="tns:ImageAttachmentRequest"></xsd:element>
+	<xsd:element name="ImageAttachmentResponse" type="tns:ImageAttachmentResponse"></xsd:element>
+	<xsd:element name="GetPlantDetailRequest" type="tns:GetPlantDetailRequest"></xsd:element>
+	<xsd:element name="GetPlantDetailResponse" type="tns:GetPlantDetailResponse"></xsd:element>
+	<xsd:element name="AddCultureOperationRequest" type="tns:AddCultureOperationRequest"></xsd:element>
+	<xsd:element name="AddCultureOperationResponse" type="tns:AddCultureOperationResponse"></xsd:element>
+	<xsd:element name="AddOrderLabelRequest" type="tns:AddOrderLabelRequest"></xsd:element>
+	<xsd:element name="AddOrderLabelResponse" type="tns:AddOrderLabelResponse"></xsd:element>
+	<xsd:element name="GetCultureLabelRequest" type="tns:GetCultureLabelRequest"></xsd:element>
+	<xsd:element name="GetCultureLabelResponse" type="tns:GetCultureLabelResponse"></xsd:element>
+	<xsd:element name="InternalMoveQuantityRequest" type="tns:InternalMoveQuantityRequest"></xsd:element>
+	<xsd:element name="InternalMoveQuantityResponse" type="tns:InternalMoveQuantityResponse"></xsd:element>
+	<xsd:element name="AddMediaLabelRequest" type="tns:AddMediaLabelRequest"></xsd:element>
+	<xsd:element name="AddMediaLabelResponse" type="tns:AddMediaLabelResponse"></xsd:element>
+	<xsd:element name="GetMediaLabelRequest" type="tns:GetMediaLabelRequest"></xsd:element>
+	<xsd:element name="GetMediaLabelResponse" type="tns:GetMediaLabelResponse"></xsd:element>
+	<xsd:element name="AddExplantOperationRequest" type="tns:AddExplantOperationRequest"></xsd:element>
+	<xsd:element name="AddExplantOperationResponse" type="tns:AddExplantOperationResponse"></xsd:element>
+	<xsd:element name="GetExplantLabelRequest" type="tns:GetExplantLabelRequest"></xsd:element>
+	<xsd:element name="GetExplantLabelResponse" type="tns:GetExplantLabelResponse"></xsd:element>
+	<xsd:element name="GetLocatorDetailRequest" type="tns:GetLocatorDetailRequest"></xsd:element>
+	<xsd:element name="GetLocatorDetailResponse" type="tns:GetLocatorDetailResponse"></xsd:element>
+	<xsd:element name="AddPrimaryHardeningDetailRequest" type="tns:AddPrimaryHardeningDetailRequest"></xsd:element>
+	<xsd:element name="AddPrimaryHardeningDetailResponse" type="tns:AddPrimaryHardeningDetailResponse"></xsd:element>
+	<xsd:element name="GetPrimaryHardeningLabelRequest" type="tns:GetPrimaryHardeningLabelRequest"></xsd:element>
+	<xsd:element name="GetPrimaryHardeningLabelResponse" type="tns:GetPrimaryHardeningLabelResponse"></xsd:element>
+	<xsd:element name="AddSecondaryHardeningDetailRequest" type="tns:AddSecondaryHardeningDetailRequest"></xsd:element>
+	<xsd:element name="AddSecondaryHardeningDetailResponse" type="tns:AddSecondaryHardeningDetailResponse"></xsd:element>
+	<xsd:element name="GetSecondaryHardeningLabelRequest" type="tns:GetSecondaryHardeningLabelRequest"></xsd:element>
+	<xsd:element name="GetSecondaryHardeningLabelResponse" type="tns:GetSecondaryHardeningLabelResponse"></xsd:element>
+	<xsd:element name="GetUpcomingVisitRequest" type="tns:GetUpcomingVisitRequest"></xsd:element>
+	<xsd:element name="GetUpcomingVisitResponse" type="tns:GetUpcomingVisitResponse"></xsd:element>
+	<xsd:element name="ChangeVisitDateRequest" type="tns:ChangeVisitDateRequest"></xsd:element>
+	<xsd:element name="ChangeVisitDateResponse" type="tns:ChangeVisitDateResponse"></xsd:element>
+	<xsd:element name="CancelVisitRequest" type="tns:CancelVisitRequest"></xsd:element>
+	<xsd:element name="CancelVisitResponse" type="tns:CancelVisitResponse"></xsd:element>
+	<xsd:element name="AddNextVisitDatetForFVRequest" type="tns:AddNextVisitDatetForFVRequest"></xsd:element>
+	<xsd:element name="AddNextVisitDatetForFVResponse" type="tns:AddNextVisitDatetForFVResponse"></xsd:element>
+	<xsd:element name="GetFirstVisitByIdRequest" type="tns:GetFirstVisitByIdRequest"></xsd:element>
+	<xsd:element name="GetFirstVisitByIdResponse" type="tns:GetFirstVisitByIdResponse"></xsd:element>
+	<xsd:element name="GetAllPlantListRequest" type="tns:GetAllPlantListRequest"></xsd:element>
+	<xsd:element name="GetAllPlantListResponse" type="tns:GetAllPlantListResponse"></xsd:element>
+	<xsd:element name="RejectPlantRequest" type="tns:RejectPlantRequest"></xsd:element>
+	<xsd:element name="RejectPlantResponse" type="tns:RejectPlantResponse"></xsd:element>
+	<xsd:element name="UpdateIntermediateVisitRequest" type="tns:UpdateIntermediateVisitRequest"></xsd:element>
+	<xsd:element name="UpdateIntermediateVisitResponse" type="tns:UpdateIntermediateVisitResponse"></xsd:element>
+	<xsd:element name="GetPlantTagRequest" type="tns:GetPlantTagRequest"></xsd:element>
+	<xsd:element name="GetPlantTagResponse" type="tns:GetPlantTagResponse"></xsd:element>
+	<xsd:element name="AddNextVisitDatetForIVRequest" type="tns:AddNextVisitDatetForIVRequest"></xsd:element>
+	<xsd:element name="AddNextVisitDatetForIVResponse" type="tns:AddNextVisitDatetForIVResponse"></xsd:element>
+	<xsd:element name="UpdateCollectionVisitRequest" type="tns:UpdateCollectionVisitRequest"></xsd:element>
+	<xsd:element name="UpdateCollectionVisitResponse" type="tns:UpdateCollectionVisitResponse"></xsd:element>
+	<xsd:element name="DiscardMediaLabelRequest" type="tns:DiscardMediaLabelRequest"></xsd:element>
+	<xsd:element name="DiscardMediaLabelResponse" type="tns:DiscardMediaLabelResponse"></xsd:element>
+	<xsd:element name="DiscardCultureLabelRequest" type="tns:DiscardCultureLabelRequest"></xsd:element>
+	<xsd:element name="DiscardCultureLabelResponse" type="tns:DiscardCultureLabelResponse"></xsd:element>
+	<xsd:element name="GetIntermediateVisitRequest" type="tns:GetIntermediateVisitRequest"></xsd:element>
+	<xsd:element name="GetIntermediateVisitResponse" type="tns:GetIntermediateVisitResponse"></xsd:element>
+	<xsd:element name="GetCollectionVisitRequest" type="tns:GetCollectionVisitRequest"></xsd:element>
+	<xsd:element name="GetCollectionVisitResponse" type="tns:GetCollectionVisitResponse"></xsd:element>
+	<xsd:element name="GetFirstVisitByVisitIdRequest" type="tns:GetFirstVisitByVisitIdRequest"></xsd:element>
+	<xsd:element name="GetFirstVisitByVisitIdResponse" type="tns:GetFirstVisitByVisitIdResponse"></xsd:element>
+	<xsd:element name="GetAllFarmerListRequest" type="tns:GetAllFarmerListRequest"></xsd:element>
+	<xsd:element name="GetAllFarmerListResponse" type="tns:GetAllFarmerListResponse"></xsd:element>
+	<xsd:element name="GetFarmerListByIdRequest" type="tns:GetFarmerListByIdRequest"></xsd:element>
+	<xsd:element name="GetFarmerListByIdResponse" type="tns:GetFarmerListByIdResponse"></xsd:element>
+	<xsd:element name="GetVisitListByFarmerIdRequest" type="tns:GetVisitListByFarmerIdRequest"></xsd:element>
+	<xsd:element name="GetVisitListByFarmerIdResponse" type="tns:GetVisitListByFarmerIdResponse"></xsd:element>
+	<xsd:element name="GetPlantDetailsListByFarmerIdRequest" type="tns:GetPlantDetailsListByFarmerIdRequest"></xsd:element>
+	<xsd:element name="GetPlantDetailsListByFarmerIdResponse" type="tns:GetPlantDetailsListByFarmerIdResponse"></xsd:element>
+	<xsd:element name="AddIotRecordRequest" type="tns:AddIotRecordRequest"></xsd:element>
+	<xsd:element name="AddIotRecordResponse" type="tns:AddIotRecordResponse"></xsd:element>
+	<xsd:element name="UpdateDatabaseActiveMQRequest" type="tns:UpdateDatabaseActiveMQRequest"></xsd:element>
+	<xsd:element name="UpdateDatabaseActiveMQResponse" type="tns:UpdateDatabaseActiveMQResponse"></xsd:element>
+	<xsd:element name="GetFORoleReportRequest" type="tns:GetFORoleReportRequest"></xsd:element>
+	<xsd:element name="GetFORoleReportResponse" type="tns:GetFORoleReportResponse"></xsd:element>
+	<xsd:element name="GetFORoleReportVisitCountRequest" type="tns:GetFORoleReportVisitCountRequest"></xsd:element>
+	<xsd:element name="GetFORoleReportVisitCountResponse" type="tns:GetFORoleReportVisitCountResponse"></xsd:element>
+	<xsd:element name="GetFORoleReportSuckerCountRequest" type="tns:GetFORoleReportSuckerCountRequest"></xsd:element>
+	<xsd:element name="GetFORoleReportSuckerCountResponse" type="tns:GetFORoleReportSuckerCountResponse"></xsd:element>
+	<xsd:element name="GetLTRoleReportCultureLabelCountRequest" type="tns:GetLTRoleReportCultureLabelCountRequest"></xsd:element>
+	<xsd:element name="GetLTRoleReportCultureLabelCountResponse" type="tns:GetLTRoleReportCultureLabelCountResponse"></xsd:element>
+	<xsd:element name="GetMTRoleReportMediaLabelCountRequest" type="tns:GetMTRoleReportMediaLabelCountRequest"></xsd:element>
+	<xsd:element name="GetMTRoleReportMediaLabelCountResponse" type="tns:GetMTRoleReportMediaLabelCountResponse"></xsd:element>
+	<xsd:element name="GetMTRoleReportDiscardLabelCountRequest" type="tns:GetMTRoleReportDiscardLabelCountRequest"></xsd:element>
+	<xsd:element name="GetMTRoleReportDiscardLabelCountResponse" type="tns:GetMTRoleReportDiscardLabelCountResponse"></xsd:element>
+	<xsd:element name="GetQARoleReportDiscardLabelCountRequest" type="tns:GetQARoleReportDiscardLabelCountRequest"></xsd:element>
+	<xsd:element name="GetQARoleReportDiscardLabelCountResponse" type="tns:GetQARoleReportDiscardLabelCountResponse"></xsd:element>
+	<xsd:element name="GetIOTDeviceRecordRequest" type="tns:GetIOTDeviceRecordRequest"></xsd:element>
+	<xsd:element name="GetIOTDeviceRecordResponse" type="tns:GetIOTDeviceRecordResponse"></xsd:element>
+	<xsd:element name="GetIOTDeviceRecordByIdRequest" type="tns:GetIOTDeviceRecordByIdRequest"></xsd:element>
+	<xsd:element name="GetIOTDeviceRecordByIdResponse" type="tns:GetIOTDeviceRecordByIdResponse"></xsd:element>
+	<xsd:element name="GetTCTRoleToSubCultureReportRequest" type="tns:GetTCTRoleToSubCultureReportRequest"></xsd:element>
+	<xsd:element name="GetTCTRoleToSubCultureReportResponse" type="tns:GetTCTRoleToSubCultureReportResponse"></xsd:element>
+	<xsd:element name="GetQARoleAllocateStorageReportRequest" type="tns:GetQARoleAllocateStorageReportRequest"></xsd:element>
+	<xsd:element name="GetQARoleAllocateStorageReportResponse" type="tns:GetQARoleAllocateStorageReportResponse"></xsd:element>
+	<xsd:element name="DownloadExcelApiForVisitCountRequest" type="tns:DownloadExcelApiForVisitCountRequest"></xsd:element>
+	<xsd:element name="DownloadExcelApiForVisitCountResponse" type="tns:DownloadExcelApiForVisitCountResponse"></xsd:element>
+	<xsd:element name="GetVillageListRequest" type="tns:GetVillageListRequest"></xsd:element>
+	<xsd:element name="GetVillageListResponse" type="tns:GetVillageListResponse"></xsd:element>
+	<xsd:element name="GetQARoleExpiryReportRequest" type="tns:GetQARoleExpiryReportRequest"></xsd:element>
+	<xsd:element name="GetQARoleExpiryReportResponse" type="tns:GetQARoleExpiryReportResponse"></xsd:element>
+	<xsd:element name="GetQARoleWorkLogRequest" type="tns:GetQARoleWorkLogRequest"></xsd:element>
+	<xsd:element name="GetQARoleWorkLogResponse" type="tns:GetQARoleWorkLogResponse"></xsd:element>
+	<xsd:element name="GetAllWorkLogRecordsRequest" type="tns:GetAllWorkLogRecordsRequest"></xsd:element>
+	<xsd:element name="GetAllWorkLogRecordsResponse" type="tns:GetAllWorkLogRecordsResponse"></xsd:element>
+	<xsd:element name="GetAllPendingRecordsRequest" type="tns:GetAllPendingRecordsRequest"></xsd:element>
+	<xsd:element name="GetAllPendingRecordsResponse" type="tns:GetAllPendingRecordsResponse"></xsd:element>
+	<xsd:element name="GetDiscardListRequest" type="tns:GetDiscardListRequest"></xsd:element>
+	<xsd:element name="GetDiscardListResponse" type="tns:GetDiscardListResponse"></xsd:element>
+	<xsd:element name="AddCultureOrderToAllRecordsRequest" type="tns:AddCultureOrderToAllRecordsRequest"></xsd:element>
+	<xsd:element name="AddCultureOrderToAllRecordsResponse" type="tns:AddCultureOrderToAllRecordsResponse"></xsd:element>
+	<xsd:element name="GetTCTRoleWorkLogRequest" type="tns:GetTCTRoleWorkLogRequest"></xsd:element>
+	<xsd:element name="GetTCTRoleWorkLogResponse" type="tns:GetTCTRoleWorkLogResponse"></xsd:element>
+	<xsd:element name="GetTCTRoleWorkLogDetailsRecordsRequest" type="tns:GetTCTRoleWorkLogDetailsRecordsRequest"></xsd:element>
+	<xsd:element name="GetTCTRoleWorkLogDetailsRecordsResponse" type="tns:GetTCTRoleWorkLogDetailsRecordsResponse"></xsd:element>
+	<xsd:element name="GetMTRoleWorkLogRequest" type="tns:GetMTRoleWorkLogRequest"></xsd:element>
+	<xsd:element name="GetMTRoleWorkLogResponse" type="tns:GetMTRoleWorkLogResponse"></xsd:element>
+	<xsd:element name="GetMTRoleWorkLogDetailsRequest" type="tns:GetMTRoleWorkLogDetailsRequest"></xsd:element>
+	<xsd:element name="GetMTRoleWorkLogDetailsResponse" type="tns:GetMTRoleWorkLogDetailsResponse"></xsd:element>
+	<xsd:element name="GetTokenValidationRequest" type="tns:GetTokenValidationRequest"></xsd:element>
+	<xsd:element name="GetTokenValidationResponse" type="tns:GetTokenValidationResponse"></xsd:element>
+	<xsd:element name="GenerateTokenAndSendMailRequest" type="tns:GenerateTokenAndSendMailRequest"></xsd:element>
+	<xsd:element name="GenerateTokenAndSendMailResponse" type="tns:GenerateTokenAndSendMailResponse"></xsd:element>
+	<xsd:element name="UpdateUserPasswordRequest" type="tns:UpdateUserPasswordRequest"></xsd:element>
+	<xsd:element name="UpdateUserPasswordResponse" type="tns:UpdateUserPasswordResponse"></xsd:element>
+	<xsd:element name="GetVillageNameListRequest" type="tns:GetVillageNameListRequest"></xsd:element>
+	<xsd:element name="GetVillageNameListResponse" type="tns:GetVillageNameListResponse"></xsd:element>
+	<xsd:element name="GetCityNameListRequest" type="tns:GetCityNameListRequest"></xsd:element>
+	<xsd:element name="GetCityNameListResponse" type="tns:GetCityNameListResponse"></xsd:element>
+	<xsd:element name="GetDistrictListRequest" type="tns:GetDistrictListRequest"></xsd:element>
+	<xsd:element name="GetDistrictListResponse" type="tns:GetDistrictListResponse"></xsd:element>
+	<xsd:element name="GetTCMediaOrderListRequest" type="tns:GetTCMediaOrderListRequest"></xsd:element>
+	<xsd:element name="GetTCMediaOrderListResponse" type="tns:GetTCMediaOrderListResponse"></xsd:element>
+	<xsd:element name="CreateMediaOrderRequest" type="tns:CreateMediaOrderRequest"></xsd:element>
+	<xsd:element name="CreateMediaOrderResponse" type="tns:CreateMediaOrderResponse"></xsd:element>
+	<xsd:element name="GetTCPFRequest" type="tns:GetTCPFRequest"></xsd:element>
+	<xsd:element name="GetTCPFResponse" type="tns:GetTCPFResponse"></xsd:element>
+	<xsd:element name="GetPersonalCodeRequest" type="tns:GetPersonalCodeRequest"></xsd:element>
+	<xsd:element name="GetPersonalCodeResponse" type="tns:GetPersonalCodeResponse"></xsd:element>
+	<xsd:element name="GetMachineCodeRequest" type="tns:GetMachineCodeRequest"></xsd:element>
+	<xsd:element name="GetMachineCodeResponse" type="tns:GetMachineCodeResponse"></xsd:element>
+	<xsd:element name="GetMediaDiscardLabelDetailsRequest" type="tns:GetMediaDiscardLabelDetailsRequest"></xsd:element>
+	<xsd:element name="GetMediaDiscardLabelDetailsResponse" type="tns:GetMediaDiscardLabelDetailsResponse"></xsd:element>
+	<xsd:element name="GetMTRoleCompletedCountDetailsRequest" type="tns:GetMTRoleCompletedCountDetailsRequest"></xsd:element>
+	<xsd:element name="GetMTRoleCompletedCountDetailsResponse" type="tns:GetMTRoleCompletedCountDetailsResponse"></xsd:element>
+	<xsd:element name="GetTraceabilityRequest" type="tns:GetTraceabilityRequest"></xsd:element>
+	<xsd:element name="GetTraceabilityResponse" type="tns:GetTraceabilityResponse"></xsd:element>
+	<xsd:element name="CreateOrderIdAndInIdRequest" type="tns:CreateOrderIdAndInIdRequest"></xsd:element>
+	<xsd:element name="CreateOrderIdAndInIdResponse" type="tns:CreateOrderIdAndInIdResponse"></xsd:element>
+	<xsd:element name="CreateOrderIdForExplantRequest" type="tns:CreateOrderIdForExplantRequest"></xsd:element>
+	<xsd:element name="CreateOrderIdForExplantResponse" type="tns:CreateOrderIdForExplantResponse"></xsd:element>
+	<xsd:element name="CreateOrderIdForCultureRequest" type="tns:CreateOrderIdForCultureRequest"></xsd:element>
+	<xsd:element name="CreateOrderIdForCultureResponse" type="tns:CreateOrderIdForCultureResponse"></xsd:element>
+	<xsd:element name="GetLabelDetailsRequest" type="tns:GetLabelDetailsRequest"></xsd:element>
+	<xsd:element name="GetLabelDetailsResponse" type="tns:GetLabelDetailsResponse"></xsd:element>
+	<xsd:element name="CreateOrderIdForPrimaryHRequest" type="tns:CreateOrderIdForPrimaryHRequest"></xsd:element>
+	<xsd:element name="CreateOrderIdForPrimaryHResponse" type="tns:CreateOrderIdForPrimaryHResponse"></xsd:element>
+	<xsd:element name="GetQARoleExpiryCountsRequest" type="tns:GetQARoleExpiryCountsRequest"></xsd:element>
+	<xsd:element name="GetQARoleExpiryCountsResponse" type="tns:GetQARoleExpiryCountsResponse"></xsd:element>
+	<xsd:element name="DeleteAttachmentRecordUsingIndexRequest" type="tns:DeleteAttachmentRecordUsingIndexRequest"></xsd:element>
+	<xsd:element name="DeleteAttachmentRecordUsingIndexResponse" type="tns:DeleteAttachmentRecordUsingIndexResponse"></xsd:element>
+	<xsd:element name="UpdateFarmerDetailRequest" type="tns:UpdateFarmerDetailRequest"></xsd:element>
+	<xsd:element name="UpdateFarmerDetailResponse" type="tns:UpdateFarmerDetailResponse"></xsd:element>
+	<xsd:element name="GetMediaLabelExpiryCountRequest" type="tns:GetMediaLabelExpiryCountRequest"></xsd:element>
+	<xsd:element name="GetMediaLabelExpiryCountResponse" type="tns:GetMediaLabelExpiryCountResponse"></xsd:element>
+	<xsd:element name="GetMediaLabelExpiryListRequest" type="tns:GetMediaLabelExpiryListRequest"></xsd:element>
+	<xsd:element name="GetMediaLabelExpiryListResponse" type="tns:GetMediaLabelExpiryListResponse"></xsd:element>
+	<xsd:element name="GetFORoleReportVisitCountDownloadResponse" type="tns:GetFORoleReportVisitCountDownloadResponse"></xsd:element>
+	<xsd:element name="GetFORoleReportSuckerCountDownloadRequest" type="tns:GetFORoleReportSuckerCountDownloadRequest"></xsd:element>
+	<xsd:element name="GetFORoleReportVisitCountDownloadRequest" type="tns:GetFORoleReportVisitCountDownloadRequest"></xsd:element>
+	<xsd:element name="GetListWithCycleRequest" type="tns:GetListWithCycleRequest"></xsd:element>
+	<xsd:element name="GetListWithCycleResponse" type="tns:GetListWithCycleResponse"></xsd:element>
+	<xsd:element name="AddLightRecordRequest" type="tns:AddLightRecordRequest"></xsd:element>
+	<xsd:element name="AddLightRecordResponse" type="tns:AddLightRecordResponse"></xsd:element>
+	
+	<xsd:complexType name="GetCodeListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="tableName" type="xsd:string"/>
+     		 <xsd:element name="referenceName" type="xsd:string" />
+     		 <xsd:element name="isReference" type="xsd:boolean"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetCodeListResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="ListOfNameAndCode" type="tns:ListOfNameAndCode" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="ListOfNameAndCode">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="codeNo" type="xsd:string" />
+			<xsd:element name="id" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="tableName" type="xsd:string"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetListResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name ="ListOfName" type="tns:ListOfName" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="ListOfName">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="id" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+  
+  <xsd:complexType name="FarmerRegisterRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="AddFarmer" type="tns:AddFarmer" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddFarmer">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="latitude" type="xsd:string" />
+			<xsd:element name="longitude" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="villageName" type="xsd:string" />
+			<xsd:element name="landmark" type="xsd:string" />
+			<xsd:element name="talukName" type="xsd:string" />
+			<xsd:element name="cityName" type="xsd:string" />
+			<xsd:element name="district" type="xsd:string" />
+			<xsd:element name="state" type="xsd:string" />
+			<xsd:element name="pinCode" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FarmerRegisterResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="status" type="xsd:string" />
+		<xsd:element name="farmerId" type="xsd:int"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="searchKey" type="xsd:string" />
+     		 <xsd:element name="pageSize" type="xsd:int" />
+     		 <xsd:element name="pageNumber" type="xsd:int" />
+     		 <xsd:element name="filters" type="tns:filter" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetVisitResponse">
+  		<xsd:sequence>
+  		<xsd:element name="count" type="xsd:int" />
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="ListOfVisit" type="tns:ListOfVisit" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="ListOfVisit">
+		<xsd:sequence>
+			<xsd:element name="visitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="visitType" type="xsd:string" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="status" type="xsd:string" />
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+			<xsd:element name ="ImageArray" type="tns:imageArray" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="imageArray">
+		<xsd:sequence>
+			<xsd:element name="imageIndexId" type="xsd:int" />
+			<xsd:element name="image64" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+  
+  <xsd:complexType name="AddVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="AddVisit" type="tns:AddVisit" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddVisit">
+		<xsd:sequence>
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+			<xsd:element name="visitTypeId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddVisitResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="farmerName" type="xsd:string" />
+		<xsd:element name="visitId" type="xsd:int"/>
+		<xsd:element name="firstVisitId" type="xsd:int"/>
+		<xsd:element name="intermediateVisitId" type="xsd:int"/>
+		<xsd:element name="collectionVisitId" type="xsd:int"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="UpdateFirstVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="UpdateFirstVisit" type="tns:UpdateFirstVisit" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="UpdateFirstVisit">
+		<xsd:sequence>
+			<xsd:element name="firstVisitId" type="xsd:int" />
+			<xsd:element name="fieldConditionId" type="xsd:int" />
+			<xsd:element name="soilTypeId" type="xsd:int" />
+			<xsd:element name="waterringTypeId" type="xsd:int" />
+			<xsd:element name="fieldManagementId" type="xsd:int" />
+			<xsd:element name="plantNo" type="xsd:int" />
+			<xsd:element name="nameOfPest" type="xsd:string" />
+			<xsd:element name="enterDetailsOfInfestation" type="xsd:string" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="visitDone" type="xsd:boolean" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="UpdateFirstVisitResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="firstVisitId" type="xsd:int"/>
+		<xsd:element name="firstVisitUUId" type="xsd:string" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddPlantDetailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="firstVisitId" type="xsd:int"/>
+     		 <xsd:element name="AddPlantDetail" type="tns:AddPlantDetail" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddPlantDetail">
+		<xsd:sequence>
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+			<xsd:element name="dateOfCollection" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name="diseaseName" type="xsd:string" />
+			<xsd:element name="medicineDetail" type="xsd:string" />
+			<xsd:element name="height" type="xsd:string" />
+			<xsd:element name="stature" type="xsd:string" />
+			<xsd:element name="leavesNo" type="xsd:int" />
+			<xsd:element name="bunchWeight" type="xsd:string" />
+			<xsd:element name="weight" type="xsd:string" />
+			<xsd:element name="bunchesNo" type="xsd:string" />
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name="specieId" type="xsd:int" />
+			<xsd:element name="varietyId" type="xsd:int" />
+     		 <xsd:element name="AddImageBase64" type="tns:AddImageBase64" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddPlantDetailResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="PlantDetails" type="tns:PlantDetails" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+	
+  	<xsd:complexType name="PlantDetails">
+		<xsd:sequence>
+			<xsd:element name="plantId" type="xsd:int"/>
+			<xsd:element name="plantUUId" type="xsd:string"/>
+			<xsd:element name="recordId" type="xsd:int"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+  	<xsd:complexType name="ImageAttachmentRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="tableId" type="xsd:int"/>
+     		 <xsd:element name="recordId" type="xsd:int"/>
+     		 <xsd:element name="AddImageBase64" type="tns:AddImageBase64" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddImageBase64">
+		<xsd:sequence>
+			<xsd:element name="image64" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ImageAttachmentResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="recordId" type="xsd:int"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetPlantDetailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="plantDetailsId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetPlantDetailResponse">
+  		<xsd:sequence>
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="ListOfPlantDetails" type="tns:ListOfPlantDetails" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="ListOfPlantDetails">
+		<xsd:sequence>
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name ="ImageArray" type="tns:imageArray" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="expectedDate" type="xsd:string" />
+			<xsd:element name="diseaseName" type="xsd:string" />
+			<xsd:element name="medicineDetails" type="xsd:string" />
+			<xsd:element name="height" type="xsd:string" />
+			<xsd:element name="stature" type="xsd:string" />
+			<xsd:element name="leavesNo" type="xsd:int" />
+			<xsd:element name="bunchWeight" type="xsd:string" />
+			<xsd:element name="weight" type="xsd:string" />
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name="bunchesNo" type="xsd:string" />
+			<xsd:element name="plantUUId" type="xsd:string" />
+			<xsd:element name="plantId" type="xsd:int" />
+			<xsd:element name="rejectStatus" type="xsd:boolean" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddCultureOperationResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="cultureLabelId" type="xsd:int"/>
+		<xsd:element name="cultureLabelUUId" type="xsd:string"/>
+		<xsd:element name="outUUId" type="xsd:string"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddCultureOperationRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+			 <xsd:element name="mediaTypeId" type="xsd:int" />
+			 <xsd:element name="inId" type="xsd:int" />
+			 <xsd:element name="outUUId" type="xsd:string" />
+			 <xsd:element name="mediaLabelUUId" type="xsd:string" />
+			 <xsd:element name="AddCultureDetails" type="tns:AddCultureDetails" minOccurs="1" maxOccurs="1"/>
+     		 <xsd:element name="AddCultureOperation" type="tns:AddCultureOperation" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddCultureDetails">
+		<xsd:sequence>
+			<xsd:element name="plantSpeciesId" type="xsd:int" />
+			<xsd:element name="varietyId" type="xsd:int" />
+			<xsd:element name="parentCultureLine" type="xsd:string" />
+			<xsd:element name="cultureDetailDate" type="xsd:string" />
+			<xsd:element name="natureSampleId" type="xsd:int" />
+			<xsd:element name="cultureStageId" type="xsd:int" />
+			<xsd:element name="cycle" type="xsd:int" />
+			<xsd:element name="virusTestingId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+  <xsd:complexType name="AddCultureOperation">
+		<xsd:sequence>
+			<xsd:element name="tCPF" type="xsd:string" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="personalCode" type="xsd:string" />
+			<xsd:element name="machineCode" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddOrderLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="token" type="xsd:string" />
+		<xsd:element name="ReportData" type="tns:ReportData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="excelBlob" type="xsd:base64Binary" />
+		<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="ReportData">
+  		<xsd:sequence>
+  			 <xsd:element name="date" type="xsd:string" />
+     		 <xsd:element name="completed_Count" type="xsd:int" />
+     		 <xsd:element name="cancelled_Count" type="xsd:int" />
+     		 <xsd:element name="in_Progress_Count" type="xsd:int" />
+  		</xsd:sequence>
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddOrderLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+	
+	<xsd:complexType name="GetCultureLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="outLabelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetCultureLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetCultureLabelData" type="tns:GetCultureLabelData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetInIdForCulture" type="tns:GetInIdForCulture" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetCultureLabelData">
+		<xsd:sequence>
+			<xsd:element name="cultureLabelUUID" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name="cultureDetailDate" type="xsd:string" />
+			<xsd:element name="natureSample" type="xsd:string" />
+			<xsd:element name="cultureStage" type="xsd:string" />
+			<xsd:element name="cycleNo" type="xsd:string" />
+			<xsd:element name="virusTesting" type="xsd:string" />
+			<xsd:element name="mediaType" type="xsd:string" />
+			<xsd:element name="tCPF" type="xsd:string" />
+			<xsd:element name="cultureOperationDate" type="xsd:string" />
+			<xsd:element name="machineName" type="xsd:string" />
+			<xsd:element name="personalCode" type="xsd:string" />
+			<xsd:element name="tcOutId" type="xsd:int" />
+			<xsd:element name="outLabelUUID" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetInIdForCulture">
+		<xsd:sequence>
+			<xsd:element name="inID" type="xsd:int" />
+			<xsd:element name="orderId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="InternalMoveQuantityRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="growthRoomNumber" type="xsd:int"/>
+     		 <xsd:element name="rackNumber" type="xsd:string" />
+     		 <xsd:element name="columnNumber" type="xsd:string" />
+     		 <xsd:element name="outLabelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="InternalMoveQuantityResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="inventoryMoveId" type="xsd:int"/>
+		<xsd:element name="moveLineId" type="xsd:int"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+	
+	<xsd:complexType name="AddMediaLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+			 <xsd:element name="mediaOrderId" type="xsd:int" />
+			 <xsd:element name="AddMediaDetails" type="tns:AddMediaDetails" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddMediaDetails">
+		<xsd:sequence>
+			<xsd:element name="mediaTypeId" type="xsd:int" />
+			<xsd:element name="tCPF" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="machineCode" type="xsd:string" />
+			<xsd:element name="personalCode" type="xsd:string" />
+			<xsd:element name="labelQuantity" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddMediaLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="mediaDetailId" type="xsd:int"/>
+		 <xsd:element name="MediaLabelData" type="tns:MediaLabelData" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	<xsd:complexType name="MediaLabelData">
+		<xsd:sequence>
+		<xsd:element name="mediaLabelId" type="xsd:int"/>
+		<xsd:element name="mediaLabelUUId" type="xsd:string"/>	
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetMediaLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="cultureLabelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMediaLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetMediaLabelData" type="tns:GetMediaLabelData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMediaLabelData">
+		<xsd:sequence>
+			<xsd:element name="mediaLabelUUID" type="xsd:string" />
+			<xsd:element name="mediaType" type="xsd:string" />
+			<xsd:element name="tCPF" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="machineName" type="xsd:string" />
+			<xsd:element name="personalCode" type="xsd:string" />
+			<xsd:element name="mediaTypeId" type="xsd:int"/>
+			<xsd:element name="mediaLineId" type="xsd:int"/>
+		</xsd:sequence>
+	</xsd:complexType>
+  
+  <xsd:complexType name="AddExplantOperationResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="tCOrderId" type="xsd:int"/>
+		<xsd:element name="explantLabelId" type="xsd:int"/>
+		<xsd:element name="explantLabelUUId" type="xsd:string"/>
+		<xsd:element name="outUUId" type="xsd:string"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddExplantOperationRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="plantTagUUId" type="xsd:string" />
+     		 <xsd:element name="inId" type="xsd:int" />
+			 <xsd:element name="AddExplantDetails" type="tns:AddExplantDetails" minOccurs="1" maxOccurs="1"/>
+     		 <xsd:element name="AddExplantOperation" type="tns:AddExplantOperation" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddExplantDetails">
+		<xsd:sequence>
+			<xsd:element name="plantSpeciesId" type="xsd:int" />
+			<xsd:element name="varietyId" type="xsd:int" />
+			<xsd:element name="parentCultureLine" type="xsd:string" />
+			<xsd:element name="cultureDetailDate" type="xsd:string" />
+			<xsd:element name="natureSampleId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddExplantOperation">
+		<xsd:sequence>
+			<xsd:element name="tCPF" type="xsd:string" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="personalCode" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetExplantLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="outLabelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetExplantLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetExplantLabelData" type="tns:GetExplantLabelData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetInIdForExplant" type="tns:GetInIdForExplant" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetExplantLabelData">
+		<xsd:sequence>
+			<xsd:element name="explantLabelUUID" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name="explantDetailDate" type="xsd:string" />
+			<xsd:element name="natureSample" type="xsd:string" />
+			<xsd:element name="tCPF" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="personalCode" type="xsd:string" />
+			<xsd:element name="outLabelUUID" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetInIdForExplant">
+		<xsd:sequence>
+			<xsd:element name="inID" type="xsd:int" />
+			<xsd:element name="orderId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetLocatorDetailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="locatorId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetLocatorDetailResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetLocatorDetailData" type="tns:GetLocatorDetailData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetLocatorDetailData">
+		<xsd:sequence>
+			<xsd:element name="locatorID" type="xsd:int" />
+			<xsd:element name="locatorTypeId" type="xsd:int" />
+			<xsd:element name="growthRoom" type="xsd:string" />
+			<xsd:element name ="rack" type="xsd:string"/>
+			<xsd:element name="column" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddPrimaryHardeningDetailResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="tCOrderId" type="xsd:int"/>
+		<xsd:element name="primaryHardeningLabelId" type="xsd:int"/>
+		<xsd:element name="primaryHardeningLabelUUId" type="xsd:string"/>
+		<xsd:element name="outUUId" type="xsd:string"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddPrimaryHardeningDetailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="outUUId" type="xsd:string" />
+     		 <xsd:element name="orderId" type="xsd:int"/>
+     		 <xsd:element name="quantity" type="xsd:int" />
+     		 <xsd:element name="cultureProcessedNo" type="xsd:string" />
+			 <xsd:element name="AddHardeningDetail" type="tns:AddHardeningDetail" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddHardeningDetail">
+		<xsd:sequence>
+			<xsd:element name="yearCode" type="xsd:string" />
+			<xsd:element name="plantSpeciesId" type="xsd:int" />
+			<xsd:element name="varietyId" type="xsd:int" />
+			<xsd:element name="parentCultureLine" type="xsd:string" />
+			<xsd:element name="lotNumber" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="plotNumberTray" type="xsd:string" />
+			<xsd:element name="cultureStageId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetPrimaryHardeningLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="outLabelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetPrimaryHardeningLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetPrimaryHardeningLabelData" type="tns:GetPrimaryHardeningLabelData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetInIdForPrimaryH" type="tns:GetInIdForPrimaryH" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetInIdForPrimaryH">
+		<xsd:sequence>
+			<xsd:element name="inID" type="xsd:int" />
+			<xsd:element name="orderId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetPrimaryHardeningLabelData">
+		<xsd:sequence>
+			<xsd:element name="primaryHardeningLabelUUID" type="xsd:string" />
+			<xsd:element name="cultureProcessedNo" type="xsd:string" />
+			<xsd:element name="yearCode" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name="lotNumber" type="xsd:string" />
+			<xsd:element name="cultureStage" type="xsd:string" />
+			<xsd:element name="plotNumberTray" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="outLabelUUID" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddSecondaryHardeningDetailResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="tCOrderId" type="xsd:int"/>
+		<xsd:element name="secondaryHardeningLabelId" type="xsd:int"/>
+		<xsd:element name="secondaryHardeningLabelUUId" type="xsd:string"/>
+		<xsd:element name="plotNumberTray" type="xsd:string" />
+		<xsd:element name="outUUId" type="xsd:string"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddSecondaryHardeningDetailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="outUUId" type="xsd:string" />
+     		 <xsd:element name="inId" type="xsd:int"/>
+		     <xsd:element name="quantity" type="xsd:int" />
+     		 <xsd:element name="cultureProcessedNo" type="xsd:string" />
+			 <xsd:element name="AddSecondaryHardeningDetail" type="tns:AddSecondaryHardeningDetail" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddSecondaryHardeningDetail">
+		<xsd:sequence>
+			<xsd:element name="yearCode" type="xsd:string" />
+			<xsd:element name="plantSpeciesId" type="xsd:int" />
+			<xsd:element name="varietyId" type="xsd:int" />
+			<xsd:element name="parentCultureLine" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="serialNumber" type="xsd:string" />
+			<xsd:element name="cultureStageId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetSecondaryHardeningLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="outLabelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetSecondaryHardeningLabelResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetSecondaryHardeningLabelData" type="tns:GetSecondaryHardeningLabelData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetSecondaryHardeningLabelData">
+		<xsd:sequence>
+			<xsd:element name="secondaryHardeningLabelUUID" type="xsd:string" />
+			<xsd:element name="cultureProcessedNo" type="xsd:string" />
+			<xsd:element name="yearCode" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name="cultureStage" type="xsd:string" />
+			<xsd:element name="plotNumberTray" type="xsd:string" />
+			<xsd:element name="serialNumber" type="xsd:string" />
+			<xsd:element name="operationDate" type="xsd:string" />
+			<xsd:element name="outLabelUUID" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetUpcomingVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="searchKey" type="xsd:string" />
+     		 <xsd:element name="pageSize" type="xsd:int" />
+     		 <xsd:element name="pageNumber" type="xsd:int" />
+     		 <xsd:element name="filters" type="tns:filter" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetUpcomingVisitResponse">
+  		<xsd:sequence>
+  		<xsd:element name="count" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetUpcomingVisitData" type="tns:GetUpcomingVisitData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetUpcomingVisitData">
+		<xsd:sequence>
+			<xsd:element name="visitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="farmerName" type="xsd:string" />
+			<xsd:element name="visitTypeName" type="xsd:string" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="villageName" type="xsd:string" />
+			<xsd:element name="talukName" type="xsd:string" />
+			<xsd:element name="cityName" type="xsd:string" />
+			<xsd:element name="district" type="xsd:string" />
+			<xsd:element name="state" type="xsd:string" />
+			<xsd:element name="pincode" type="xsd:string" />
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ImageArray1">
+		<xsd:sequence>
+			<xsd:element name="image64" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ChangeVisitDateRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="visitId" type="xsd:int" />
+     		 <xsd:element name="changeDate" type="xsd:string" />
+     		 <xsd:element name="reason" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="ChangeVisitDateResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="CancelVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="visitId" type="xsd:int" />
+     		 <xsd:element name="reason" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CancelVisitResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="AddNextVisitDatetForFVRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="firstVisitId" type="xsd:int" />
+     		 <xsd:element name="nextVisitDate" type="xsd:string" />
+     		 <xsd:element name="cycleNo" type="xsd:int" />
+     		 <xsd:element name="visitTypeId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="AddNextVisitDatetForFVResponse">
+  		<xsd:sequence>
+  		<xsd:element name="newVisitId" type="xsd:int" />
+  		<xsd:element name="intermediateVisitId" type="xsd:int" />
+  		<xsd:element name="collectionVisitId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFirstVisitByIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="firstVisitId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetFirstVisitByIdResponse">
+  		<xsd:sequence>
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetFirstVisitData" type="tns:GetFirstVisitData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFirstVisitData">
+		<xsd:sequence>
+			<xsd:element name="firstVisitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="plantNo" type="xsd:string" />
+			<xsd:element name="visitDate" type="xsd:string" />
+			<xsd:element name="fieldSelectionName" type="xsd:string" />
+			<xsd:element name ="soilTypeName" type="xsd:string"/>
+			<xsd:element name="wateringTypeName" type="xsd:string" />
+			<xsd:element name="fieldManagementName" type="xsd:string" />
+			<xsd:element name ="pestHistory" type="xsd:string"/>
+			<xsd:element name="enterDetailsOfInfestation" type="xsd:string" />
+			<xsd:element name="nextVisitDate" type="xsd:string" />
+			<xsd:element name="uUId" type="xsd:string" />
+			<xsd:element name="farmerTableId" type="xsd:int" />
+			<xsd:element name="imageRecordId" type="xsd:int" />
+			<xsd:element name ="attachedIntermediateVisit" type="xsd:boolean"/>
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ImageArray2">
+		<xsd:sequence>
+			<xsd:element name="imageIndexId" type="xsd:int" />
+			<xsd:element name="image64" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetAllPlantListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetAllPlantListResponse">
+  		<xsd:sequence>
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetAllPlantListData" type="tns:GetAllPlantListData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetAllPlantListData">
+		<xsd:sequence>
+			<xsd:element name="plantId" type="xsd:int" />
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="species" type="xsd:string" />
+			<xsd:element name ="parentCultureLine" type="xsd:string"/>
+			<xsd:element name ="ImageArray" type="tns:imageArray" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="expectedDate" type="xsd:string" />
+			<xsd:element name="diseaseName" type="xsd:string" />
+			<xsd:element name="medicineDetails" type="xsd:string" />
+			<xsd:element name="height" type="xsd:string" />
+			<xsd:element name="stature" type="xsd:string" />
+			<xsd:element name="leavesNo" type="xsd:int" />
+			<xsd:element name="bunchWeight" type="xsd:string" />
+			<xsd:element name="weight" type="xsd:string" />
+			<xsd:element name="bunchesNo" type="xsd:string" />
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name="status" type="xsd:string" />
+			<xsd:element name="plantUUId" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RejectPlantRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="AddPlantIdAndReason" type="tns:AddPlantIdAndReason" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="AddPlantIdAndReason">
+    	<xsd:sequence>
+     		 <xsd:element name="plantId" type="xsd:int" />
+     		 <xsd:element name="reason" type="xsd:string" />	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="RejectPlantResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="UpdateIntermediateVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="intermediateVisitId" type="xsd:int" />
+     		 <xsd:element name="healthMonitoringDetails" type="xsd:string" />
+     		 <xsd:element name="monitoringStateId" type="xsd:int" />
+     		 <xsd:element name="reason" type="xsd:string" />
+     		 <xsd:element name="visitDone" type="xsd:boolean" />
+     		 <xsd:element name="nextVisitDate" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="UpdateIntermediateVisitResponse">
+  		<xsd:sequence>
+  		<xsd:element name="intermediateVisitId" type="xsd:int" />
+  		<xsd:element name="intermediateVisitUUId" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetPlantTagRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="plantTagUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetPlantTagResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetPlantTagData" type="tns:GetPlantTagData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetPlantDetailsData" type="tns:GetPlantDetailsData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetPlantTagInId" type="tns:GetPlantTagInId" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetPlantTagData">
+		<xsd:sequence>
+			<xsd:element name="plantTagId" type="xsd:int" />
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetPlantDetailsData">
+		<xsd:sequence>
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="parentCultureLine" type="xsd:string" />
+			<xsd:element name="dateOfSourcing" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetPlantTagInId">
+		<xsd:sequence>
+			<xsd:element name="inId" type="xsd:int" />
+			<xsd:element name="orderId" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddNextVisitDatetForIVRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="intermediateVisitId" type="xsd:int" />
+     		 <xsd:element name="nextVisitDate" type="xsd:string" />
+     		 <xsd:element name="cycleNo" type="xsd:int" />
+     		 <xsd:element name="visitTypeId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="AddNextVisitDatetForIVResponse">
+  		<xsd:sequence>
+  		<xsd:element name="newVisitId" type="xsd:int" />
+  		<xsd:element name="collectionVisitId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  		<xsd:complexType name="UpdateCollectionVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="collectionVisitId" type="xsd:int" />
+     		 <xsd:element name="yieldWeight" type="xsd:string" />
+     		 <xsd:element name="visitDone" type="xsd:boolean" />
+     		 <xsd:element name ="PlantDetailsAndNoOfSuckerList" type="tns:PlantDetailsAndNoOfSuckerList" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="PlantDetailsAndNoOfSuckerList">
+  		<xsd:sequence>
+  		<xsd:element name="collectionVisitPlantDetailsId" type="xsd:int" />
+  		<xsd:element name="noOfSucker" type="xsd:int" />
+    </xsd:sequence>
+  	</xsd:complexType>
+  
+   <xsd:complexType name="UpdateCollectionVisitResponse">
+  		<xsd:sequence>
+  		<xsd:element name="collectionVisitId" type="xsd:int" />
+  		<xsd:element name="collectionVisitUUId" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="DiscardMediaLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="AddMediaLabelDiscardDetail" type="tns:AddMediaLabelDiscardDetail" minOccurs="0" maxOccurs="unbounded"/>
+    		 <xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="AddMediaLabelDiscardDetail">
+    	<xsd:sequence>
+     		 <xsd:element name="mediaLabelUUId" type="xsd:string" />
+     		 <xsd:element name="discardReason" type="xsd:string" />
+     		 <xsd:element name="discardType" type="xsd:int" />
+     		 <xsd:element name="tCPF" type="xsd:string" />
+     		 <xsd:element name="discardDate" type="xsd:string" />
+     		 <xsd:element name="personalCode" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="DiscardMediaLabelResponse">
+  		<xsd:sequence>
+  		<xsd:element name="movementId" type="xsd:int" />
+  		<xsd:element name="MediaLabelRecords" type="tns:MediaLabelRecords" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+
+  	<xsd:complexType name="MediaLabelRecords">
+    	<xsd:sequence>
+     		 <xsd:element name="mediaLabelId" type="xsd:int" />
+  			 <xsd:element name="mediaLabelUUId" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  	
+  	<xsd:complexType name="DiscardCultureLabelRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="cultureLabelUUId" type="xsd:string" />
+     		 <xsd:element name="discardReason" type="xsd:string" />
+     		 <xsd:element name="discardType" type="xsd:int" />
+     		 <xsd:element name="tCPF" type="xsd:string" />
+     		 <xsd:element name="discardDate" type="xsd:string" />
+     		 <xsd:element name="personalCode" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="DiscardCultureLabelResponse">
+  		<xsd:sequence>
+  		<xsd:element name="qualityCheckId" type="xsd:int" />
+  		<xsd:element name="cultureLabelId" type="xsd:int" />
+  		<xsd:element name="cultureLabelUUId" type="xsd:string" />
+  		<xsd:element name="movementId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetIntermediateVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="visitId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+	
+  	<xsd:complexType name="GetIntermediateVisitResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetIntermediateVisitData" type="tns:GetIntermediateVisitData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="farmerTableId" type="xsd:int" />
+		<xsd:element name="imageRecordId" type="xsd:int" />
+		<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetIntermediatePlantData" type="tns:GetIntermediatePlantData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetIntermediateVisitData">
+		<xsd:sequence>
+			<xsd:element name="intermediateVisitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="intermediateVisitUUId" type="xsd:string" />
+			<xsd:element name="monitoringDetails" type="xsd:string" />
+			<xsd:element name="monitoringState" type="xsd:string" />
+			<xsd:element name="reason" type="xsd:string" />
+			<xsd:element name="firstVisitId" type="xsd:int" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="attachedColltionVisit" type="xsd:boolean" />
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetIntermediatePlantData">
+		<xsd:sequence>
+			<xsd:element name="plantId" type="xsd:int" />
+			<xsd:element name="plantUUId" type="xsd:string" />
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name="plantRejectStatus" type="xsd:string" />
+			<xsd:element name="plantTagId" type="xsd:int" />
+			<xsd:element name="plantTableId" type="xsd:int" />
+			<xsd:element name="imageRecordId" type="xsd:int" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetCollectionVisitRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="visitId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  	
+  	<xsd:complexType name="GetCollectionVisitResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetCollectionVisitData" type="tns:GetCollectionVisitData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="farmerTableId" type="xsd:int" />
+		<xsd:element name="imageRecordId" type="xsd:int" />
+		<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetCollectionPlantData" type="tns:GetCollectionPlantData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetCollectionVisitData">
+		<xsd:sequence>
+			<xsd:element name="collectionVisitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="collectionVisitUUId" type="xsd:string" />
+			<xsd:element name="yieldWeight" type="xsd:string" />
+			<xsd:element name="firstVisitId" type="xsd:int" />
+			<xsd:element name="intermediateVisitId" type="xsd:int" />
+			<xsd:element name="collectNoOfSucker" type="xsd:boolean" />
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetCollectionPlantData">
+		<xsd:sequence>
+			<xsd:element name="collectionVisitPlantDetailsId" type="xsd:int" />
+			<xsd:element name="plantId" type="xsd:int" />
+			<xsd:element name="plantUUId" type="xsd:string" />
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name="noOfSucker" type="xsd:int" />
+			<xsd:element name="plantRejectStatus" type="xsd:string" />
+			<xsd:element name="plantTagId" type="xsd:int" />
+			<xsd:element name="plantTableId" type="xsd:int" />
+			<xsd:element name="imageRecordId" type="xsd:int" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetFirstVisitByVisitIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="visitId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  	<xsd:complexType name="GetFirstVisitByVisitIdResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetFirstVisitDatas" type="tns:GetFirstVisitDatas" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="farmerTableId" type="xsd:int" />
+		<xsd:element name="imageRecordId" type="xsd:int" />
+		<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name ="GetFirstVisitPlantData" type="tns:GetFirstVisitPlantData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFirstVisitDatas">
+		<xsd:sequence>
+			<xsd:element name="firstVisitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="firstVisitUUId" type="xsd:string" />
+			<xsd:element name="plantNo" type="xsd:int" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="pestHistory" type="xsd:string" />
+			<xsd:element name="enterDetailsOfInfestation" type="xsd:string" />
+			<xsd:element name="fieldSelection" type="xsd:string" />
+			<xsd:element name="soilType" type="xsd:string" />
+			<xsd:element name="wateringType" type="xsd:string" />
+			<xsd:element name="fieldManagement" type="xsd:string" />
+			<xsd:element name ="attachedIntermediateVisit" type="xsd:boolean"/>
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetFirstVisitPlantData">
+		<xsd:sequence>
+			<xsd:element name="plantId" type="xsd:int" />
+			<xsd:element name="plantUUId" type="xsd:string" />
+			<xsd:element name="plantTagUUId" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name="plantTagId" type="xsd:int" />
+			<xsd:element name="plantTableId" type="xsd:int" />
+			<xsd:element name="imageRecordId" type="xsd:int" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetAllFarmerListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="searchKey" type="xsd:string" />
+     		 <xsd:element name="pageSize" type="xsd:int" />
+     		 <xsd:element name="pageNumber" type="xsd:int" />
+     		 <xsd:element name="filters" type="tns:filter" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="filter">
+  		<xsd:sequence>
+		<xsd:element name="key" type="xsd:string" />
+		<xsd:element name="value" type="xsd:string" />
+    </xsd:sequence>
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetAllFarmerListResponse">
+  		<xsd:sequence>
+  		<xsd:element name="count" type="xsd:int" />
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetFarmerData" type="tns:GetFarmerData" minOccurs="0" maxOccurs="unbounded"/>
+		
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFarmerData">
+		<xsd:sequence>
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="farmerName" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="address" type="xsd:string" />
+			<xsd:element name="villageName" type="xsd:string" />
+			<xsd:element name="landmark" type="xsd:string" />
+			<xsd:element name="talukName" type="xsd:string" />
+			<xsd:element name="cityName" type="xsd:string" />
+			<xsd:element name="district" type="xsd:string" />
+			<xsd:element name="state" type="xsd:string" />
+			<xsd:element name="pincode" type="xsd:string" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetFarmerListByIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="farmerId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  	
+  	<xsd:complexType name="GetFarmerListByIdResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetFarmerByIdData" type="tns:GetFarmerByIdData" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFarmerByIdData">
+		<xsd:sequence>
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="farmerName" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="villageName" type="xsd:string" />
+			<xsd:element name="landmark" type="xsd:string" />
+			<xsd:element name="talukName" type="xsd:string" />
+			<xsd:element name="cityName" type="xsd:string" />
+			<xsd:element name="district" type="xsd:string" />
+			<xsd:element name="state" type="xsd:string" />
+			<xsd:element name="pincode" type="xsd:string" />
+			<xsd:element name="latitude" type="xsd:string" />
+			<xsd:element name="longitude" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetVisitListByFarmerIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="farmerId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  	
+  	<xsd:complexType name="GetVisitListByFarmerIdResponse">
+  		<xsd:sequence>
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetVisitDataByFarmerId" type="tns:GetVisitDataByFarmerId" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetVisitDataByFarmerId">
+		<xsd:sequence>
+			<xsd:element name="visitId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="farmerName" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="date" type="xsd:string" />
+			<xsd:element name="visitType" type="xsd:string" />
+			<xsd:element name="status" type="xsd:string" />
+			<xsd:element name="visitDone" type="xsd:boolean" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="GetPlantDetailsListByFarmerIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="farmerId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  	
+  	<xsd:complexType name="GetPlantDetailsListByFarmerIdResponse">
+  		<xsd:sequence>
+  		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="GetPlantDetailsByFarmerId" type="tns:GetPlantDetailsByFarmerId" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetPlantDetailsByFarmerId">
+		<xsd:sequence>
+			<xsd:element name="plantDetailsId" type="xsd:int" />
+			<xsd:element name="farmerId" type="xsd:int" />
+			<xsd:element name="plantTagId" type="xsd:int" />
+			<xsd:element name="plantTagUUid" type="xsd:string" />
+			<xsd:element name="cropType" type="xsd:string" />
+			<xsd:element name="variety" type="xsd:string" />
+			<xsd:element name="rejectStatus" type="xsd:string" />	
+			<xsd:element name="row" type="xsd:string" />
+			<xsd:element name="column" type="xsd:string" />
+			<xsd:element name ="ImageArray" type="tns:ImageArray2" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddIotRecordRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="deviceId" type="xsd:int" />
+     		 <xsd:element name="humidity" type="xsd:string" />
+     		 <xsd:element name="temperature" type="xsd:string" />
+     		 <xsd:element name="voltage" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="AddIotRecordResponse">
+  		<xsd:sequence>
+  		<xsd:element name="recordId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="UpdateDatabaseActiveMQRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="UpdateDatabaseActiveMQResponse">
+  		<xsd:sequence>
+  		<xsd:element name="recordId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFORoleReportRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetFORoleReportResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetReportData" type="tns:GetReportData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetReportData">
+    	<xsd:sequence>
+     		 <xsd:element name="statusName" type="xsd:string" />
+  			 <xsd:element name="statusCount" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetFORoleReportVisitCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetFORoleReportVisitCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetReportDataVisitCount" type="tns:GetReportDataVisitCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetReportDataVisitCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetFORoleReportSuckerCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetFORoleReportSuckerCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetReportDataSuckerCount" type="tns:GetReportDataSuckerCount" minOccurs="0" maxOccurs="unbounded"/>
+  		<xsd:element name="excelBlob" type="xsd:base64Binary" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetReportDataSuckerCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetLTRoleReportCultureLabelCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetLTRoleReportCultureLabelCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetCultureLabelCount" type="tns:GetCultureLabelCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetCultureLabelCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+	
+	 <xsd:complexType name="GetMTRoleReportMediaLabelCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleReportMediaLabelCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetMediaLabelCount" type="tns:GetMediaLabelCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMediaLabelCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleReportDiscardLabelCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleReportDiscardLabelCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetDiscardLabelCount" type="tns:GetDiscardLabelCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetDiscardLabelCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetQARoleReportDiscardLabelCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetQARoleReportDiscardLabelCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetQADiscardLabelCount" type="tns:GetQADiscardLabelCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetQADiscardLabelCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetIOTDeviceRecordRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetIOTDeviceRecordResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetIOTData" type="tns:GetIOTData" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetIOTData">
+    	<xsd:sequence>
+  			 <xsd:element name="id" type="xsd:int" />
+  			 <xsd:element name="uuid" type="xsd:string" />
+  			 <xsd:element name="name" type="xsd:string" />
+  			 <xsd:element name="deviceId" type="xsd:string" />
+  			 <xsd:element name="frequency" type="xsd:string" />
+  			 <xsd:element name="roomNo" type="xsd:string" />
+  			 <xsd:element name="cornorType" type="xsd:string" />
+  			 <xsd:element name="sensorType" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetIOTDeviceRecordByIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="deviceId" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetIOTDeviceRecordByIdResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetIOTDataById" type="tns:GetIOTDataById" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetIOTDataById">
+    	<xsd:sequence>
+  			 <xsd:element name="deviceId" type="xsd:int" />
+  			 <xsd:element name="uuid" type="xsd:string" />
+  			 <xsd:element name="name" type="xsd:string" />
+  			 <xsd:element name="frequency" type="xsd:string" />
+  			 <xsd:element name="roomNo" type="xsd:string" />
+  			 <xsd:element name="cornorType" type="xsd:string" />
+  			 <xsd:element name="sensorType" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetTCTRoleToSubCultureReportRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTCTRoleToSubCultureReportResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetToSubCultureCount" type="tns:GetToSubCultureCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetToSubCultureCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetQARoleAllocateStorageReportRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetQARoleAllocateStorageReportResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetQAAllocateStorageCount" type="tns:GetQAAllocateStorageCount" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetQAAllocateStorageCount">
+    	<xsd:sequence>
+     		 <xsd:element name="labelName" type="xsd:string" />
+  			 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="DownloadExcelApiForVisitCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="DownloadExcelApiForVisitCountResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetReportDataVisitCount" type="tns:GetReportDataVisitCount" minOccurs="0" maxOccurs="unbounded"/>
+  		<xsd:element name="excelBlob" type="xsd:base64Binary" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetVillageListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetVillageListResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetVillageList" type="tns:GetVillageList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetVillageList">
+    	<xsd:sequence>
+     		 <xsd:element name="villageNumber" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetQARoleExpiryReportRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetQARoleExpiryReportResponse">
+  		<xsd:sequence>
+  		<xsd:element name ="GetExpiryList" type="tns:GetExpiryList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetExpiryList">
+    	<xsd:sequence>
+     		 <xsd:element name="cultureCode" type="xsd:string" />
+     		 <xsd:element name="cycle" type="xsd:string" />
+     		 <xsd:element name="manufacturingDate" type="xsd:string" />
+     		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetQARoleWorkLogRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetQARoleWorkLogResponse">
+  		<xsd:sequence>
+  		<xsd:element name="todayTotalCount" type="xsd:int" />
+     		 <xsd:element name="todayDiscardCount" type="xsd:int" />
+     		 <xsd:element name="pendingTotalCount" type="xsd:int" />
+     		 <xsd:element name="cultureTotalCount" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  
+  <xsd:complexType name="GetAllWorkLogRecordsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="pageSize" type="xsd:int" />
+     		 <xsd:element name="pageNumber" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetAllWorkLogRecordsResponse">
+  		<xsd:sequence>
+  		<xsd:element name="totalCount" type="xsd:int" />
+  		<xsd:element name ="GetAllList" type="tns:GetAllList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetAllList">
+    	<xsd:sequence>
+     		 <xsd:element name="cultureCode" type="xsd:string" />
+     		 <xsd:element name="cycle" type="xsd:string" />
+     		 <xsd:element name="manufacturingDate" type="xsd:string" />
+     		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetAllPendingRecordsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="pageSize" type="xsd:int" />
+     		 <xsd:element name="pageNumber" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetAllPendingRecordsResponse">
+  		<xsd:sequence>
+  		<xsd:element name="totalCount" type="xsd:int" />
+  		<xsd:element name ="GetAllPendingRecords" type="tns:GetAllPendingRecords" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetAllPendingRecords">
+    	<xsd:sequence>
+     		 <xsd:element name="cultureCode" type="xsd:string" />
+     		 <xsd:element name="cycle" type="xsd:string" />
+     		 <xsd:element name="manufacturingDate" type="xsd:string" />
+     		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetDiscardListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="pageSize" type="xsd:int" />
+     		 <xsd:element name="pageNumber" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetDiscardListResponse">
+  		<xsd:sequence>
+  		<xsd:element name="totalCount" type="xsd:int" />
+  		<xsd:element name ="GetDiscardListRecords" type="tns:GetDiscardListRecords" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetDiscardListRecords">
+    	<xsd:sequence>
+     		 <xsd:element name="cultureCode" type="xsd:string" />
+     		 <xsd:element name="cycle" type="xsd:string" />
+     		 <xsd:element name="updatedDate" type="xsd:string" />
+     		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="AddCultureOrderToAllRecordsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="cultureCode" type="xsd:string" />
+     		 <xsd:element name="cycle" type="xsd:string" />
+     		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="AddCultureOrderToAllRecordsResponse">
+  		<xsd:sequence>
+  		<xsd:element name="cultureOrder" type="xsd:int" />
+  		<xsd:element name ="GetAllInRecords" type="tns:GetAllInRecords" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetAllInRecords">
+    	<xsd:sequence>
+     		 <xsd:element name="inId" type="xsd:int" />
+     		 <xsd:element name="stage" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetTCTRoleWorkLogRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTCTRoleWorkLogResponse">
+  		<xsd:sequence>
+     		 <xsd:element name="totalCount" type="xsd:int" />
+     		 <xsd:element name="completedLabelCountToday" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetTCTRoleWorkLogDetailsRecordsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTCTRoleWorkLogDetailsRecordsResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetCultureListRecords" type="tns:GetCultureListRecords" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetCultureListRecords">
+    	<xsd:sequence>
+     		 <xsd:element name="labelCode" type="xsd:string" />
+     		 <xsd:element name="stage" type="xsd:string" />
+     		 <xsd:element name="manufacturingDate" type="xsd:string" />
+     		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:string" />
+     		 <xsd:element name="inId" type="xsd:int" />
+     		 <xsd:element name="label" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetMTRoleWorkLogRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleWorkLogResponse">
+  		<xsd:sequence>
+     		 <xsd:element name="mediumLabelsCount" type="xsd:int" />
+     		 <xsd:element name="discardCount" type="xsd:int" />
+     		 <xsd:element name="completedCount" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMTRoleWorkLogDetailsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleWorkLogDetailsResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetMediumRecords" type="tns:GetMediumRecords" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMediumRecords">
+    	<xsd:sequence>
+    		 <xsd:element name="mediaOrderId" type="xsd:int" />
+     		 <xsd:element name="mediaType" type="xsd:string" />
+     		 <xsd:element name="date" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetTokenValidationRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userId" type="xsd:int" />
+     		 <xsd:element name="token" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTokenValidationResponse">
+  		<xsd:sequence>
+     		 <xsd:element name="tokenMessage" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GenerateTokenAndSendMailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userName" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GenerateTokenAndSendMailResponse">
+  		<xsd:sequence>
+     		 <xsd:element name="token" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="UpdateUserPasswordRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userName" type="xsd:string" />
+     		 <xsd:element name="password" type="xsd:string" />
+     		 <xsd:element name="token" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="UpdateUserPasswordResponse">
+  		<xsd:sequence>
+     		 <xsd:element name="status" type="xsd:string" />
+     		 <xsd:element name="webUrl" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetVillageNameListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetVillageNameListResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetVillageNameList" type="tns:GetVillageNameList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetVillageNameList">
+    	<xsd:sequence>
+     		 <xsd:element name="villageName" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+    	<xsd:complexType name="GetCityNameListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetCityNameListResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetCityNameList" type="tns:GetCityNameList" minOccurs="0" maxOccurs="unbounded"/>
+     		 <xsd:element name="FarmerName" type="xsd:string" />
+     		 <xsd:element name="VisitType" type="xsd:string" />
+     		 <xsd:element name="State" type="xsd:string" />
+     		 <xsd:element name="District" type="xsd:string" />
+     		 <xsd:element name="CityName" type="xsd:string" />
+     		 <xsd:element name="Village" type="xsd:string" />
+     		 <xsd:element name="Pincode" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetCityNameList">
+    	<xsd:sequence>
+     		 <xsd:element name="cityName" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetDistrictListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetDistrictListResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetDistrictList" type="tns:GetDistrictList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetDistrictList">
+    	<xsd:sequence>
+     		 <xsd:element name="district" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetTCMediaOrderListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="mediaType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTCMediaOrderListResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetTCMediaOrderList" type="tns:GetTCMediaOrderList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetTCMediaOrderList">
+    	<xsd:sequence>
+     		 <xsd:element name="mediaOrderID" type="xsd:int" />
+     		 <xsd:element name="totalCount" type="xsd:int" />
+     		 <xsd:element name="lineCount" type="xsd:int" />
+     		 <xsd:element name="pendingCount" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CreateMediaOrderRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="mediaType" type="xsd:string" />
+     		 <xsd:element name="quantity" type="xsd:int" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CreateMediaOrderResponse">
+  		<xsd:sequence>
+     		<xsd:element name="mediaOrderId" type="xsd:int" /> 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetTCPFRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTCPFResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetTCPFList" type="tns:GetTCPFList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetTCPFList">
+    	<xsd:sequence>
+     		 <xsd:element name="tcpf" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetPersonalCodeRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetPersonalCodeResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetPersonalCodeList" type="tns:GetPersonalCodeList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetPersonalCodeList">
+    	<xsd:sequence>
+     		 <xsd:element name="persoanlCode" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetMachineCodeRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="mediaType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMachineCodeResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetMachineCodeList" type="tns:GetMachineCodeList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMachineCodeList">
+    	<xsd:sequence>
+    		<xsd:element name="name" type="xsd:string" />
+     		 <xsd:element name="machineCode" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetMediaDiscardLabelDetailsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMediaDiscardLabelDetailsResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetMediaDiscardLabelDetailsList" type="tns:GetMediaDiscardLabelDetailsList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMediaDiscardLabelDetailsList">
+    	<xsd:sequence>
+    		 <xsd:element name="mediaLabelId" type="xsd:int" />
+     		 <xsd:element name="mediaType" type="xsd:string" />
+     		 <xsd:element name="date" type="xsd:string" />
+     		 <xsd:element name="reason" type="xsd:string" />
+     		 <xsd:element name="discardType" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleCompletedCountDetailsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMTRoleCompletedCountDetailsResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetMTRoleCompletedCountDetailsList" type="tns:GetMTRoleCompletedCountDetailsList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMTRoleCompletedCountDetailsList">
+    	<xsd:sequence>
+    		 <xsd:element name="mediaLabelId" type="xsd:int" />
+    		 <xsd:element name="mediaLineId" type="xsd:int" />
+     		 <xsd:element name="mediaType" type="xsd:string" />
+     		 <xsd:element name="date" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetTraceabilityRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="labelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTraceabilityResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetTraceabilityList" type="tns:GetTraceabilityList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetTraceabilityList">
+    	<xsd:sequence>
+    		 <xsd:element name="labelUUId" type="xsd:string" />
+     		 <xsd:element name="cropType" type="xsd:string" />
+     		 <xsd:element name="variety" type="xsd:string" />
+     		 <xsd:element name="date" type="xsd:string" />
+     		 <xsd:element name="stage" type="xsd:string" />
+     		 <xsd:element name="cycle" type="xsd:string" />
+     		 <xsd:element name="user" type="xsd:string" />
+     		 <xsd:element name="personalcode" type="xsd:string" />
+     		 <xsd:element name="location" type="xsd:string" />
+     		 <xsd:element name="temperature" type="xsd:string" />
+     		 <xsd:element name="humidity" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="CreateOrderIdAndInIdRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="plantTagUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CreateOrderIdAndInIdResponse">
+  		<xsd:sequence>
+     	<xsd:element name="orderId" type="xsd:int" />
+     	<xsd:element name="inId" type="xsd:int" />	 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="CreateOrderIdForExplantRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="explantOutUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CreateOrderIdForExplantResponse">
+  		<xsd:sequence>
+     	<xsd:element name="orderId" type="xsd:int" />
+     	<xsd:element name="inId" type="xsd:int" />	 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="CreateOrderIdForCultureRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="cultureOutUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CreateOrderIdForCultureResponse">
+  		<xsd:sequence>
+     	<xsd:element name="orderId" type="xsd:int" />
+     	<xsd:element name="inId" type="xsd:int" />	 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetLabelDetailsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetLabelDetailsResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetLabelDetailsList" type="tns:GetLabelDetailsList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetLabelDetailsList">
+    	<xsd:sequence>
+    		 <xsd:element name="labelCode" type="xsd:string" />
+     		 <xsd:element name="stage" type="xsd:string" />
+     		 <xsd:element name="manufacturingDate" type="xsd:string" />
+     		 <xsd:element name="room" type="xsd:string" />
+     		 <xsd:element name="rack" type="xsd:string" />
+     		 <xsd:element name="columns" type="xsd:string" />
+     		 <xsd:element name="uUId" type="xsd:string" />
+     		 <xsd:element name="label" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="CreateOrderIdForPrimaryHRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="primaryHOutUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="CreateOrderIdForPrimaryHResponse">
+  		<xsd:sequence>
+     	<xsd:element name="orderId" type="xsd:int" />
+     	<xsd:element name="inId" type="xsd:int" />	 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetQARoleExpiryCountsRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetQARoleExpiryCountsResponse">
+  		<xsd:sequence>
+     		 <xsd:element name ="GetExpiryCountList" type="tns:GetExpiryCountList" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetExpiryCountList">
+    	<xsd:sequence>
+    		 <xsd:element name="expiryDate" type="xsd:string" />
+     		 <xsd:element name="count" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="DeleteAttachmentRecordUsingIndexRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="tableId" type="xsd:int" />
+     		 <xsd:element name="recordId" type="xsd:int" />
+     		 <xsd:element name ="IndexList" type="tns:IndexList" minOccurs="0" maxOccurs="unbounded"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="IndexList">
+    	<xsd:sequence>
+    		 <xsd:element name="indexNo" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="DeleteAttachmentRecordUsingIndexResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="UpdateFarmerDetailRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="farmerId" type="xsd:int" />
+     		 <xsd:element name ="UpdateFarmerDetail" type="tns:UpdateFarmerDetail" minOccurs="1" maxOccurs="1"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="UpdateFarmerDetailResponse">
+  		<xsd:sequence> 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="UpdateFarmerDetail">
+    	<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="latitude" type="xsd:string" />
+			<xsd:element name="longitude" type="xsd:string" />
+			<xsd:element name="mobileNo" type="xsd:string" />
+			<xsd:element name="villageName" type="xsd:string" />
+			<xsd:element name="landmark" type="xsd:string" />
+			<xsd:element name="talukName" type="xsd:string" />
+			<xsd:element name="cityName" type="xsd:string" />
+			<xsd:element name="district" type="xsd:string" />
+			<xsd:element name="state" type="xsd:string" />
+			<xsd:element name="pinCode" type="xsd:string" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetMediaLabelExpiryCountRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMediaLabelExpiryCountResponse">
+  		<xsd:sequence> 
+  		<xsd:element name="totalCount" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetMediaLabelExpiryListRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetMediaLabelExpiryListResponse">
+  		<xsd:sequence> 
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name ="MediaLabelExpiryList" type="tns:MediaLabelExpiryList" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="MediaLabelExpiryList">
+    	<xsd:sequence>
+			<xsd:element name="mediaLabelId" type="xsd:int" />
+			<xsd:element name="mediaLabelUUId" type="xsd:string" />
+			<xsd:element name="mediaType" type="xsd:string" />
+			<xsd:element name="labelDate" type="xsd:string" />
+			<xsd:element name="mediaOrderId" type="xsd:int" />
+			<xsd:element name="mediaLineId" type="xsd:int" />
+			<xsd:element name="quantity" type="xsd:int" />
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetFORoleReportSuckerCountDownloadRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetFORoleReportVisitCountDownloadResponse">
+  		<xsd:sequence>
+  		<xsd:element name="excelBlob" type="xsd:base64Binary" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="GetFORoleReportVisitCountDownloadRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="userInput" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="GetListWithCycleRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="tableName" type="xsd:string"/>
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetListWithCycleResponse">
+  		<xsd:sequence>
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+		<xsd:element name="tableId" type="xsd:int" />
+		<xsd:element name ="ListOfNameWithCycle" type="tns:ListOfNameWithCycle" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  	
+  	<xsd:complexType name="ListOfNameWithCycle">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="id" type="xsd:int" />
+			<xsd:element name="cycleNo" type="xsd:int" />
+			<xsd:element name="firstVisit" type="xsd:boolean" />
+			<xsd:element name="intermediateVisit" type="xsd:boolean" />
+			<xsd:element name="collectionVisit" type="xsd:boolean" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddLightRecordRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="serviceType" type="xsd:string" />
+     		 <xsd:element name="deviceId" type="xsd:int" />
+     		 <xsd:element name="lightStatus" type="xsd:string" />
+     		 <xsd:element name="time" type="xsd:string" />
+     		 <xsd:element name="appearance" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="AddLightRecordResponse">
+  		<xsd:sequence>
+  		<xsd:element name="recordId" type="xsd:int" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+  	</xsd:complexType>
+  
+</xsd:schema>
+
+

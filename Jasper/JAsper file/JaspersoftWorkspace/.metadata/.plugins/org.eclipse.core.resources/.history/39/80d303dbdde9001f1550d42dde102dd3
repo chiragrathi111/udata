@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="produvtLabelRWPL" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="20" uuid="dc0e6729-05ef-4515-bbeb-7b47705e6f2a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TissueServer.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT cl.tc_mediaLabelQr_id,cl.c_uuid,cl.created,cl.tcpf,cl.personalCode,cl.isdiscarded AS discard,
+mt.name AS mediaType,mat.codeNo AS machineName,cl.operationDate,mt.tc_mediatype_id AS mediaId,
+cl.ad_client_id,cl.ad_org_id,cl.tc_medialine_id AS lineId FROM adempiere.tc_mediaLabelQr cl
+JOIN adempiere.tc_mediatype mt ON mt.tc_mediatype_id = cl.tc_mediatype_id
+JOIN adempiere.tc_machinetype mat ON mat.tc_machinetype_id = cl.tc_machinetype_id
+WHERE cl.ad_client_id =  $P{AD_CLIENT_ID}  AND cl.tc_mediaLabelQr_id =  $P{RECORD_ID} ;]]>
+	</queryString>
+	<field name="tc_medialabelqr_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tc_medialabelqr_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_medialabelqr_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="c_uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="tcpf" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tcpf"/>
+		<property name="com.jaspersoft.studio.field.label" value="tcpf"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="discard" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="discard"/>
+		<property name="com.jaspersoft.studio.field.label" value="discard"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="mediatype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="mediatype"/>
+		<property name="com.jaspersoft.studio.field.label" value="mediatype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_mediatype"/>
+	</field>
+	<field name="machinename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="machinename"/>
+		<property name="com.jaspersoft.studio.field.label" value="machinename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_machinetype"/>
+	</field>
+	<field name="operationdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="operationdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="operationdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="mediaid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="mediaid"/>
+		<property name="com.jaspersoft.studio.field.label" value="mediaid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_mediatype"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<field name="lineid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="lineid"/>
+		<property name="com.jaspersoft.studio.field.label" value="lineid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_medialabelqr"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="570" height="30" forecolor="#298F60" backcolor="#298F60" uuid="0a3b59d4-5eca-456d-9fa5-f36e43b4e75c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="0" width="521" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="f3827bc9-5e5d-47ea-bb10-66176c0ec965">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Media Label]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="350">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="90" y="2" width="329" height="299" uuid="13fc6367-98e1-4eee-8fa2-00485453b425">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{c_uuid}]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="3" y="268" width="523" height="80" uuid="1edc9066-ff5e-4223-a608-37f762f79206">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mediatype}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

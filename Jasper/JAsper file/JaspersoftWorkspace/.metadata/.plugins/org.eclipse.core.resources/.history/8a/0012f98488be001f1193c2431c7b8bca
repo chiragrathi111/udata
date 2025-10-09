@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test33" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="5" rightMargin="0" topMargin="20" bottomMargin="20" uuid="a7a2f291-929b-490d-a05f-397a35c0d6fc">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="vinayServer.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select pi.labeluuid as label, mp.value,ml.m_inout_id from adempiere.pi_productlabel pi
+join adempiere.m_inoutline ml on ml.m_inoutline_id = pi.m_inoutline_id join adempiere.m_product mp on mp.m_product_id = pi.m_product_Id 
+where ml.ad_client_id =  $P{AD_CLIENT_ID}  and ml.m_inout_id =   $P{RECORD_ID} ;]]>
+	</queryString>
+	<field name="label" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="label"/>
+		<property name="com.jaspersoft.studio.field.label" value="label"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_productlabel"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="m_inout_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_inout_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_inout_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inoutline"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="541" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement x="32" y="20" width="463" height="356" uuid="424e3b00-5ccd-40ca-bfc8-fc89776fd0e6"/>
+			</rectangle>
+			<componentElement>
+				<reportElement x="340" y="230" width="157" height="129" uuid="e13b7a3a-04b1-465d-94bb-140c86d62df4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["{"  +
+  "\"Value\": \"" + $F{value} + "\"," +
+  "\"Label\": \"" + $F{label}+ "\"" +
+"}"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<line>
+				<reportElement x="32" y="48" width="463" height="1" uuid="4fd348fb-1826-4ac9-b185-1c76b38fb43b"/>
+			</line>
+			<textField>
+				<reportElement x="32" y="20" width="463" height="28" uuid="04aa5d09-8636-4eab-922d-dc5cfb128a5f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[RADHESHAM WELLPACK PVT. LTD.]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="39" y="54" width="463" height="22" uuid="f738ea2f-f6fa-424d-a4e9-0965e51e1176">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[AMCOR FLEXIBLES INDIA PVT. LTD.]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

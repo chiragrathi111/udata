@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExpiryReportN" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="99d83c75-a4ff-40cf-8c24-cc2ffdaa8ce6">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TissueNewC.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="Stage" class="java.lang.String"/>
+	<parameter name="FromDate" class="java.sql.Date"/>
+	<parameter name="ToDate" class="java.sql.Date"/>
+	<queryString language="SQL">
+		<![CDATA[WITH subquery AS (
+SELECT ps.codeno || ' ' || v.codeno || ' ' || cl.parentcultureline || ' ' || TO_CHAR(cl.culturedate, 'DD-MM-YY') || ' ' || ns.codeno AS cultureCode,
+cs.name || ' - ' || cl.cycleno AS cycle,DATE(cl.created) AS manufacturingDate,
+DATE(cl.created + (cs.period::int * INTERVAL '1 day')) AS expiryDate,l.x AS room,l.y AS rack,l.z AS columns,cs.period AS period,
+(SELECT COUNT(*) FROM adempiere.tc_culturelabel cll WHERE cll.parentuuid = cl.c_uuid LIMIT 1) AS subquery_column
+FROM adempiere.tc_culturelabel cl 
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_variety_id
+JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id 
+WHERE cl.ad_client_id =  $P{AD_CLIENT_ID}  AND cl.isdiscarded = 'N' AND cl.c_uuid IS NOT NULL AND cl.parentuuid IS NOT NULL AND ($P{Stage} IS NULL OR cs.name =  $P{Stage} ))
+SELECT cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns,COUNT(*) AS count,period
+FROM subquery WHERE subquery_column = 0 AND expiryDate < current_date 
+AND expiryDate >=  $P{FromDate}  AND expiryDate <= $P{ToDate}  
+GROUP BY cultureCode,cycle,manufacturingDate,expiryDate,room,rack,columns,period
+ORDER BY expiryDate,cycle,room,rack,columns;]]>
+	</queryString>
+	<field name="culturecode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturecode"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturecode"/>
+	</field>
+	<field name="cycle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cycle"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycle"/>
+	</field>
+	<field name="manufacturingdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="manufacturingdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="manufacturingdate"/>
+	</field>
+	<field name="expirydate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="expirydate"/>
+		<property name="com.jaspersoft.studio.field.label" value="expirydate"/>
+	</field>
+	<field name="room" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="room"/>
+		<property name="com.jaspersoft.studio.field.label" value="room"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="rack" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rack"/>
+		<property name="com.jaspersoft.studio.field.label" value="rack"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="columns" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="columns"/>
+		<property name="com.jaspersoft.studio.field.label" value="columns"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_locator"/>
+	</field>
+	<field name="count" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="count"/>
+		<property name="com.jaspersoft.studio.field.label" value="count"/>
+	</field>
+	<field name="period" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="period"/>
+		<property name="com.jaspersoft.studio.field.label" value="period"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="68" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="1" width="528" height="66" forecolor="#298F60" backcolor="#298F60" uuid="efe991ee-22db-489c-b127-5698c05694a7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="3" y="3" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="171ad764-adf1-49fc-b476-acd4beab394e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Expiry Reports]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="479" y="38" width="49" height="20" forecolor="#FFFFFF" uuid="862dc859-6b4e-46d5-965b-dc5832ef1b68">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Column]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="443" y="38" width="35" height="20" forecolor="#FFFFFF" uuid="1449e527-3ec6-4a42-a7f4-f4742975f38e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rack]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="38" width="88" height="28" forecolor="#FFFFFF" uuid="f28fed60-e653-4fba-8f92-0e212a359b7f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Of Manufacturing]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="276" y="38" width="63" height="28" forecolor="#FFFFFF" uuid="d266c332-9b4d-4eb3-a6ca-586d965957b6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Of Expiry]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="111" y="38" width="67" height="20" forecolor="#FFFFFF" uuid="a318ea30-bc5e-4e0e-8a0d-bc7d6d0c5115">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cycle]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="28" y="38" width="50" height="28" forecolor="#FFFFFF" uuid="e304e6b2-55f2-4611-8cca-37d3db5ae569">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Culture Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="38" width="61" height="28" forecolor="#FFFFFF" uuid="e33e1e9c-5d1b-48ab-a186-752569de1a2f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. of Cultures]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="38" width="35" height="20" forecolor="#FFFFFF" uuid="b1c8df77-69c5-48ac-be8d-e5d0b1113a21">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Room]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="0" y="1" width="105" height="20" uuid="b9785ffc-66fd-4225-b63a-edd795a067d0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{culturecode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="1" width="85" height="20" uuid="63403478-639c-41be-b081-20ee4960cbb7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cycle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="205" y="1" width="68" height="20" uuid="740f869c-c6a2-424f-9d0a-66bd0bf951c7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{manufacturingdate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="1" width="62" height="20" uuid="ab7b532d-7193-41c9-b6ff-6d199330afea">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{expirydate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="368" y="1" width="37" height="20" uuid="b3917bcb-98ee-4e03-9fef-dd6cd8229afd">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="451" y="1" width="35" height="20" uuid="2af6be38-a0fb-42fb-a699-f97153ba416c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{rack}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="495" y="1" width="40" height="20" uuid="0da49263-fd4d-4f31-8ccd-f67430c16e58">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{columns}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="1" width="30" height="20" uuid="a8a90443-889d-4b34-aae4-bc49dbc0872a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="50">
+			<textField>
+				<reportElement x="80" y="6" width="398" height="40" uuid="70172752-fac1-47d3-8a09-b799fc49045c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Records Found"]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

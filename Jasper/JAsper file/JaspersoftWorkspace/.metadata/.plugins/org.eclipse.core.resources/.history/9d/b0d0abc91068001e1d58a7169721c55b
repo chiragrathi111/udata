@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExpiryReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6753e0df-619c-4369-a77a-8c2f3f23e3eb">
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[bV9hdHRyaWJ1dGVzZXRpbnN0YW5jZSAsMjUsMzY0Nyw1MDk2ZDI1MS0xODg0LTRhMDktOTc1Ni03
+Y2NlMWQ1NTY5NzE7bV9pbm91dGxpbmUgLDUzMSwyNSwzODdjN2E4MC0xMDEyLTQ1NGUtODcwNC1l
+ZTBiMzYwOWFlNzA7bV9wcm9kdWN0ICwxMDU3LDEzNDAsY2E0MzZjNzctMTQ0Zi00NTcwLWEzMzMt
+Yzk5OGQ3YzNhNDFiO21fd2FyZWhvdXNlICwyODgsMjkyNSwwMWIyYzk1MS03NjVjLTQ0YzYtYTNh
+ZC1jODhmYzk5YzU4OGQ7Y19vcmRlcmxpbmUgLDc5NCwxNDgwLDQwYjc2Zjc5LTYzNTktNDNjOS05
+ODNiLWYxNDMyODgwNTcxZDttX3N0b3JhZ2VvbmhhbmQgLDEzMjAsMjE2NiwzZjdjYTkxZC1hMjBm
+LTQyNzQtYTUwYy1iYjJiOWRhYzc5ZjE7Y19vcmRlciAsNTMxLDEyMzgsZTViZDBkMzItM2Q1MS00
+YWVkLThkZGItMGI1ZjE3MjEyOGMxOw==]]>
+	</property>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="346"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="642"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<parameter name="CLIENT_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT b.name AS Product_Name,a.expirydate,e.qtyonhand AS ExpiryQTY,
+att.lot AS Lot_no,wh.value AS Warehouse_Name FROM c_orderline a
+join m_product b ON a.m_product_id = b.m_product_id 
+join m_inoutline mil ON mil.c_orderline_id = a.c_orderline_id 
+join m_storageonhand e ON mil.m_attributesetinstance_id = e.m_attributesetinstance_id 
+join m_attributesetinstance att ON att.m_attributesetinstance_id = e.m_attributesetinstance_id 
+join c_order f ON f.c_order_id = a.c_order_id 
+join m_warehouse wh ON wh.m_warehouse_id = f.m_warehouse_id 
+WHERE a.ad_client_id = $P{CLIENT_ID} AND f.issotrx = 'N' AND a.expirydate >= CURRENT_DATE]]>
+	</queryString>
+	<field name="product_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="product_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="product_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="expirydate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="expirydate"/>
+		<property name="com.jaspersoft.studio.field.label" value="expirydate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="expiryqty" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="expiryqty"/>
+		<property name="com.jaspersoft.studio.field.label" value="expiryqty"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_storageonhand"/>
+	</field>
+	<field name="lot_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lot_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="lot_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_attributesetinstance"/>
+	</field>
+	<field name="warehouse_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_warehouse"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

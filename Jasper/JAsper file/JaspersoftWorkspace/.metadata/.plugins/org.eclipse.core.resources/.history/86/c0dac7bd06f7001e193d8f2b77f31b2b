@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CultureProduction" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ca1ce678-6ef2-432d-8d8e-09db0d5a85ae">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT v.name,ord.tc_variety_id,ord.culturecode,CONCAT(i_pr.name, '-', o_pr.name) AS StageAndCycle,v.codeno,
+    CASE WHEN LAG(i.tc_in_id) OVER (ORDER BY i.tc_in_id) = i.tc_in_id THEN NULL
+    ELSE i.quantity END AS quantity,
+    NULLIF(CASE WHEN o_pr.name LIKE 'M%' OR o_pr.name LIKE 'N%' OR o_pr.name LIKE 'BM%' THEN o.quantity ELSE 0 END, 0) AS M,
+    NULLIF(CASE WHEN o_pr.name LIKE 'E%' OR o_pr.name LIKE 'BE%' THEN o.quantity ELSE 0 END, 0) AS E,
+    NULLIF(CASE WHEN o_pr.name LIKE 'R%' OR o_pr.name LIKE 'BR%' THEN o.quantity ELSE 0 END, 0) AS R,
+    o.ad_client_id,o.ad_org_id,o.created
+FROM adempiere.tc_out o
+JOIN adempiere.m_product o_pr ON o.m_product_id = o_pr.m_product_id
+JOIN adempiere.tc_in i ON i.tc_in_id = o.tc_in_id
+JOIN adempiere.m_product i_pr ON i.m_product_id = i_pr.m_product_id
+JOIN adempiere.tc_order ord ON ord.tc_order_id = o.tc_order_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = ord.tc_variety_id
+where ord.ad_client_id = 1000000 order by v.codeno;]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="tc_variety_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_order"/>
+	</field>
+	<field name="culturecode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturecode"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturecode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_order"/>
+	</field>
+	<field name="stageandcycle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stageandcycle"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageandcycle"/>
+	</field>
+	<field name="codeno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="quantity" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="quantity"/>
+	</field>
+	<field name="m" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m"/>
+		<property name="com.jaspersoft.studio.field.label" value="m"/>
+	</field>
+	<field name="e" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="e"/>
+		<property name="com.jaspersoft.studio.field.label" value="e"/>
+	</field>
+	<field name="r" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="r"/>
+		<property name="com.jaspersoft.studio.field.label" value="r"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<group name="Variety">
+		<groupExpression><![CDATA[$F{tc_variety_id}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="5" y="5" width="65" height="20" uuid="a06c657e-cef9-427e-9c1d-f2461c8327bc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="75" y="5" width="80" height="20" uuid="77651e70-d661-4548-88e9-9272d27b4e45">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{culturecode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="5" width="80" height="20" uuid="a2426d07-bbaf-4fda-b9ed-0ae0c4b3b493">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{stageandcycle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="235" y="5" width="60" height="20" uuid="9861ca80-e93e-4686-93dd-507e3a2e9d30">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="295" y="5" width="60" height="20" uuid="d473adc9-1945-4f4c-b803-33d27adc7471">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{m}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="5" width="60" height="20" uuid="da69ad9e-f998-46c6-a694-efd880e63900">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{e}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="415" y="5" width="60" height="20" uuid="7e373a3d-cc6b-4516-a426-0c261ee4630c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{r}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

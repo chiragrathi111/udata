@@ -240,6 +240,9 @@ First Visit:-
 
     ALTER TABLE adempiere.tc_visit ADD COLUMN cycleNo numeric(10,0);
 
+    ALTER TABLE adempiere.tc_temperatureStatus ADD COLUMN custom_timestamp TIMESTAMP;
+    ALTER TABLE adempiere.tc_light ADD COLUMN custom_timestamp TIMESTAMP;
+
     First Visit Table:-
     
     CREATE TABLE adempiere.tc_firstvisit (
@@ -688,9 +691,17 @@ REFERENCES adempiere.ad_user(ad_user_id);
     isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
     c_uuId VARCHAR(36) DEFAULT NULL::bpchar,
     tc_hardeningtraytag_uu VARCHAR(36) NOT NULL);
+##########################
+SDC Not Updated:-
+Alter table adempiere.c_order
+Add column isculture CHAR(1) not null DEFAULT 'N'::bpchar;
 
+Alter table adempiere.c_orderline
+Add column cultureuuid VARCHAR(36) DEFAULT NULL::bpchar;
 
-###
+Alter table adempiere.tc_cultureLabel
+Add column issold CHAR(1) not null DEFAULT 'N'::bpchar;
+##########################
         CREATE TABLE adempiere.tc_cultureLabel (
     tc_cultureLabel_id SERIAL PRIMARY KEY,
     tc_cultureLabel_uu VARCHAR(36) DEFAULT NULL::bpchar,
@@ -832,7 +843,8 @@ ADD CONSTRAINT tc_explantLabel_tc_out_id_fkey
 FOREIGN KEY (tc_out_id)
 REFERENCES adempiere.tc_out(tc_out_id);
 
-
+Alter table adempiere.TC_SecondaryHardeningLabel
+Add column parentuuid VARCHAR(36) DEFAULT NULL::bpchar;
 
 
 ALTER TABLE adempiere.tc_primaryhardeningLabel add column lotNumber VARCHAR(1);
@@ -2027,3 +2039,80 @@ double validation
                         .build();
                
          }.
+//////////////////////////////////////////////////////////
+==========================================================================
+WITH status_durations AS (SELECT l.m_locatortype_id,l.tc_devicedata_id,lt.name AS room_name,
+TO_CHAR(COALESCE(l.custom_timestamp, l.created), 'DD/MM/YY') AS dates,
+COALESCE(l.custom_timestamp::Date, l.created::Date) AS only_date,
+dd.value AS device_name,ls.name AS status_name,l.created AS created_ts,
+COALESCE(NULLIF(l.appearance, ''), '0')::numeric AS ampere,LEAD(l.created) OVER (PARTITION BY l.tc_devicedata_id ORDER BY l.created) AS next_time
+FROM adempiere.tc_light l JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+JOIN adempiere.tc_devicedata dd ON dd.tc_devicedata_id = l.tc_devicedata_id
+WHERE l.ad_client_id =  $P{AD_CLIENT_ID}  AND l.created >= $P{FromDate} 
+AND l.created < ($P{ToDate}::timestamp + INTERVAL '1 day')
+AND ($P{deviceId} IS NULL OR dd.tc_devicedata_id IN ($P!{deviceId}))
+AND ($P{RoomType} IS NULL OR lt.name = $P{RoomType}) 
+AND  ($P{LightStatus}  IS NULL OR ls.name =  $P{LightStatus}))
+SELECT only_date AS date,dates,m_locatortype_id,tc_devicedata_id,room_name,device_name,status_name,COUNT(*) AS status_count,
+ROUND(AVG(ampere), 2) AS avg_ampere,FLOOR(LEAST(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 1440) / 60) || ' hour ' ||
+FLOOR(LEAST(SUM(EXTRACT(EPOCH FROM (next_time - created_ts)) / 60), 1440) % 60) || ' min' AS duration
+FROM status_durations GROUP BY m_locatortype_id,tc_devicedata_id,only_date,room_name,device_name,status_name,dates
+ORDER BY  room_name, device_name,only_date DESC, status_name;
+===============================================================================
+SELECT  l.name,l.tc_light_id As id,l.lighton As lightOn,l.lightoff AS lightOff,
+TO_CHAR(COALESCE(l.custom_timestamp, l.created), 'DD/MM/YY') AS Dates,
+TO_CHAR(COALESCE(l.custom_timestamp, l.created), 'HH12:MI AM') AS Time,
+COALESCE(l.custom_timestamp::Date, l.created::Date) As Date,
+l.m_locatortype_id As RoomId,lt.name As Room,
+ls.name As lightStatus,COALESCE(l.appearance, '0') AS ampere FROM adempiere.tc_light l
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+JOIN adempiere.tc_lightstatus ls ON ls.tc_lightstatus_id = l.tc_lightstatus_id
+JOIN adempiere.tc_devicedata dd ON dd.tc_devicedata_id = l.tc_devicedata_id
+WHERE l.ad_client_id =  $P{AD_CLIENT_ID} AND l.created >= $P{FromDate} 
+AND l.created < ($P{ToDate}::timestamp + INTERVAL '1 day')
+AND ($P{deviceId} IS NULL OR dd.tc_devicedata_id IN ($P!{deviceId}))
+AND ($P{RoomType} IS NULL OR lt.name = $P{RoomType}) 
+AND  ($P{LightStatus}  IS NULL OR ls.name =  $P{LightStatus} ) 
+order by l.m_locatortype_id,Date;
+=============================================================================
+WITH last_battery AS (
+    SELECT DISTINCT ON (t.tc_devicedata_id, t.created::date)
+        t.tc_devicedata_id,
+        t.created::date AS date,
+        COALESCE(NULLIF(t.battery_percentage, ''), '0') AS battery_percentage
+    FROM adempiere.tc_temperatureStatus t
+    WHERE t.ad_client_id = 1000002
+    ORDER BY t.tc_devicedata_id, t.created::date, t.created DESC
+)
+SELECT 
+    lt.name AS room_name,
+    TO_CHAR(COALESCE(t.custom_timestamp::date, t.created::date), 'DD/MM/YY') AS date,
+    COALESCE(t.custom_timestamp::date, t.created::date) AS onlyDate,
+    dd.value AS device_name,
+    ROUND(AVG(t.temperature::numeric), 2) AS avg_temperature,
+    ROUND(AVG(t.humidity::numeric), 2) AS avg_humidity,
+    COUNT(*) AS reading_count,
+    COALESCE(lb.battery_percentage, '0') AS battery_percentage,
+    lt.m_locatortype_id AS m_locatortype_id
+FROM adempiere.tc_temperatureStatus t
+JOIN adempiere.tc_devicedata dd 
+    ON dd.tc_devicedata_id = t.tc_devicedata_id
+JOIN adempiere.m_locatortype lt 
+    ON lt.m_locatortype_id = t.m_locatortype_id
+LEFT JOIN last_battery lb 
+    ON lb.tc_devicedata_id = t.tc_devicedata_id 
+   AND lb.date = t.created::date
+WHERE t.ad_client_id = 1000002
+AND ($P{deviceId} IS NULL OR dd.tc_devicedata_id IN ($P!{deviceId}))
+AND ($P{RoomtId} IS NULL OR lt.name = $P{RoomtId})
+AND t.created::date >= $P{FromDate}
+AND t.created::date < ($P{ToDate}::timestamp + INTERVAL '1 day')
+GROUP BY 
+    lt.m_locatortype_id,
+    COALESCE(t.custom_timestamp::date, t.created::date),
+    lt.name, 
+    dd.value, 
+    lb.battery_percentage
+ORDER BY onlyDate DESC, lt.name, dd.value;
+================================================================================

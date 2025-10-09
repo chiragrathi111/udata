@@ -48,6 +48,7 @@ python2 -V
 sudo usermod -aG docker ${USER}
 sudo chmod 666 /var/run/docker.sock  (This line not use throw the error)
 sudo curl -sSL http://bit.ly/2ysbOFE | bash -s -- 1.4.6 1.4.6 0.4.18  (multiple images pull and downloaded in syatem)
+curl -sSL https://bit.ly/2ysbOFE | bash -s -- 1.4.6 1.4.6 0.4.18 (its working)
 ls
 cd fabric-samples
 sudo cp bin/* /usr/local/bin    '*/'not use after bin '

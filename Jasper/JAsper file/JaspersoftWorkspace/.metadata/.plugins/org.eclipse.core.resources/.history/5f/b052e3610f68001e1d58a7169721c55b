@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExpiryReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6753e0df-619c-4369-a77a-8c2f3f23e3eb">
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[bV9zdG9yYWdlb25oYW5kICwxMzEwLDIxNTYsZTU4NDczMWQtMGU3ZS00OWUxLWFjNWItYTk1ZDAy
+YzRkYWE5O21faW5vdXRsaW5lICw1MjEsMTUsOGJmY2UzYjAtMDI3NS00MGRlLWIyNGEtN2I5Y2E0
+ZTIyNjA4O21fcHJvZHVjdCAsMTA0NywxMzMwLDcwZWI0MDNhLWFhZGYtNGI4OS05OWE5LTQzNjI2
+MmExYzE2YztjX29yZGVybGluZSAsNzg0LDE0NzAsY2M1NWJiNmYtMDAzNC00NTgxLTgwMjAtZDk2
+NWQ3OWY2NDE2O21fd2FyZWhvdXNlICwyNzgsMjkxNSwyNmNhYzRkMy00NTBjLTQ3OTktYjU5Ny0y
+ODBhOGQxMDM3NTM7bV9hdHRyaWJ1dGVzZXRpbnN0YW5jZSAsMTUsMzYzNyxhOTQ0NmQ1Ny1iMGJl
+LTQ2MjMtYmI3OS03Yjg0ZmY0Yjg5OWM7Y19vcmRlciAsNTIxLDEyMjgsNzQzYjFmNjktYTY0ZS00
+ODgwLTg1YTUtNDliN2Y4ODU5MzhlOw==]]>
+	</property>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="346"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="642"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Idempiere Database Connection"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT b.name AS Product_Name,a.expirydate,
+e.qtyonhand AS ExpiryQTY,att.lot AS Lot_no,
+wh.value AS Warehouse_Name FROM c_orderline a
+join m_product b ON a.m_product_id = b.m_product_id 
+join m_inoutline mil ON mil.c_orderline_id = a.c_orderline_id 
+join m_storageonhand e ON mil.m_attributesetinstance_id = e.m_attributesetinstance_id 
+join m_attributesetinstance att ON att.m_attributesetinstance_id = e.m_attributesetinstance_id 
+join c_order f ON f.c_order_id = a.c_order_id 
+join m_warehouse wh ON wh.m_warehouse_id = f.m_warehouse_id]]>
+	</queryString>
+	<field name="product_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="product_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="product_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="expirydate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="expirydate"/>
+		<property name="com.jaspersoft.studio.field.label" value="expirydate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="expiryqty" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="expiryqty"/>
+		<property name="com.jaspersoft.studio.field.label" value="expiryqty"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_storageonhand"/>
+	</field>
+	<field name="lot_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lot_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="lot_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_attributesetinstance"/>
+	</field>
+	<field name="warehouse_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_warehouse"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

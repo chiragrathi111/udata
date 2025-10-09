@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="technicianwise" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3bf0f7ed-8d4b-4e73-ace7-b81a7f049478">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT cl.tc_cultureLabel_id AS id,cl.c_uuid AS uuid,cl.updated AS Date,cl.updatedby AS techID,u.name AS technician,
+cl.personalCode2 AS personalCode,cl.discarddate AS discardDate FROM adempiere.tc_cultureLabel cl
+JOIN adempiere.ad_user u ON u.ad_user_id = cl.updatedby
+WHERE cl.AD_Client_Id = 1000000 AND isdiscarded = 'Y' ORDER BY u.name,cl.tc_cultureLabel_id;]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="techid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="techid"/>
+		<property name="com.jaspersoft.studio.field.label" value="techid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="technician" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="technician"/>
+		<property name="com.jaspersoft.studio.field.label" value="technician"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="discarddate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="discarddate"/>
+		<property name="com.jaspersoft.studio.field.label" value="discarddate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<group name="technician">
+		<groupExpression><![CDATA[$F{techid}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<textField>
+					<reportElement x="14" y="4" width="106" height="20" uuid="f1666d9a-46b9-4e0e-b6dd-2005848addc5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{technician}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="59" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="2" width="528" height="55" forecolor="#298F60" backcolor="#298F60" uuid="49b22e25-eda0-4985-aa7b-b241a6f85b57">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="23" y="4" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="348ea0ca-ceca-4b4d-aa63-a28c8952a8c9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Technician wise Contamination Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="34" width="81" height="20" forecolor="#FFFFFF" uuid="7b429129-24a0-4c51-a74f-92ada8440cfb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personal Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="322" y="34" width="60" height="20" forecolor="#FFFFFF" uuid="33d40aac-97bc-44a3-98a9-79c6c198980a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="34" width="70" height="20" forecolor="#FFFFFF" uuid="caaade89-4ee2-4128-bd8b-3872b6c04701">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Technician]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="34" width="82" height="20" forecolor="#FFFFFF" uuid="23692e1b-1485-4933-9bae-2de2827b7c95">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Culture UUId]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="81" y="3" width="220" height="20" uuid="e45b2930-3312-4071-9b22-ac61b407f8af">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{uuid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="312" y="3" width="76" height="20" uuid="f210dd2b-a26f-4493-9b5f-257d6cbb6bcf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="416" y="3" width="40" height="20" uuid="560bb3d9-4c2e-4a9e-be92-22784ef03cb8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{personalcode}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

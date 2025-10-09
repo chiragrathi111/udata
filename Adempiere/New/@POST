@@ -1,0 +1,350 @@
+@POST
+    @Path("/mr_list")
+    public MRListResponseDocument getMrList(MRListRequestDocument req);
+
+@Override
+    public CreateMRResponseDocument createMR(CreateMRRequestDocument createMRRequestDocument) {
+        CreateMRResponseDocument createMRResponseDocument = CreateMRResponseDocument.Factory.newInstance();
+        CreateMRResponse createMRResponse = createMRResponseDocument.addNewCreateMRResponse();
+        CreateMRRequest createMRRequest = createMRRequestDocument.getCreateMRRequest();
+        ADLoginRequest loginReq = createMRRequest.getADLoginRequest();
+        String serviceType = createMRRequest.getServiceType();
+        int cOrderId = createMRRequest.getCOrderId();
+        MInvoice m_invoice = null;
+        MRMA m_rma = null;
+        Trx trx = null;
+        int clientID = loginReq.getClientID();
+        CompiereService m_cs = getCompiereService();
+        Properties ctx = m_cs.getCtx();
+        int mInoutId = 0;
+        try {
+            String trxName = Trx.createTrxName(getClass().getName() + "_");
+            trx = Trx.get(trxName, true);
+            trx.start();
+            
+            org.idempiere.adInterface.x10.ADLoginRequest adLoginReq = RwplUtils.convertAdLogin(loginReq);
+            String err = login(adLoginReq, webServiceName, "createMR", serviceType);
+            if (err != null && err.length() > 0) {
+                createMRResponse.setError(err);
+                createMRResponse.setIsError(true);
+                return createMRResponseDocument;
+            }
+            if (!serviceType.equalsIgnoreCase("createMR")) {
+                createMRResponse.setIsError(true);
+                createMRResponse.setError("Service type " + serviceType + " not configured");
+                return createMRResponseDocument;
+            }
+
+            MRLines[] MRLinesArray = createMRRequest.getMRLinesArray();
+
+            MTable docTypeTable = MTable.get(ctx, "c_doctype");
+            PO docTypePO = docTypeTable.getPO("name = 'MM Receipt' and ad_client_id = " + clientID + "",
+                    trx.getTrxName());
+            MDocType mDocType = (MDocType) docTypePO;
+
+            MTable table = MTable.get(ctx, "c_order");
+            PO po = table.getPO(cOrderId, trx.getTrxName());
+
+            MInOut inout = null;
+            int clientId = loginReq.getClientID();
+            int orgId = loginReq.getOrgID();
+            int userId = Env.getAD_User_ID(ctx);
+            if (po.get_ID() == 0) {
+                int warehouseId = createMRRequest.getWarehouseId();
+                int bPartnerId = createMRRequest.getBPartnerId();
+                String description = createMRRequest.getDescription();
+                Timestamp movementDate = new Timestamp(createMRRequest.getMovementdate().getTimeInMillis());
+
+                inout = new MInOut_Custom(ctx, trxName, clientId, orgId, userId, bPartnerId,
+                        warehouseId, mDocType, movementDate, description);
+                inout.saveEx();
+
+                mInoutId = inout.getM_InOut_ID();
+
+                for (MRLines data : MRLinesArray) {
+                    int qnty = data.getQnty();
+                    int M_Product_ID = data.getProductId();
+                    int C_UOM_ID = data.getUomId();
+                    BigDecimal QtyEntered = BigDecimal.valueOf(qnty);
+                    int M_Locator_ID = data.getLocator();
+
+                    MInOutLine iol = new MInOutLine(ctx, 0, trxName);
+                    iol.setM_InOut_ID(mInoutId);
+                    iol.setM_Product_ID(M_Product_ID, C_UOM_ID); // Line UOM
+                    iol.setQty(QtyEntered);
+
+                    iol.setMovementQty(QtyEntered);
+                    iol.setC_UOM_ID(C_UOM_ID);
+                    iol.setM_Warehouse_ID(warehouseId);
+                    iol.setM_Locator_ID(M_Locator_ID);
+                    iol.saveEx();
+
+                    data.setMrLineId(iol.get_ID());
+                    
+                    createPackLineforInoutLine(ctx, trxName, data.getPackLineArray(), qnty, iol.get_ID());
+                }
+
+            } else {
+                MOrder order = (MOrder) po;
+
+                MInOut receipt = new MInOut(order, mDocType.get_ID(), order.getDateOrdered());
+                receipt.setDocStatus(DocAction.STATUS_Drafted);
+                receipt.saveEx();
+
+                mInoutId = receipt.getM_InOut_ID();
+                inout = new MInOut(ctx, mInoutId, trx.getTrxName());
+                for (MRLines data : MRLinesArray) {
+                    int C_InvoiceLine_ID = 0;
+                    int M_RMALine_ID = 0;
+                    int M_Product_ID = data.getProductId();
+                    int C_UOM_ID = data.getUomId();
+                    int C_OrderLine_ID = data.getCOrderlineId();
+                    BigDecimal QtyEntered = BigDecimal.valueOf(data.getQnty());
+                    int M_Locator_ID = data.getLocator();
+
+                    inout.createLineFrom(C_OrderLine_ID, C_InvoiceLine_ID, M_RMALine_ID, M_Product_ID, C_UOM_ID,
+                            QtyEntered, M_Locator_ID);
+                    MInOutLine lineArray[] = MInOutLine.get(ctx, C_OrderLine_ID, trxName);
+                    MInOutLine line = lineArray[lineArray.length - 1];
+                    data.setMrLineId(line.get_ID());
+                    
+                    Packline.deletepackLine(ctx, trxName, line.get_ID());
+                    createPackLineforInoutLine(ctx, trxName, data.getPackLineArray(), data.getQnty(), line.get_ID());
+                }
+                inout.updateFrom(order, m_invoice, m_rma);
+            }
+            trx.commit();
+            createMRResponse.setMRLinesArray(MRLinesArray);
+            createMRResponse.setIsError(false);
+            createMRResponse.setMrDocumentNumber(inout.getDocumentNo());
+            createMRResponse.setMrId(inout.get_ID());
+
+        } catch (Exception e) {
+            MTable table = MTable.get(ctx, "m_inout");
+            PO po = table.getPO(mInoutId, trx.getTrxName());
+            po.delete(true);
+            createMRResponse.setError(e.getMessage());
+            createMRResponse.setIsError(true);
+            return createMRResponseDocument;
+        } finally {
+            getCompiereService().disconnect();
+            trx.close();
+        }
+
+        return createMRResponseDocument;
+    }
+
+    private void createPackLineforInoutLine(Properties ctx, String trxName, PackLine[] packlineArray, int qnty,
+int inoutLineId) {
+
+int packCount = 1;
+for (PackLine packline : packlineArray) {
+createPackLine(ctx, trxName, inoutLineId, packCount, packline.getPackCount());
+qnty = qnty - packline.getPackCount();
+packCount++;
+}
+
+if (qnty > 0) {
+createPackLine(ctx, trxName, inoutLineId, packCount, qnty);
+}
+}
+    
+    private void createPackLine(Properties ctx, String trxName, int minoutLineId, int packCount, int qnty) {
+        Packline lineNew = new Packline(ctx, 0, trxName);
+        lineNew.setM_InOutLine_ID(minoutLineId);
+        lineNew.setAD_Org_ID(Env.getAD_Org_ID(ctx));
+        lineNew.setlabel("Pack " + packCount);
+        lineNew.setquantity(BigDecimal.valueOf(qnty));
+        lineNew.saveEx();
+    }
+
+    payload    
+
+{
+    "CreateMRRequest": {
+        "serviceType": "createMR",
+        "warehouseId": 1000000,
+        "bPartnerId": 1000004,
+        "movementdate": "2025-01-05T00:00:00.000",
+        "description": "bj",
+        "cOrderId": 0,
+        "ADLoginRequest": {
+            "user": "pgrn",
+            "pass": "pgrn",
+            "lang": 112,
+            "ClientID": 1000000,
+            "RoleID": 1000002,
+            "OrgID": 1000000,
+            "WarehouseID": 1000000,
+            "stage": 0
+        },
+        "mRLines": [
+            {
+                "productId": 1000001,
+                "productName": "ProB",
+                "uomId": 100,
+                "qnty": 400,
+                "locator": 1000001,
+                "labelQty": 0,
+                "packLine":[
+                    {
+                        "PackCount" : 100
+                    },
+                     {
+                        "PackCount" : 200
+                    }
+                ]
+            },
+            {
+                "productId": 1000002,
+                "productName": "proA",
+                "uomId": 100,
+                "qnty": 200,
+                "locator": 1000001,
+                "labelQty": 0,
+                "packLine":[
+                    {
+                        "PackCount" : 50
+                    },
+                     {
+                        "PackCount" : 70
+                    }
+                ]
+            }
+        ]
+    }
+}
+
+response
+{
+  "CreateMRResponse": {
+    "@IsError": false,
+    "mrDocumentNumber": "1000382",
+    "mrId": 1000729,
+    "mRLines": [
+      {
+        "mrLineId": 1000836,
+        "productId": 1000001,
+        "uomId": 100,
+        "qnty": 400,
+        "locator": 1000001
+      },
+      {
+        "mrLineId": 1000837,
+        "productId": 1000002,
+        "uomId": 100,
+        "qnty": 200,
+        "locator": 1000001
+      }
+    ]
+  }
+}
+
+
+this is my old api
+i want same response
+i migrate to api startng i use json in xml file
+but currently i want not using any credential so i want migrate my api
+i sent this foramt according migrste
+but i have doubt you saw my request payload their have multiple Line and inside line have multiple packline same thing i want this @query is posible
+so gave whole code their accoding
+i just share one rafrence
+give code simple not too much complex and my new api response come same old api
+
+@POST
+    @Path("getmrcomponents")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMRComponents();
+    
+
+@Override
+    public Response getMRComponents() {
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("IsError", false);
+
+        try {
+            Properties ctx = Env.getCtx();
+            int clientId = Env.getAD_Client_ID(ctx);
+
+            List<MWarehouse> warehouses = new Query(ctx, MWarehouse.Table_Name, "IsActive='Y' AND ad_client_id=?", null)
+                                            .setParameters(clientId)
+                                            .setOrderBy("Name ASC")
+                                            .list();
+            List<Map<String, Object>> warehouseList = new ArrayList<>();
+            for (MWarehouse wh : warehouses) {
+                Map<String, Object> whMap = new HashMap<>();
+                whMap.put("warehouseId", wh.get_ID());
+                whMap.put("warehouse", wh.getName());
+                // Default locator example
+                int defaultLocatorId = 0;
+                List<MLocator> locators = MLocatorType_Custom.getLocatorsByType(ctx, null, wh.get_ID(), "receiving", "Y");
+                if (locators != null && !locators.isEmpty()) {
+                    defaultLocatorId = locators.get(0).get_ID();
+                }
+                whMap.put("defaultLocatorId", defaultLocatorId);
+
+                warehouseList.add(whMap);
+            }
+            responseMap.put("warehouse", warehouseList);
+
+            List<MProductCategory> categories = new Query(ctx, MProductCategory.Table_Name, "IsActive='Y' AND ad_client_id=?", null)
+                                                    .setParameters(clientId)
+                                                    .setOrderBy("Name ASC")
+                                                    .list();
+            List<Map<String, Object>> categoryList = new ArrayList<>();
+            for (MProductCategory cat : categories) {
+                Map<String, Object> catMap = new HashMap<>();
+                catMap.put("productCategoryId", cat.getM_Product_Category_ID());
+                catMap.put("productCategoryName", cat.getName());
+                categoryList.add(catMap);
+            }
+            responseMap.put("productCategory", categoryList);
+
+            List<PO> products = new Query(ctx, MProduct_Custom.Table_Name, "IsActive='Y' AND ad_client_id=?", null)
+                                            .setParameters(clientId)
+                                            .setOrderBy("Name ASC")
+                                            .list();
+            List<Map<String, Object>> productList = new ArrayList<>();
+            for (PO prds : products) {
+                MProduct_Custom prd = new MProduct_Custom(ctx, prds.get_ID(), null);
+                Map<String, Object> prdMap = new HashMap<>();
+                prdMap.put("productId", prd.get_ID());
+                prdMap.put("productName", prd.getName());
+                prdMap.put("uomId", prd.getC_UOM_ID());
+                prdMap.put("uomName", prd.getC_UOM() != null ? prd.getC_UOM().getName() : "");
+                prdMap.put("labelQnty", prd.getLabelQnty() != null ? prd.getLabelQnty().intValue() : 0);
+                prdMap.put("productCategoryId", prd.getM_Product_Category_ID());
+                prdMap.put("productCategoryName", prd.getM_Product_Category() != null ? prd.getM_Product_Category().getName() : "");
+                productList.add(prdMap);
+            }
+            responseMap.put("product", productList);
+
+            List<MBPartner> bpartners = new Query(ctx, MBPartner.Table_Name, "IsActive='Y' AND ad_client_id=?", null)
+                                            .setParameters(clientId)
+                                            .setOrderBy("Name ASC")
+                                            .list();
+            List<Map<String, Object>> bpList = new ArrayList<>();
+            for (MBPartner bp : bpartners) {
+                Map<String, Object> bpMap = new HashMap<>();
+                bpMap.put("businessPartnerID", bp.get_ID());
+                bpMap.put("businessPartnerName", bp.getName());
+                bpMap.put("address", bp.getPrimaryC_BPartner_Location() != null ? bp.getPrimaryC_BPartner_Location().getName() : "");
+                bpList.add(bpMap);
+            }
+            responseMap.put("businessPartner", bpList);
+
+            return Response.ok(Collections.singletonMap("GetMRComponentsResponse", responseMap)).build();
+
+        } catch (Exception e) {
+            Map<String, Object> errorResp = new HashMap<>();
+            errorResp.put("IsError", true);
+            errorResp.put("ErrorMessage", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity(Collections.singletonMap("GetMRComponentsResponse", errorResp))
+                           .build();
+        }
+    }
+
+
+please give me actual code     

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_7" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="98ecd706-260e-4960-91b2-99fdfc9404a7">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT u.name As user,cl.createdby AS userId,cl.personal_code AS personalCode,cl.created AS date,cl.tc_culturelabel_id AS id,'Culture Label' AS labelName
+FROM adempiere.tc_culturelabel cl JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby WHERE cl.AD_CLIENT_ID = 1000000
+UNION ALL
+SELECT u.name As user,el.createdby AS userId,el.personalcode AS personalCode,el.created AS date,el.tc_explantlabel_id AS id,'Explant Label' AS labelName
+FROM adempiere.tc_explantlabel el JOIN adempiere.ad_user u ON u.ad_user_id = el.createdby WHERE el.AD_CLIENT_ID = 1000000
+UNION ALL
+SELECT u.name As user,ml.createdby AS userId,ml.personalcode AS personalCode,ml.created AS date,ml.tc_medialabelQr_id AS id,'Media Label' AS labelName
+FROM adempiere.tc_medialabelQr ml JOIN adempiere.ad_user u ON u.ad_user_id = ml.createdby WHERE ml.AD_CLIENT_ID = 1000000 ;
+]]>
+	</queryString>
+	<field name="user" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user"/>
+		<property name="com.jaspersoft.studio.field.label" value="user"/>
+	</field>
+	<field name="userid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="userid"/>
+		<property name="com.jaspersoft.studio.field.label" value="userid"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+	</field>
+	<field name="date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+	</field>
+	<field name="labelname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="labelname"/>
+		<property name="com.jaspersoft.studio.field.label" value="labelname"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

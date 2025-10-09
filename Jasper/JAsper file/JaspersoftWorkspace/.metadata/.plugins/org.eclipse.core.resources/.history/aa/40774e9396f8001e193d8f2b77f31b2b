@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CultureDetailsQR" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d57e808c-230d-42af-85a6-d16fe806ddad">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[select ps.codeno As cropType,v.codeno As variety,ns.codeno AS natureSample,cs.codeno AS CultureStage,vt.codeno As VirusResult,* from adempiere.tc_culturedetails cd
+join adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cd.tc_species_id
+join adempiere.tc_variety v ON v.tc_variety_id = cd.tc_species_ids
+join adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cd.tc_naturesample_id
+join adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cd .tc_culturestage_id
+join adempiere.tc_virustesting vt ON vt.tc_virustesting_id = cd.tc_virustesting_id
+where cd.ad_client_id =  $P{AD_CLIENT_ID}    and cd.tc_culturedetails_id =   $P{RECORD_ID}  ;]]>
+	</queryString>
+	<field name="croptype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.label" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="variety" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="variety"/>
+		<property name="com.jaspersoft.studio.field.label" value="variety"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="naturesample" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="naturesample"/>
+		<property name="com.jaspersoft.studio.field.label" value="naturesample"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="culturestage" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturestage"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturestage"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="virusresult" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="virusresult"/>
+		<property name="com.jaspersoft.studio.field.label" value="virusresult"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="tc_culturedetails_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_culturedetails_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_culturedetails_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="created" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="createdby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="updatedby" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="isdefault" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="parentcultureline" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parentcultureline"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentcultureline"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="cycleno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cycleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycleno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="tc_species_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_species_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_species_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="tc_species_ids" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_species_ids"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_species_ids"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="tc_naturesample_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_naturesample_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_naturesample_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="tc_culturestage_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_culturestage_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_culturestage_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="tc_virustesting_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_virustesting_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_virustesting_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturedetails"/>
+	</field>
+	<field name="tc_plantspecies_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_plantspecies_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_plantspecies_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_27" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_28" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_29" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_30" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="codeno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="varitycodeno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="varitycodeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="varitycodeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_33" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_34" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_35" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_36" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_37" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_38" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_39" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="tc_variety_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="COLUMN_41" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_42" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_43" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_44" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_45" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_46" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_47" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_48" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_49" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_50" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_51" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_52" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_53" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="COLUMN_54" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_naturesample_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_naturesample_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_55" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_56" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_57" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_58" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_59" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_60" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_61" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_62" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_63" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_64" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_65" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_66" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="COLUMN_67" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_culturestage_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_culturestage_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_68" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_69" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_70" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_71" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_72" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_73" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_74" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_75" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_76" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_77" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_78" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_79" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="COLUMN_80" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_virustesting_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_virustesting_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_81" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_82" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_83" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_84" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value"/>
+		<property name="com.jaspersoft.studio.field.label" value="value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_85" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_86" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created"/>
+		<property name="com.jaspersoft.studio.field.label" value="created"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_87" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.label" value="createdby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_88" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_89" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.label" value="updatedby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_90" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description"/>
+		<property name="com.jaspersoft.studio.field.label" value="description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_91" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="COLUMN_92" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdefault"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="372" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="40" y="0" width="438" height="372" uuid="8be9c456-3009-4033-a45c-82a63ea19a04">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[{
+  "Crop Type": "($F{croptype})",
+  "Variety": "($F{variety})",
+  "Parent Culture Line": "($F{parentcultureline})",
+  "Date": "($F{date})",
+  "Nature of Sample": "($F{naturesample})",
+  "Culture Sub Stage": "($F{culturestage})",
+  "Cycle Number": "($F{cycleno})",
+  "Virus Testing Result": "($F{virusresult})"
+}
+]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+		</band>
+	</pageHeader>
+</jasperReport>

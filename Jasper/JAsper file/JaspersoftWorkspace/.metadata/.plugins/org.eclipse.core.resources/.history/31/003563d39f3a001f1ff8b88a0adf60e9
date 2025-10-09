@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="UserManagementReportForFieldOffiecr" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4949013e-12b4-4dba-8302-6b040862c660">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT users,userId,date,id,PlantID,visitName,counts
+FROM (
+SELECT u.name As Users,fv.createdby As userId,Date(fv.created) As date,fv.tc_firstvisit_id AS id,fj.tc_plantdetails_id AS PlantID,'First Visit' AS visitName,
+CAST(COUNT(*) OVER (PARTITION BY DATE(fv.created), fv.tc_firstvisit_id,u.name) AS NUMERIC) AS counts FROM adempiere.tc_firstvisit fv
+JOIN adempiere.ad_user u ON u.ad_user_id = fv.createdby
+JOIN adempiere.tc_firstjoinplant fj ON fj.tc_firstvisit_id = fv.tc_firstvisit_id	
+WHERE fv.ad_client_id = 1000000 AND fj.tc_plantdetails_id is not null 
+UNION ALL
+SELECT u.name As Users,iv.createdby As userId,Date(iv.created) As date,iv.tc_intermediatevisit_id,ij.tc_plantdetails_id AS PlantID,'Intermediate Visit' AS visitName,
+CAST(COUNT(*) OVER (PARTITION BY DATE(iv.created), iv.tc_intermediatevisit_id,u.name) AS NUMERIC) AS counts FROM adempiere.tc_intermediatevisit iv
+JOIN adempiere.ad_user u ON u.ad_user_id = iv.createdby
+JOIN adempiere.tc_intermediatejoinplant ij ON ij.tc_intermediatevisit_id = iv.tc_intermediatevisit_id	
+WHERE iv.ad_client_id = 1000000 AND ij.tc_plantdetails_id is not null 
+UNION ALL
+SELECT u.name As Users,cv.createdby As userId,Date(cv.created) As date,cv.tc_collectiondetails_id,cj.tc_plantdetails_id AS PlantID,'Collection Visit' AS visitName,
+CAST(COUNT(*) OVER (PARTITION BY DATE(cv.created), cv.tc_collectiondetails_id,u.name) AS NUMERIC) AS counts FROM adempiere.tc_collectiondetails cv
+JOIN adempiere.ad_user u ON u.ad_user_id = cv.createdby
+JOIN adempiere.tc_collectionjoinplant cj ON cj.tc_collectiondetails_id = cv.tc_collectiondetails_id	
+WHERE cv.ad_client_id = 1000000 AND cj.tc_plantdetails_id is not null 
+) AS combined WHERE visitName = 'Intermediate Visit' ORDER BY users,date,id;]]>
+	</queryString>
+	<field name="users" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="users"/>
+		<property name="com.jaspersoft.studio.field.label" value="users"/>
+	</field>
+	<field name="userid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="userid"/>
+		<property name="com.jaspersoft.studio.field.label" value="userid"/>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+	</field>
+	<field name="id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+	</field>
+	<field name="plantid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="plantid"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantid"/>
+	</field>
+	<field name="visitname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="visitname"/>
+		<property name="com.jaspersoft.studio.field.label" value="visitname"/>
+	</field>
+	<field name="counts" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="counts"/>
+		<property name="com.jaspersoft.studio.field.label" value="counts"/>
+	</field>
+	<variable name="date wise" class="java.math.BigDecimal" resetType="Group" resetGroup="Date" calculation="Sum">
+		<variableExpression><![CDATA[$F{counts}]]></variableExpression>
+	</variable>
+	<variable name="user wise" class="java.math.BigDecimal" resetType="Group" resetGroup="User" calculation="Sum">
+		<variableExpression><![CDATA[$F{counts}]]></variableExpression>
+	</variable>
+	<group name="User">
+		<groupExpression><![CDATA[$F{userid}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="2" y="0" width="78" height="20" uuid="7fe28cd6-9cdb-4e97-90f1-44af09a4d6c5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{users}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Date">
+		<groupExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="130" y="0" width="70" height="20" uuid="a87e448a-3e39-4b9e-95bb-1d156b7932ba">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="401" y="0" width="56" height="20" uuid="b999f3b9-58cc-4a90-b6b4-8fa872192d19">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$V{date wise}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="VisitId">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="260" y="0" width="81" height="20" uuid="15d0648a-451e-41d1-b028-b978736e0937">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="401" y="0" width="56" height="20" uuid="50e44c8f-fe9b-411c-bad5-340bbeb1875a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{counts}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="1" width="540" height="55" forecolor="#298F60" backcolor="#298F60" uuid="c7bd22cf-c434-4fac-b3ed-a9aab5152780">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="4" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="21f13b43-5bd9-451b-b855-bf3cae4e51b3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User Management Report For Field Officer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="34" width="70" height="20" forecolor="#FFFFFF" uuid="adc05d07-ccaf-47d4-93ad-f3a55b2f2839">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Technician]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="143" y="34" width="30" height="20" forecolor="#FFFFFF" uuid="14a3d24c-b7e0-4be1-a02f-7e5573eac581">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="36" width="54" height="20" forecolor="#FFFFFF" uuid="4d0380c5-6642-43a3-b3df-c255008317cb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Record Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="34" width="50" height="20" forecolor="#FFFFFF" uuid="7c2b582d-c66c-417d-86cd-fc799e3adaeb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+		</band>
+	</title>
+</jasperReport>

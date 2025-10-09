@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GrowthRoomReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="54a2ff84-fbbc-467f-8311-b16069033606">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tissue.jrdax"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT v.name,ord.tc_variety_id,ord.culturecode,v.codeno,o.description AS Contamination,i_pr.name AS stageAndCycle,
+    COALESCE(NULLIF(SUM(CASE WHEN DATE_TRUNC('month', i.created) != DATE_TRUNC('month', NOW()) THEN i.quantity ELSE 0 END), 0),0) AS OpeningStock,
+    COALESCE(NULLIF(SUM(CASE WHEN DATE_TRUNC('month', i.created) = DATE_TRUNC('month', NOW()) THEN i.quantity ELSE 0 END), 0),0) AS Stocked,
+    COALESCE(NULLIF(SUM(CASE WHEN o_pr.name LIKE 'N%' OR o_pr.name LIKE 'BI%' THEN o.quantity ELSE 0 END), 0),0) AS ToCT,
+    COALESCE(NULLIF(SUM(CASE WHEN o_pr.name LIKE 'M%' OR o_pr.name LIKE 'BM%' THEN o.quantity ELSE 0 END), 0),0) AS M,
+    COALESCE(NULLIF(SUM(CASE WHEN o_pr.name LIKE 'E%' OR o_pr.name LIKE 'BE%' THEN o.quantity ELSE 0 END), 0),0) AS E,
+    COALESCE(NULLIF(SUM(CASE WHEN o_pr.name LIKE 'R%' OR o_pr.name LIKE 'BR%' THEN o.quantity ELSE 0 END), 0),0) AS R,
+    COALESCE(NULLIF(SUM(CASE WHEN o_pr.name LIKE 'H%' OR o_pr.name LIKE 'BH%' THEN o.quantity ELSE 0 END), 0),0) AS Hardning,
+    i.ad_client_id,i.ad_org_id,MAX(Date(i.created)) AS orderDate
+FROM adempiere.tc_in i
+JOIN adempiere.m_product i_pr ON i.m_product_id = i_pr.m_product_id
+JOIN adempiere.tc_out o ON o.tc_in_id = i.tc_in_id
+JOIN adempiere.m_product o_pr ON o.m_product_id = o_pr.m_product_id
+JOIN adempiere.tc_order ord ON ord.tc_order_id = o.tc_order_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = ord.tc_variety_id
+where ord.ad_client_id = 1000000  AND o.created > '9/04/2024' AND o.created < '11/04/2024'
+GROUP BY i_pr.name,i.ad_client_id,i.ad_org_id,v.name,ord.tc_variety_id,ord.culturecode,v.codeno,o.description Order By v.codeno;
+
+]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="tc_variety_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_variety_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_order"/>
+	</field>
+	<field name="culturecode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturecode"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturecode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_order"/>
+	</field>
+	<field name="codeno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="contamination" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="contamination"/>
+		<property name="com.jaspersoft.studio.field.label" value="contamination"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="stageandcycle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stageandcycle"/>
+		<property name="com.jaspersoft.studio.field.label" value="stageandcycle"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="openingstock" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="openingstock"/>
+		<property name="com.jaspersoft.studio.field.label" value="openingstock"/>
+	</field>
+	<field name="stocked" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="stocked"/>
+		<property name="com.jaspersoft.studio.field.label" value="stocked"/>
+	</field>
+	<field name="toct" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="toct"/>
+		<property name="com.jaspersoft.studio.field.label" value="toct"/>
+	</field>
+	<field name="m" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m"/>
+		<property name="com.jaspersoft.studio.field.label" value="m"/>
+	</field>
+	<field name="e" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="e"/>
+		<property name="com.jaspersoft.studio.field.label" value="e"/>
+	</field>
+	<field name="r" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="r"/>
+		<property name="com.jaspersoft.studio.field.label" value="r"/>
+	</field>
+	<field name="hardning" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="hardning"/>
+		<property name="com.jaspersoft.studio.field.label" value="hardning"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_in"/>
+	</field>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_in"/>
+	</field>
+	<field name="orderdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="orderdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="orderdate"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

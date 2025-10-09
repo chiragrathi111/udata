@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="produvtLabelRWPL" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="20" uuid="dc0e6729-05ef-4515-bbeb-7b47705e6f2a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="rwpl.jrdax"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select pl.pi_productlabel_id,u.name As User,pl.labeluuid as label, mp.name As productName,uom.name As uom,ml.m_inout_id,pl.quantity As Quantity,to_char(pl.created, 'DD/MM/YYYY') AS date,
+COALESCE(mp.erpcode, '') AS erpCode,to_char(pl.created, 'DD/MM/YYYY hh:mi:ss AM') As dateTime from adempiere.pi_productlabel pl
+LEFT JOIN adempiere.m_inoutline ml on ml.m_inoutline_id = pl.m_inoutline_id 
+JOIN adempiere.m_product mp on mp.m_product_id = pl.m_product_Id 
+JOIN adempiere.ad_user u ON u.ad_user_id = pl.createdby
+JOIN adempiere.c_uom uom ON uom.c_uom_id = mp.c_uom_id
+where pl.ad_client_id =  $P{AD_CLIENT_ID}  and Pl.pi_productlabel_id =  $P{RECORD_ID}]]>
+	</queryString>
+	<field name="pi_productlabel_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pi_productlabel_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="pi_productlabel_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_productlabel"/>
+	</field>
+	<field name="user" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user"/>
+		<property name="com.jaspersoft.studio.field.label" value="user"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="label" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="label"/>
+		<property name="com.jaspersoft.studio.field.label" value="label"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_productlabel"/>
+	</field>
+	<field name="productname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="productname"/>
+		<property name="com.jaspersoft.studio.field.label" value="productname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="uom" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="uom"/>
+		<property name="com.jaspersoft.studio.field.label" value="uom"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_uom"/>
+	</field>
+	<field name="m_inout_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_inout_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_inout_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_inoutline"/>
+	</field>
+	<field name="quantity" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pi_productlabel"/>
+	</field>
+	<field name="date" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+	</field>
+	<field name="erpcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="erpcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="erpcode"/>
+	</field>
+	<field name="datetime" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="datetime"/>
+		<property name="com.jaspersoft.studio.field.label" value="datetime"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="723" splitType="Stretch">
+			<rectangle>
+				<reportElement x="5" y="2" width="579" height="720" uuid="af22c16a-9b2e-4aa1-92ae-12dd485d3610"/>
+			</rectangle>
+			<componentElement>
+				<reportElement x="289" y="290" width="286" height="369" uuid="db31083b-e2e2-49af-ac16-bfc5faa9475e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{label}]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<line>
+				<reportElement x="5" y="67" width="580" height="1" uuid="7a37bdc4-3446-4998-9fb9-043613649371">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="14" y="200" width="186" height="30" uuid="674242d6-a410-456e-a6a8-3bdfebe0e1ec">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Part No.      : "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="0" width="579" height="67" uuid="3795b06d-d5c8-49b0-9b76-a41d1f8dc472">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="25" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RADHESHAM WELLPACK PVT. LTD.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="14" y="337" width="386" height="30" uuid="7bc8b89f-bfc8-4e73-aa5c-3fb114a18f8f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ERP Code    : " + $F{erpcode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="416" width="291" height="30" uuid="4b94b603-4b7e-411f-abcc-0b36b2222458">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Order No.    : " + $F{m_inout_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="497" width="297" height="30" uuid="809db0a9-359b-4a9d-8a51-1045303f81da">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Quantity      : "  + $F{quantity} + "  " + $F{uom}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="588" width="356" height="30" uuid="c9685f8d-2e80-4b4a-8bb4-33308d66f8a2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date of Pkg  : "  + $F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="665" width="356" height="30" uuid="3d1497c0-4d0c-4d8f-96aa-11555f7c6b2e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rcvd. By      : "  + $F{user}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="152" y="712" width="162" height="1" uuid="d92d079e-d555-47c1-8d9c-8b28a8a4d9e5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="191" y="200" width="385" height="60" uuid="3e55fe7f-2196-4401-8366-a491ed9359c7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="264" width="386" height="30" uuid="0bb8e83e-6763-4c93-82fa-7b8d466d29d7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Description : " + $F{erpcode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="75" width="560" height="30" uuid="840e9b88-12d8-4482-b170-f4323c823462">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["P. Category : " + $F{erpcode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="115" width="186" height="30" uuid="88c53147-df3f-4e89-85a0-b9927a3f6e37">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Label UUId  : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="191" y="116" width="385" height="60" uuid="99226315-e003-44dd-80ff-f527b0c7637d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

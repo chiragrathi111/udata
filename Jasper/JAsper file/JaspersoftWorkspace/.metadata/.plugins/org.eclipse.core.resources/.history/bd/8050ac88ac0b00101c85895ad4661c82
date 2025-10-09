@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StonexP" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c5f3394f-bee4-4ff2-8d9a-70dbde322897">
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="task_id" class="java.lang.Integer"/>
+	<field name="task_title" class="java.lang.String"/>
+	<field name="subtask_id" class="java.lang.Integer"/>
+	<field name="subtask_title" class="java.lang.String"/>
+	<field name="inspection" class="java.lang.Integer"/>
+	<field name="step_number" class="java.lang.Integer"/>
+	<field name="field_name" class="java.lang.String"/>
+	<group name="Task">
+		<groupExpression><![CDATA[$F{task_id}]]></groupExpression>
+		<groupHeader>
+			<band height="35">
+				<textField>
+					<reportElement x="0" y="1" width="280" height="30" uuid="33c8f3d6-dc59-4bfe-8050-c17cab124f4a"/>
+					<textElement verticalAlignment="Middle">
+						<font size="25" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Task: "+$F{task_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Subtask">
+		<groupExpression><![CDATA[$F{subtask_id}]]></groupExpression>
+		<groupHeader>
+			<band height="37">
+				<textField>
+					<reportElement x="20" y="1" width="360" height="30" uuid="d1da63d8-f469-4a38-ab73-52fa7297120e"/>
+					<textElement verticalAlignment="Middle">
+						<font size="25" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["SubTask: "+$F{subtask_title}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Inspection">
+		<groupExpression><![CDATA[$F{inspection}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<textField>
+					<reportElement x="30" y="1" width="400" height="30" uuid="7a0ab3e8-342b-48bb-8cda-11b6f1c4eb46">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="25" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Inspection: "+$F{inspection}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Steps">
+		<groupExpression><![CDATA[$F{step_number}]]></groupExpression>
+		<groupHeader>
+			<band height="34">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<staticText>
+					<reportElement x="190" y="4" width="285" height="16" uuid="dd4068de-a980-414f-8496-0d61a91932b1"/>
+					<text><![CDATA[======================]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="40" y="1" width="440" height="30" uuid="a582f190-8ee5-454c-bd49-ffd14d27ef8d">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="25" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Field: "+$F{field_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

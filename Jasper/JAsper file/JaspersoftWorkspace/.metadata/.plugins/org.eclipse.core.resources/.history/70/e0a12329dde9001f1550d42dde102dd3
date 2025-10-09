@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PlantTag" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="4d0089cc-2cfa-4dea-9c26-1787bb8cb7b2">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TissueServer.jrdax"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT ph.tc_secondaryhardeningLabel_id,ph.c_uuId AS UUId,ph.yearCode AS yearCode,ph.parentCultureLine AS PCultureLine,
+ph.cultureProcessedNumber AS cultureProcessNumber,ph.serialNumber AS serialNumber,ph.plotNumberTray AS plotNumberTray,
+ph.operationDate AS operationDate,ps.codeno AS cropType,v.codeno AS variety,cs.codeno AS cultureStage,
+o.c_uuid AS OutUUId FROM adempiere.tc_secondaryhardeningLabel ph
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = ph.tc_species_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = ph.tc_variety_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = ph.tc_culturestage_id
+JOIN adempiere.tc_out o ON o.tc_out_id = ph.tc_out_id
+WHERE ph.ad_client_id = 1000000 AND ph.tc_secondaryhardeningLabel_id = 1000071;]]>
+	</queryString>
+	<field name="tc_secondaryhardeninglabel_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tc_secondaryhardeninglabel_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_secondaryhardeninglabel_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="yearcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="yearcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="yearcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="pcultureline" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pcultureline"/>
+		<property name="com.jaspersoft.studio.field.label" value="pcultureline"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="cultureprocessnumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cultureprocessnumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="cultureprocessnumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="serialnumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="serialnumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="serialnumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="plotnumbertray" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="plotnumbertray"/>
+		<property name="com.jaspersoft.studio.field.label" value="plotnumbertray"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="operationdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="operationdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="operationdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_secondaryhardeninglabel"/>
+	</field>
+	<field name="croptype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.label" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="variety" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="variety"/>
+		<property name="com.jaspersoft.studio.field.label" value="variety"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="culturestage" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturestage"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturestage"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="outuuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="outuuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="outuuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="570" height="30" forecolor="#298F60" backcolor="#298F60" uuid="16c691c4-9d27-41a4-af7b-27fb809a5845">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="0" width="521" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="10d74cd2-42f8-4e55-90fb-701d8e9b4544">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Secondery Hardening Label]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="363" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="90" y="49" width="329" height="299" uuid="c7c73b87-b730-4c63-bb9b-b4befe905084">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["{\"outUuid\": \"" + $F{outuuid} + "\"," +
+"\"cultureUuid\": \"" + $F{uuid} + "\"," +
+"\"year\": \"" + $F{yearcode}+ "\"," +
+"\"cropType\": \"" + $F{croptype} + "\"," +
+"\"varietyType\": \"" + $F{variety} + "\"," +
+"\"parentLine\": \"" + $F{pcultureline}+ "\"," +
+"\"cultureStage\": \"" + $F{culturestage} + "\"," +
+"\"dateOfOperation\": \"" + $F{operationdate} + "\"," +
+"\"serialNumber\": \"" + $F{serialnumber} + "\"}"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="3" y="1" width="523" height="80" uuid="11fd74e7-cf94-4652-88ab-0a1ed5ca449b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{yearcode} + " " + $F{croptype}+ " " +  $F{variety}  + " "+$F{pcultureline} + " "  + $F{serialnumber}+ " " + $F{culturestage} + "-" + $F{plotnumbertray} + " " + new SimpleDateFormat("ddMMyy").format($F{operationdate}) ]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

@@ -1,0 +1,65 @@
+06/08/2025 :-
+1. Added all changes filed on SDC server. -Done
+2. Modify Report added on SDC server. - Done
+3. Write Query for new reprot. 
+4. Main url sent response on update password api. - Done
+5. Modify Attachment assign admin role instaed of superAdmin - Done
+6. Added validation on any api.
+
+=======================================
+ <filter>
+		<filter-name>InvalidEndpointFilter</filter-name>
+		<filter-class>org.realmeds.tissue.custom.InvalidEndpointFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>InvalidEndpointFilter</filter-name>
+		<url-pattern>/services/*</url-pattern>
+	</filter-mapping>
+
+package org.realmeds.tissue.custom;
+
+import java.io.IOException;
+import java.net.URI;
+
+import javax.servlet.*;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class InvalidEndpointFilter implements Filter{
+
+	@Override
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+        throws IOException, ServletException {
+
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+
+        try {
+            // Try to validate the URI
+            String uri = request.getRequestURI();
+            URI.create(uri); // Throws error if bad URI like %{...}
+
+            // If URI is valid, continue to your web service
+            chain.doFilter(req, res);
+        } catch (IllegalArgumentException e) {
+            // If URI is invalid, return custom JSON message
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Invalid API endpoint. Please check your URL.\"}");
+        }
+    }
+
+	@Override
+    public void init(FilterConfig filterConfig) {}
+
+    @Override
+    public void destroy() {}
+
+}
+	

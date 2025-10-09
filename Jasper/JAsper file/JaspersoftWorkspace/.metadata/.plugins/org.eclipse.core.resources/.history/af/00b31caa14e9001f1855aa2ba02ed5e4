@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PlantTag" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="4d0089cc-2cfa-4dea-9c26-1787bb8cb7b2">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TissueServer.jrdax"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT cl.tc_virustesting_id AS virusId,cl.tc_culturestage_id AS cultureStageId,cl.tc_in_id AS inId,cl.tc_CultureLabel_id,cl.c_uuid AS UUId,cl.parentcultureline AS parentCultureLine,cl.cycleno AS cycleNo,cl.tcpf AS TCPF,cl.personal_code AS personalCode,
+ps.codeno AS cropType,v.codeno AS Variety,ns.codeno AS natureSample,cs.codeno AS cultureStage,vt.name AS virusResult,mt.name AS mediaType,
+mat.codeNo AS machineName,cl.tc_out_id AS outId,o.c_uuid AS outUUid,
+cl.culturedate AS cultureDate,cl.isdiscarded As discard,cl.cultureoperationdate AS cultureOperationDate FROM adempiere.tc_cultureLabel cl
+JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = cl.tc_species_id
+JOIN adempiere.tc_variety v ON v.tc_variety_id = cl.tc_variety_id
+JOIN adempiere.tc_naturesample ns ON ns.tc_naturesample_id = cl.tc_naturesample_id
+JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
+JOIN adempiere.tc_virustesting vt ON vt.tc_virustesting_id = cl.tc_virustesting_id
+JOIN adempiere.tc_mediatype mt ON mt.tc_mediatype_id = cl.tc_mediatype_id
+JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
+JOIN adempiere.tc_in i ON i.tc_in_id = cl.tc_in_id
+JOIN adempiere.tc_machinetype mat ON mat.tc_machinetype_id = cl.tc_machinetype_id
+WHERE cl.ad_client_id =  $P{AD_CLIENT_ID}  AND cl.tc_CultureLabel_id =  $P{RECORD_ID}]]>
+	</queryString>
+	<field name="virusid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="virusid"/>
+		<property name="com.jaspersoft.studio.field.label" value="virusid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="culturestageid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="culturestageid"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturestageid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="inid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="inid"/>
+		<property name="com.jaspersoft.studio.field.label" value="inid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="tc_culturelabel_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tc_culturelabel_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tc_culturelabel_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="uuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="uuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="parentcultureline" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parentcultureline"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentcultureline"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="cycleno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cycleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="cycleno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="tcpf" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tcpf"/>
+		<property name="com.jaspersoft.studio.field.label" value="tcpf"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="croptype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.label" value="croptype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_plantspecies"/>
+	</field>
+	<field name="variety" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="variety"/>
+		<property name="com.jaspersoft.studio.field.label" value="variety"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_variety"/>
+	</field>
+	<field name="naturesample" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="naturesample"/>
+		<property name="com.jaspersoft.studio.field.label" value="naturesample"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_naturesample"/>
+	</field>
+	<field name="culturestage" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="culturestage"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturestage"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturestage"/>
+	</field>
+	<field name="virusresult" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="virusresult"/>
+		<property name="com.jaspersoft.studio.field.label" value="virusresult"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_virustesting"/>
+	</field>
+	<field name="mediatype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="mediatype"/>
+		<property name="com.jaspersoft.studio.field.label" value="mediatype"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_mediatype"/>
+	</field>
+	<field name="machinename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="machinename"/>
+		<property name="com.jaspersoft.studio.field.label" value="machinename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_machinetype"/>
+	</field>
+	<field name="outid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="outid"/>
+		<property name="com.jaspersoft.studio.field.label" value="outid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="outuuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="outuuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="outuuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="culturedate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="culturedate"/>
+		<property name="com.jaspersoft.studio.field.label" value="culturedate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="discard" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="discard"/>
+		<property name="com.jaspersoft.studio.field.label" value="discard"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="cultureoperationdate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="cultureoperationdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="cultureoperationdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="34">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="4" width="528" height="30" forecolor="#298F60" backcolor="#298F60" uuid="4a08d003-cbd9-4a59-bcab-1e1862b68853">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="4" width="450" height="30" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="2b04432d-666b-49c8-9a09-f1a866dc6f41">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Culture Label]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="469" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="90" y="61" width="330" height="370" uuid="3a96fd1e-bdf3-4272-b467-40bdfb4904d2">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["{\"outUuid\": \"" + $F{outuuid} + "\"," +
+"\"inId\": \"" + $F{inid} + "\"," +
+"\"cultureUuid\": \"" + $F{uuid} + "\"," +
+"\"cropType\": \"" + $F{croptype} + "\"," +
+"\"varietyType\": \"" + $F{variety} + "\"," +
+"\"parentLine\": \"" + $F{parentcultureline} + "\"," +
+"\"natureOfSample\": \"" + $F{naturesample} + "\"," +
+"\"cultureStage\": \"" + $F{culturestageid} + "\"," +
+"\"cycle\": \"" + $F{cycleno} + "\"," +
+"\"virusTesting\": \"" + $F{virusid} + "\"," +
+"\"dateOfSourcing\": \"" + $F{culturedate} + "\"," +
+"\"tcpf\": \"" + $F{tcpf} + "\"," +
+"\"dateOfOperation\": \"" + $F{cultureoperationdate} + "\"," +
+"\"personnelCode\": \"" + $F{personalcode} + "\"," +
+"\"machineCode\": \"" + $F{machinename} + "\"}"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<textField>
+				<reportElement x="20" y="222" width="80" height="30" uuid="4bf9fbc2-6206-4152-bd93-0cf8c46f05a1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mediatype}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="400" y="188" width="175" height="102" uuid="815f00d7-e993-436d-8b0f-c113f9e79b4a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tcpf} + " " + $F{cultureoperationdate} + " " + $F{machinename} + " " + $F{personalcode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="10" width="523" height="60" uuid="e6f3b2f6-f075-4a71-8380-1818b2b44e73">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{croptype} + " " + $F{variety} + " " +  $F{parentcultureline}  + " "+ $F{culturedate} + " "  + $F{naturesample} + " " + $F{culturestage} + " " + $F{cycleno} + " " + $F{virusresult}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

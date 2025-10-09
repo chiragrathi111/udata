@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+  <name>Vinay 111</name>
+  <driver>org.postgresql.Driver</driver>
+  <username>adempiere</username>
+  <password>adempiere</password>
+  <url>jdbc:postgresql://localhost:5432/vinayerp111</url>
+  <database></database>
+  <savePassword>true</savePassword>
+  <serverAddress></serverAddress>
+</jdbcDataAdapter>

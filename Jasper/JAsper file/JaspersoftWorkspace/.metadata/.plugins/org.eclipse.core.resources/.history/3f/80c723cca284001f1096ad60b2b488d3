@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_8" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1d0f59b1-0b58-4312-8acd-466d9c8abbf7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="aint" class="java.math.BigDecimal"/>
+	<queryString language="SQL">
+		<![CDATA[select tc_planttag_id As plantId,c_uuid as plantUUId 
+from adempiere.tc_planttag 
+where ad_client_id =  $P{AD_CLIENT_ID}  
+order by tc_planttag_id desc LIMIT  $P{aint}]]>
+	</queryString>
+	<field name="plantid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="plantid"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<field name="plantuuid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="plantuuid"/>
+		<property name="com.jaspersoft.studio.field.label" value="plantuuid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_planttag"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="93">
+			<textField>
+				<reportElement x="0" y="42" width="100" height="20" uuid="2b216db2-ca8d-47ed-a286-f6c37a53ae20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Plant ID"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="42" width="230" height="20" uuid="c1a838e3-67aa-44cc-8b4f-d0c3f096eedd"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Plant UUID"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="0b8823b7-7ad4-4520-87ad-df1a0019b2c9"/>
+				<textFieldExpression><![CDATA[$F{plantid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="280" height="20" uuid="ff4772a8-2316-4658-ad41-57cb0b6d3547"/>
+				<textFieldExpression><![CDATA[$F{plantuuid}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
