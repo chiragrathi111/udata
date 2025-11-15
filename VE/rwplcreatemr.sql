@@ -4,8 +4,21 @@
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createMR(Map<String, Object> requestBody);
 	
+	@POST
+	@Path("mrlist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getMRList(
+	    @QueryParam("searchKey") String searchKey,
+	    @QueryParam("status") String status,
+	    @QueryParam("isSalesTransaction") String isSalesTransaction);
+	
+	@POST
+	@Path("/getMrData")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getMrData(@QueryParam("documentNo") String documentNo);
 
-@Override
+
+	@Override
 	public Response createMR(Map<String, Object> requestBody) {
 
 		Map<String, Object> responseMap = new HashMap<>();
@@ -19,7 +32,9 @@
 	        int cOrderId = requestBody.containsKey("cOrderId") ? (Integer) requestBody.get("cOrderId") : 0;
 	        String description = requestBody.containsKey("description") ? (String) requestBody.get("description") : "";
 	        String movementDateStr = (String) requestBody.get("movementdate");
-	        Timestamp movementDate = new Timestamp((long) requestBody.get("movementdate"));
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-dd-MM'T'HH:mm:ss.SSS");
+	        Date parsedDate = dateFormat.parse(movementDateStr);
+	        Timestamp movementDate = new Timestamp(parsedDate.getTime());
 	        
 	        List<Map<String, Object>> mrLinesList = (List<Map<String, Object>>) requestBody.get("mRLines");
 	        
@@ -146,6 +161,17 @@
 	        responseMap.put("mrId", inout.get_ID());
 	        responseMap.put("mRLines", responseLines);
 	        
+	        Map<String, String> data = new HashMap<>();
+			data.put("recordId", String.valueOf(inout.getM_InOut_ID()));
+			data.put("documentNo", String.valueOf(inout.getDocumentNo()));
+			data.put("path1", "/put_away_screen");
+			data.put("path2", "/put_away_detail_screen");
+
+			RwplUtils.sendNotificationAsync(true, false, inout.get_Table_ID(), inout.getM_InOut_ID(), ctx, trxName,
+					"New Inward: " + inout.getDocumentNo() + "",
+					" Inward - " + inout.getDocumentNo() + " added to process", inout.get_TableName(), data,
+					clientId, "MaterialReciptCreated");
+	        
 	        return Response.ok(Collections.singletonMap("CreateMRResponse", responseMap)).build();
 	    	
 	    }catch (Exception e) {
@@ -197,43 +223,158 @@
 		    lineNew.saveEx();
 		}
 
-======================
-Payload:-
 
-{
-  "warehouseId": 1000000,
-  "bPartnerId": 1000004,
-  "movementdate": "2025-01-05T00:00:00.000",
-  "description": "bj",
-  "cOrderId": 0,
-  "mRLines": [
-    {
-      "productId": 1000001,
-      "uomId": 100,
-      "qnty": 400,
-      "locator": 1000001,
-      "packLine": [
-        {
-          "PackCount": 100
-        },
-        {
-          "PackCount": 200
-        }
-      ]
-    },
-    {
-      "productId": 1000002,
-      "uomId": 100,
-      "qnty": 200,
-      "locator": 1000001,
-      "packLine": [
-        {
-          "PackCount": 50
-        },
-        {
-          "PackCount": 70
-        }
-      ]
-    }
-  ]
-}		
+	@Override
+	public Response getMRList(String searchKey, String status, String isSalesTransaction) {
+		Map<String, Object> responseMap = new HashMap<>();
+	    responseMap.put("IsError", false);
+
+	    try {
+	        Properties ctx = Env.getCtx();
+	        int clientId = Env.getAD_Client_ID(ctx);
+
+	        String query = "SELECT po.m_inout_id, po.documentno, bp.name AS supplier, wh.name AS warehouseName, po.pickStatus "
+	                     + "FROM m_inout po "
+	                     + "JOIN c_bpartner bp ON po.c_bpartner_id = bp.c_bpartner_id "
+	                     + "JOIN m_warehouse wh ON po.m_warehouse_id = wh.m_warehouse_id "
+	                     + "WHERE po.ad_client_id = ? "
+	                     + "AND (? IS NULL OR po.pickStatus = ?) "
+	                     + "AND (? IS NULL OR po.issotrx = ?) "
+	                     + "AND (? IS NULL OR po.documentno ILIKE '%' || ? || '%')";
+
+	        PreparedStatement pstmt = DB.prepareStatement(query, null);
+	        pstmt.setInt(1, clientId);
+	        pstmt.setString(2, status);
+	        pstmt.setString(3, status);
+	        pstmt.setString(4, isSalesTransaction);
+	        pstmt.setString(5, isSalesTransaction);
+	        pstmt.setString(6, searchKey);
+	        pstmt.setString(7, searchKey);
+
+	        ResultSet rs = pstmt.executeQuery();
+	        List<Map<String, Object>> mrList = new ArrayList<>();
+
+	        while (rs.next()) {
+	            Map<String, Object> mr = new HashMap<>();
+	            mr.put("mInoutID", rs.getInt("m_inout_id"));
+	            mr.put("documentNo", rs.getString("documentno"));
+	            mr.put("supplier", rs.getString("supplier"));
+	            mr.put("warehouseName", rs.getString("warehouseName"));
+	            mr.put("pickStatus", rs.getString("pickStatus"));
+	            mrList.add(mr);
+	        }
+
+	        responseMap.put("mrList", mrList);
+	        responseMap.put("count", mrList.size());
+
+	        return Response.ok(Collections.singletonMap("GetMRListResponse", responseMap)).build();
+
+	    } catch (Exception e) {
+	        Map<String, Object> errorResp = new HashMap<>();
+	        errorResp.put("IsError", true);
+	        errorResp.put("ErrorMessage", e.getMessage());
+	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+	                       .entity(Collections.singletonMap("GetMRListResponse", errorResp))
+	                       .build();
+	    }
+	}
+
+
+	@Override
+	public Response getMrData(String documentNo) {
+		Map<String, Object> responseMap = new HashMap<>();
+	    responseMap.put("IsError", false);
+
+	    if (documentNo == null || documentNo.trim().isEmpty()) {
+	        responseMap.put("IsError", true);
+	        responseMap.put("ErrorMessage", "Document number is required");
+	        return Response.status(Response.Status.BAD_REQUEST)
+	                       .entity(Collections.singletonMap("GetMRDataResponse", responseMap))
+	                       .build();
+	    }
+	    
+	    try {
+	    	Properties ctx = Env.getCtx();
+	        int clientId = Env.getAD_Client_ID(ctx);
+
+	        List<MInOut> mrList = new Query(ctx, MInOut.Table_Name, "DocumentNo=? AND AD_Client_ID=?", null)
+	                .setParameters(documentNo, clientId)
+	                .setOrderBy("Created DESC")
+	                .list();
+
+	        if (mrList.isEmpty()) {
+	            responseMap.put("IsError", true);
+	            responseMap.put("ErrorMessage", "No MR found for DocumentNo: " + documentNo);
+	            return Response.status(Response.Status.NOT_FOUND)
+	                           .entity(Collections.singletonMap("GetMRDataResponse", responseMap))
+	                           .build();
+	        }
+
+	        MInOut mr = mrList.get(0);
+	        Map<String, Object> mrHeader = new HashMap<>();
+
+	        mrHeader.put("documentNo", mr.getDocumentNo());
+	        mrHeader.put("description", mr.getDescription() != null ? mr.getDescription() : "");
+	        mrHeader.put("docStatus", mr.getDocStatus());
+	        mrHeader.put("movementDate", mr.getMovementDate());
+	        mrHeader.put("mInoutID", mr.getM_InOut_ID());
+
+	        if (mr.getC_BPartner_ID() > 0) {
+	            MBPartner bp = new MBPartner(ctx, mr.getC_BPartner_ID(), null);
+	            mrHeader.put("supplier", bp.getName());
+	        }
+
+	        if (mr.getM_Warehouse_ID() > 0) {
+	            MWarehouse wh = new MWarehouse(ctx, mr.getM_Warehouse_ID(), null);
+	            mrHeader.put("warehouseName", wh.getName());
+	        }
+
+	        List<MInOutLine> lines = new Query(ctx, MInOutLine.Table_Name, "M_InOut_ID=?", null)
+	                .setParameters(mr.getM_InOut_ID())
+	                .setOrderBy("Line")
+	                .list();
+
+	        List<Map<String, Object>> lineList = new ArrayList<>();
+	        int totalQty = 0;
+
+	        for (MInOutLine line : lines) {
+	            Map<String, Object> lineData = new HashMap<>();
+
+	            MProduct product = new MProduct(ctx, line.getM_Product_ID(), null);
+	            lineData.put("productID", line.getM_Product_ID());
+	            lineData.put("productName", product.getName());
+
+	            MLocator locator = new MLocator(ctx, line.getM_Locator_ID(), null);
+	            lineData.put("locatorID", line.getM_Locator_ID());
+	            lineData.put("locatorName", locator.getValue());
+
+	            lineData.put("mInoutLineID", line.getM_InOutLine_ID());
+	            lineData.put("movementQty", line.getMovementQty());
+	            lineData.put("uomID", line.getC_UOM_ID());
+	            lineData.put("cOrderLineID", line.getC_OrderLine_ID());
+
+	            totalQty += line.getMovementQty().intValue();
+
+	            lineList.add(lineData);
+	        }
+
+	        mrHeader.put("totalQty", totalQty);
+	        mrHeader.put("lines", lineList);
+	        mrHeader.put("lineCount", lineList.size());
+
+	        responseMap.put("MRData", mrHeader);
+
+	        return Response.ok(Collections.singletonMap("GetMRDataResponse", responseMap)).build();
+
+	    } catch (Exception e) {
+	        responseMap.put("IsError", true);
+	        responseMap.put("ErrorMessage", e.getMessage());
+	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+	                       .entity(Collections.singletonMap("GetMRDataResponse", responseMap))
+	                       .build();
+	    }
+	}
+
+
+
+	

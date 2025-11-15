@@ -86,7 +86,7 @@ Fro Vinay Electricals:-
 
 	pg_dump -U adempiere -W stonex_template > /home/ubuntu/stonexNew.dmp
 
-	scp -i "Downloads/democ.pem" ubuntu@3.28.239.34:/home/ubuntu/stonex_template.dmp /home/chirag/
+	scp -i "pemFile/democ.pem" ubuntu@3.28.239.34:/home/ubuntu/stonex_template.dmp /home/chirag/
 
 	===================================
 	Delete DB:-

@@ -22,7 +22,7 @@ https://tc.warepro.in/webui/
 RWPL:-
 Scomp:-
 scomp -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
-java -cp /home/mahe/Documents/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans.impl.tool.SchemaCompiler -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
+java -cp /home/chirag/Downloads/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans.impl.tool.SchemaCompiler -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
 
 
 
@@ -236,3 +236,173 @@ Login using gmail
 Claude Desktop 
 Login using Gmail
 =====================================================================
+@Override
+	public GetTraceabilityDataForQRResponseDocument getTraceabilityDataForQR(
+			GetTraceabilityDataForQRRequestDocument req) {
+		GetTraceabilityDataForQRResponseDocument response = GetTraceabilityDataForQRResponseDocument.Factory.newInstance();
+		GetTraceabilityDataForQRResponse res = response.addNewGetTraceabilityDataForQRResponse();
+		GetTraceabilityDataForQRRequest loginReq = req.getGetTraceabilityDataForQRRequest();
+		Properties ctx = Env.getCtx();
+		int clientId = Env.getAD_Client_ID(ctx);
+		String cultureLabelUUid = safeTrim(loginReq.getLabelUUId());
+		Trx trx = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+		String plantUUId = "";
+		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		
+		try {
+			String trxName = Trx.createTrxName(getClass().getName() + "_");
+			trx = Trx.get(trxName, true);
+			trx.start();
+			
+			String sql = "WITH RECURSIVE cte AS (SELECT cl.parentuuid,cl.c_uuid,cl.created,var.name AS variety\n"
+					+ "FROM adempiere.tc_culturelabel cl\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id\n"
+					+ "WHERE TRIM(cl.c_uuid) = TRIM(?) AND cl.ad_client_id = ? \n"
+					+ "UNION ALL\n"
+					+ "SELECT phs.cultureuuid AS parentuuid,cl.c_uuid,cl.created,var.name AS variety\n"
+					+ "FROM adempiere.TC_PrimaryHardeningLabel ph JOIN adempiere.tc_primaryHardeningcultureS phs \n"
+					+ "ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id\n"
+					+ "JOIN adempiere.tc_culturelabel cl ON phs.cultureuuid = cl.c_uuid\n"
+					+ "JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id\n"
+					+ "WHERE TRIM(ph.c_uuid) = TRIM(?) AND ph.ad_client_id = ? \n"
+					+ "UNION ALL\n"
+					+ "SELECT phs.cultureuuid AS parentuuid,cl.c_uuid,cl.created,var.name AS variety\n"
+					+ "FROM adempiere.TC_SecondaryHardeningLabel sh JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid\n"
+					+ "JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id\n"
+					+ "JOIN adempiere.tc_culturelabel cl ON phs.cultureuuid = cl.c_uuid\n"
+					+ "JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id\n"
+					+ "WHERE TRIM(sh.c_uuid) = TRIM(?) AND sh.ad_client_id = ? \n"
+					+ "UNION ALL\n"
+					+ "SELECT cl2.parentuuid,cl2.c_uuid,cl2.created,var.name AS variety\n"
+					+ "FROM cte JOIN adempiere.tc_culturelabel cl2 ON cte.parentuuid = cl2.c_uuid\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id),\n"
+					+ "culture_result AS (SELECT cte.parentuuid,cte.c_uuid,cte.created,cte.variety\n"
+					+ "FROM cte GROUP BY cte.parentuuid, cte.c_uuid,cte.created, cte.variety\n"
+					+ "UNION ALL\n"
+					+ "SELECT DISTINCT tcc.parentuuid,tcc.c_uuid,tcc.created,cte.variety\n"
+					+ "FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid\n"
+					+ "UNION ALL\n"
+					+ "SELECT DISTINCT NULL, tpt.c_uuid, tpt.created, cte.variety\n"
+					+ "FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid\n"
+					+ "LEFT JOIN adempiere.tc_planttag tpt ON tcc.parentuuid = tpt.c_uuid WHERE tpt.c_uuid IS NOT NULL),\n"
+					+ "explant_result AS (SELECT DISTINCT tcc.parentuuid,tcc.c_uuid,tcc.created,var.name AS variety\n"
+					+ "FROM adempiere.tc_explantlabel tcc JOIN adempiere.tc_variety var ON var.tc_variety_id = tcc.tc_variety_id\n"
+					+ "WHERE TRIM(tcc.c_uuid) = TRIM(?) AND tcc.ad_client_id = ? \n"
+					+ "UNION ALL\n"
+					+ "SELECT DISTINCT NULL AS parentuuid,tpt.c_uuid,tpt.created,var.name AS variety\n"
+					+ "FROM adempiere.tc_planttag tpt JOIN adempiere.tc_explantlabel tcc ON tcc.parentuuid = tpt.c_uuid\n"
+					+ "JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid\n"
+					+ "JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id\n"
+					+ "WHERE TRIM(tcc.c_uuid) = TRIM(?) AND tpt.c_uuid IS NOT NULL),\n"
+					+ "plant_tag_result AS (SELECT DISTINCT NULL AS parentuuid,tpt.c_uuid,tpt.created,var.name AS variety\n"
+					+ "FROM adempiere.tc_planttag tpt JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id\n"
+					+ "WHERE TRIM(tpt.c_uuid) = TRIM(?) AND tpt.ad_client_id = ?),\n"
+					+ "primary_result AS (SELECT phs.cultureuuid AS parentuuid,ph.c_uuid,ph.created,var.name AS variety\n"
+					+ "FROM adempiere.TC_PrimaryHardeningLabel ph JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = ph.tc_variety_id\n"
+					+ "WHERE TRIM(ph.c_uuid) = TRIM(?) AND ph.ad_client_id = ?),\n"
+					+ "secondary_result AS (SELECT sh.parentuuid,sh.c_uuid,sh.created,var.name AS variety\n"
+					+ "FROM adempiere.TC_SecondaryHardeningLabel sh JOIN adempiere.tc_variety var ON var.tc_variety_id = sh.tc_variety_id\n"
+					+ "WHERE TRIM(sh.c_uuid) = TRIM(?) AND sh.ad_client_id = ?\n"
+					+ "UNION ALL\n"
+					+ "SELECT phs.cultureuuid AS parentuuid,ph.c_uuid,ph.created,var.name AS variety\n"
+					+ "FROM adempiere.TC_SecondaryHardeningLabel sh JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid\n"
+					+ "JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id\n"
+					+ "JOIN adempiere.tc_variety var ON var.tc_variety_id = ph.tc_variety_id\n"
+					+ "WHERE TRIM(sh.c_uuid) = TRIM(?) AND sh.ad_client_id = ?)\n"
+					+ "SELECT * FROM secondary_result UNION ALL\n"
+					+ "SELECT * FROM primary_result UNION ALL\n"
+					+ "SELECT * FROM culture_result\n"
+					+ "WHERE (parentuuid IS NULL OR parentuuid <> c_uuid) UNION ALL\n"
+					+ "SELECT * FROM explant_result WHERE NOT EXISTS (SELECT 1 FROM culture_result) UNION ALL SELECT * FROM plant_tag_result\n"
+					+ "WHERE NOT EXISTS (SELECT 1 FROM explant_result) AND NOT EXISTS (SELECT 1 FROM culture_result) ORDER BY created ASC limit 1;";
+			
+			pstm = DB.prepareStatement(sql.toString(), null);
+			int paramIndex = 1;
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			pstm.setString(paramIndex++, cultureLabelUUid);
+			pstm.setInt(paramIndex++, clientId);
+			rs = pstm.executeQuery();
+			
+			if (!rs.isBeforeFirst()) {
+				res.setIsError(false);
+				return response;
+			}
+			
+			if (rs.next()) {
+				String variety = rs.getString("variety");
+				plantUUId = rs.getString("c_uuid");
+				res.setVariety(variety);
+			}
+			closeDbCon(pstm, rs);
+			
+			PO plantDetails = new Query(ctx,I_TC_PlantDetails.Table_Name, "planttaguuid=? AND ad_client_id=?", trxName)
+					.setParameters(plantUUId, clientId).first();
+			PO collectionJointPlant = new Query(ctx,X_TC_collectionjoinplant.Table_Name,"tc_plantdetails_id=?", trxName)
+					.setParameters(plantDetails.get_ID()).first();
+			
+			
+		}catch (Exception e) {
+			if(trx != null)
+				trx.rollback();
+			res.setIsError(true);
+		}finally {
+			if(trx !=null)
+				trx.close();
+		}
+		
+		return response;
+	}	
+
+
+	// @POST
+	// @Path("/gettracedataforqr")
+	// public GetTraceabilityDataForQRResponseDocument getTraceabilityDataForQR(GetTraceabilityDataForQRRequestDocument req);
+
+
+	<xsd:element name="GetTraceabilityDataForQRRequest" type="tns:GetTraceabilityDataForQRRequest"></xsd:element>
+	<xsd:element name="GetTraceabilityDataForQRResponse" type="tns:GetTraceabilityDataForQRResponse"></xsd:element>
+	
+	<xsd:complexType name="GetTraceabilityDataForQRRequest">
+    	<xsd:sequence>
+     		 <xsd:element name="labelUUId" type="xsd:string" />
+    		<xsd:element name="ADLoginRequest" type="tns:ADLoginRequest" minOccurs="1" maxOccurs="1"/>	
+      </xsd:sequence>
+  </xsd:complexType>
+  
+   <xsd:complexType name="GetTraceabilityDataForQRResponse">
+  		<xsd:sequence>
+  			 <xsd:element name="variety" type="xsd:string" />
+     		 <xsd:element name="productCultureLine" type="xsd:string" />
+     		 <xsd:element name="placeOfSourcing" type="xsd:string" />
+     		 <xsd:element name="taluk" type="xsd:string" />
+     		 <xsd:element name="panchayath" type="xsd:string" />
+     		 <xsd:element name="district" type="xsd:string" />
+     		 <xsd:element name="dateOfSourcing" type="xsd:string" />
+     		 <xsd:element name="dateOfSeconderyHardening" type="xsd:string" />
+		<xsd:element name="error" type="xsd:string" minOccurs="0" />
+    </xsd:sequence>
+    	<xsd:attribute name="isError" type="xsd:boolean" />
+    	
+  	</xsd:complexType>

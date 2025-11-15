@@ -60,3 +60,11 @@ WHERE m_inout_id = 1000616;
 -- Delete inout header
 DELETE FROM adempiere.m_inout
 WHERE m_inout_id = 1000616;
+
+PAOrder:-
+UPDATE adempiere.pi_paorder SET processed = 'N' WHERE pi_paorder_id = 1002593;
+DELETE FROM adempiere.pi_productlabel WHERE pi_paorder_id = 1002593;
+DELETE FROM adempiere.pi_paorder WHERE pi_paorder_id = 1002593;
+
+
+

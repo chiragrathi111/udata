@@ -1,0 +1,148 @@
+Reports:-
+FO Visit Count Report:-
+-- SELECT TO_CHAR(CURRENT_DATE, 'Day') AS day_name,CURRENT_DATE AS date,COUNT(DISTINCT v.tc_visit_id) AS visit_count
+-- FROM adempiere.tc_visit v INNER JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby
+-- INNER JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'
+-- INNER JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id
+-- AND vt.name = 'First Visit'
+-- WHERE v.updated::date = CURRENT_DATE
+-- AND v.ad_client_id = 1000002 
+-- AND u.name = 'tilak1';
+
+-- WITH days AS (SELECT generate_series(0, 6) AS day_of_week),
+-- visit_counts AS (SELECT v.updated::date AS visit_day,to_char(v.updated::date, 'FMDay') AS day_name,
+-- EXTRACT(dow FROM v.updated::date)::int AS day_of_week,COUNT(DISTINCT v.tc_visit_id) AS visit_count
+-- FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby           
+-- JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND LOWER(TRIM(s.name)) = ?
+-- JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id
+-- AND TRIM(vt.name) = ? WHERE v.ad_client_id = ? AND TRIM(u.name) = 'tilak1'
+-- AND v.updated::date BETWEEN (CURRENT_DATE - INTERVAL '6 days')::date AND CURRENT_DATE
+-- GROUP BY v.updated::date,to_char(v.updated::date, 'FMDay'),EXTRACT(dow FROM v.updated::date))
+-- SELECT (CURRENT_DATE - INTERVAL '6 days' + d.day_of_week * INTERVAL '1 day')::date AS dates,
+-- COALESCE(vc.day_name,to_char((CURRENT_DATE - INTERVAL '6 days' + d.day_of_week * INTERVAL '1 day')::date, 'FMDay')) AS day_name,
+-- COALESCE(vc.visit_count, 0) AS visit_count FROM days d
+-- LEFT JOIN visit_counts vc ON (CURRENT_DATE - INTERVAL '6 days' + d.day_of_week * INTERVAL '1 day')::date = vc.visit_day ORDER BY dates;
+
+
+-- WITH weeks AS (SELECT generate_series(0, 4) AS week_number),
+-- visit_counts AS (SELECT date_trunc('week', v.updated)::date AS week_start,
+-- to_char(date_trunc('week', v.updated), 'YYYY-MM-DD') AS week_start_str,COUNT(*) AS visit_count
+-- FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby
+-- JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'
+-- JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id AND vt.name = ?
+-- WHERE v.ad_client_id = ? AND u.name = ? AND v.updated::date >= (current_date - interval '29 days')::date
+-- AND v.updated::date <= current_date GROUP BY date_trunc('week', v.updated)),
+-- date_range AS (SELECT (current_date - interval '29 days')::date + generate_series(0, 29) AS day)
+-- SELECT to_char(date_trunc('week', day), 'YYYY-MM-DD') AS week_start,COALESCE(vc.visit_count, 0) AS visit_count
+-- FROM date_range LEFT JOIN visit_counts vc ON date_trunc('week', day) = vc.week_start
+-- GROUP BY date_trunc('week', day),vc.visit_count ORDER BY week_start;
+
+-- WITH months AS (SELECT generate_series(0, 11) AS month),
+-- visit_counts AS (SELECT date_trunc('month', v.updated)::date AS month_year,to_char(v.updated, 'FMMonth') AS month_name,COUNT(*) AS visit_count
+-- FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby
+-- JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'
+-- JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id AND vt.name = ?
+-- WHERE v.ad_client_id = ? AND u.name = ?
+-- AND v.updated::date >= (current_date - interval '364 days')::date AND v.updated::date <= current_date
+-- GROUP BY date_trunc('month', v.updated),to_char(v.updated, 'FMMonth'))
+-- SELECT to_char(date_trunc('month', current_date)  - (m.month || ' months')::interval, 'YYYY-MM-01') AS month_date,
+-- COALESCE(vc.visit_count, 0) AS visit_count FROM months m LEFT JOIN visit_counts vc
+-- ON date_trunc('month', current_date) - (m.month || ' months')::interval = vc.month_year
+-- ORDER BY date_trunc('month', current_date) - (m.month || ' months')::interval;
+
+
+WITH year_counts AS (SELECT date_trunc('year', v.updated)::date AS year_start,COUNT(*) AS counts
+FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby
+JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'
+JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id AND vt.name = ?
+WHERE v.ad_client_id = ? AND u.name = ? GROUP BY date_trunc('year', v.updated)),
+year_range AS (SELECT date_trunc('year', CURRENT_DATE)::date AS year_start
+UNION ALL
+SELECT generate_series((SELECT MIN(year_start) FROM year_counts),date_trunc('year', CURRENT_DATE)::date,interval '1 year')::date AS year_start),
+all_years AS (SELECT DISTINCT year_start FROM year_range)
+SELECT to_char(a.year_start, 'YYYY-01-01') AS year_date,COALESCE(y.counts, 0) AS counts FROM all_years a
+LEFT JOIN year_counts y ON a.year_start = y.year_start ORDER BY a.year_start;
+
+====================================================================================================================
+Media Report:-
+-- SELECT day_info.day_name AS day_name,current_date AS date,COALESCE(COUNT(v.*), 0) AS counts
+-- FROM (SELECT to_char(current_date, 'FMDay') AS day_name) AS day_info
+-- LEFT JOIN adempiere.tc_medialabelqr v ON v.created::date = current_date
+-- AND v.ad_client_id = 1000002 AND v.isdiscarded = 'N'
+-- AND v.createdby IN (SELECT ad_user_id FROM adempiere.ad_user WHERE name = 'muthu1' )
+-- AND v.tc_mediatype_id IN (Select tc_mediatype_id FROM adempiere.tc_mediatype Where name = 'CR' )
+-- GROUP BY day_info.day_name;
+
+-- WITH days AS (SELECT generate_series(0, 6) AS day_of_week),
+-- visit_counts AS (SELECT date_trunc('day', v.created) AS visit_day,to_char(v.created, 'FMDay') AS day_name,
+-- EXTRACT(dow FROM v.created) AS day_of_week,COUNT(*) AS visit_count FROM adempiere.tc_medialabelqr v
+-- JOIN adempiere.ad_user u ON u.ad_user_id = v.createdby
+-- JOIN adempiere.tc_mediatype mt ON mt.tc_mediatype_id = v.tc_mediatype_id
+-- WHERE v.ad_client_id = ? AND v.isdiscarded = 'N' AND u.name = ? AND mt.name = ?
+-- AND v.created::date >= current_date - interval '6 days' AND v.created::date <= current_date
+-- GROUP BY date_trunc('day', v.created), to_char(v.created, 'FMDay'),EXTRACT(dow FROM v.created))
+-- SELECT (current_date - interval '6 days' + d.day_of_week * interval '1 day')::date AS dates,
+-- COALESCE(vc.day_name,to_char(current_date - interval '6 days' + d.day_of_week * interval '1 day', 'FMDay')) AS day_name,
+-- COALESCE(vc.visit_count, 0) AS counts FROM days d
+-- LEFT JOIN visit_counts vc  ON date_trunc('day', current_date - interval '6 days' + d.day_of_week * interval '1 day') = vc.visit_day
+-- ORDER BY dates;
+
+-- WITH weeks AS (SELECT generate_series(0, 4) AS week_number),
+-- counts AS (SELECT date_trunc('week', v.created) AS week_start,to_char(date_trunc('week', v.created), 'YYYY-MM-DD') AS week_start_str,
+-- COUNT(*) AS counts FROM adempiere.tc_medialabelqr v JOIN adempiere.ad_user u ON u.ad_user_id = v.createdby
+-- JOIN adempiere.tc_mediatype mt ON mt.tc_mediatype_id = v.tc_mediatype_id WHERE v.ad_client_id = ?
+-- AND v.isdiscarded = 'N' AND u.name = ? AND mt.name = ?
+-- AND v.created::date >= current_date - interval '29 days' AND v.created::date <= current_date
+-- GROUP BY date_trunc('week', v.created)),
+-- date_range AS (SELECT (current_date - interval '29 days')::date + generate_series(0, 29) AS day)
+-- SELECT to_char(date_trunc('week', day), 'YYYY-MM-DD') AS week_start,COALESCE(vc.counts, 0) AS counts
+-- FROM date_range LEFT JOIN counts vc ON date_trunc('week', day) = vc.week_start
+-- GROUP BY date_trunc('week', day), vc.counts ORDER BY week_start;
+
+-- WITH months AS (SELECT generate_series(0, 11) AS month),
+-- visit_counts AS (SELECT date_trunc('month', v.created) AS month_year,to_char(v.created, 'FMMonth') AS month_name,
+-- COUNT(*) AS visit_count FROM adempiere.tc_medialabelqr v JOIN adempiere.ad_user u ON u.ad_user_id = v.createdby
+-- JOIN adempiere.tc_mediatype mt ON mt.tc_mediatype_id = v.tc_mediatype_id WHERE v.ad_client_id = ?
+-- AND v.isdiscarded = 'N' AND u.name = ? AND mt.name = ? AND v.created::date >= (current_date - interval '364 days')
+-- AND v.created::date <= current_date GROUP BY date_trunc('month', v.created),to_char(v.created, 'FMMonth'))
+-- SELECT to_char(date_trunc('month', current_date) - (m.month || ' months')::interval,'YYYY-MM-01') AS month_date,
+-- COALESCE(vc.visit_count, 0) AS counts FROM months m
+-- LEFT JOIN visit_counts vc ON date_trunc('month', current_date) - (m.month || ' months')::interval = vc.month_year
+-- ORDER BY date_trunc('month', current_date) - (m.month || ' months')::interval;
+
+-- WITH year_counts AS (SELECT date_trunc('year', v.created) AS year_start,COUNT(*) AS counts
+-- FROM adempiere.tc_medialabelqr v JOIN adempiere.ad_user u ON u.ad_user_id = v.createdby
+-- JOIN adempiere.tc_mediatype mt ON mt.tc_mediatype_id = v.tc_mediatype_id		
+-- WHERE v.ad_client_id = ? AND v.isdiscarded = 'N' AND u.name = ? AND mt.name = ?
+-- GROUP BY date_trunc('year', v.created)),
+-- year_range AS (SELECT date_trunc('year', CURRENT_DATE) AS year_start UNION ALL
+-- SELECT generate_series((SELECT MIN(year_start) FROM year_counts),date_trunc('year', CURRENT_DATE),interval '1 year') AS year_start),
+-- all_years AS (SELECT DISTINCT year_start FROM year_range)
+-- SELECT to_char(a.year_start, 'YYYY-01-01') AS year_date,COALESCE(y.counts, 0) AS counts
+-- FROM all_years a LEFT JOIN year_counts y ON a.year_start = y.year_start ORDER BY a.year_start;
+
+
+=================================================================================
+SELECT pr.m_product_id,pr.name AS mediacategory,pr.description AS codeifany,
+COALESCE(ml.openingstock, 0::numeric) AS openingbalance,COALESCE(ml.stocked, 0::numeric) AS mediastocked,
+COALESCE(mol.totalqty, 0::numeric) AS issuetoct,COALESCE(ml.openingstock, 0::numeric) + COALESCE(ml.stocked, 0::numeric)
+ - COALESCE(mol.totalqty, 0::numeric) - COALESCE(di.discarded_qty, 0::numeric) AS balance,ml.updated,
+COALESCE(di.discarded_qty, 0::numeric) AS discardedquantity FROM adempiere.m_product pr
+LEFT JOIN (SELECT  pr_1.m_product_id,MAX(date(ml_1.updated)) AS updated,        
+SUM(CASE WHEN date(ml_1.created) < '2025-11-06' THEN ml_1.quantity ELSE 0  END) AS openingstock,        
+SUM(CASE  WHEN date(ml_1.created) BETWEEN '2025-11-06' AND '2025-11-13' THEN ml_1.quantity ELSE 0  END) AS stocked
+FROM adempiere.tc_medialine ml_1 JOIN adempiere.m_product pr_1 ON pr_1.m_product_id = ml_1.m_product_id
+WHERE ml_1.ad_client_id = 1000002  GROUP BY pr_1.m_product_id) ml ON pr.m_product_id = ml.m_product_id
+LEFT JOIN (SELECT pro.m_product_id,
+SUM(CASE  WHEN date(mol_1.created) BETWEEN '2025-11-06' AND '2025-11-13' THEN mol_1.quantity  ELSE 0  END) AS totalqty
+FROM adempiere.tc_mediaoutline mol_1 JOIN adempiere.m_product pro ON pro.m_product_id = mol_1.m_product_id
+WHERE mol_1.ad_client_id = 1000002 GROUP BY pro.m_product_id) mol ON pr.m_product_id = mol.m_product_id
+LEFT JOIN (SELECT ml_1.m_product_id,
+SUM(CASE  WHEN mlq.isdiscarded = 'Y' AND date(ml_1.created) BETWEEN '2025-11-06' AND '2025-11-13' THEN ml_1.quantity ELSE 0  END) AS discarded_qty
+FROM adempiere.tc_medialine ml_1 JOIN adempiere.tc_medialabelqr mlq ON ml_1.tc_medialine_id = mlq.tc_medialine_id
+WHERE ml_1.ad_client_id = 1000002 GROUP BY ml_1.m_product_id) di ON pr.m_product_id = di.m_product_id
+JOIN adempiere.m_product_category pc ON pr.m_product_category_id = pc.m_product_category_id
+WHERE pc.name = 'BMedia' AND pr.ad_client_id = 1000002;
+
+
+

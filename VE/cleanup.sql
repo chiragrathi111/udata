@@ -1,4 +1,262 @@
+PaOrder
+Bulk Deleted using PaOrder_id
+-- Reset processed flag
+UPDATE adempiere.pi_paorder 
+SET processed = 'N' 
+WHERE pi_paorder_id IN (1002866,1002867,1002870,1002873,1002874);
+
+-- Delete related receive qty records
+DELETE FROM adempiere.pi_paorderreceiveqty 
+WHERE pi_paorder_id IN (1002866,1002867,1002870,1002873,1002874);
+
+-- Delete related packing qty records
+DELETE FROM adempiere.pi_paorderpackingqty 
+WHERE pi_paorder_id IN (1002866,1002867,1002870,1002873,1002874);
+
+-- Delete related product labels
+DELETE FROM adempiere.pi_productlabel 
+WHERE pi_paorder_id IN (1002866,1002867,1002870,1002873,1002874);
+
+-- Finally, delete the PA Orders
+DELETE FROM adempiere.pi_paorder 
+WHERE pi_paorder_id IN (1002866,1002867,1002870,1002873,1002874);
+
+
+
 ***************************************************************
+M_Inout:-
+Bulk Deleted using M_inout_id:-
+-- Reset InOut header
+UPDATE adempiere.m_inout 
+SET docstatus = 'DR', docaction = 'CO', processed = 'N' 
+WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735);
+
+-- Delete related lines & transactions
+DELETE FROM adempiere.m_matchpo 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.m_matchinv 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.m_transaction 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.m_inoutlinema 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.pi_productlabel 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.m_costhistory 
+WHERE m_costdetail_id IN (
+    SELECT cd.m_costdetail_id 
+    FROM adempiere.m_costdetail cd
+    JOIN adempiere.m_inoutline iol ON cd.m_inoutline_id = iol.m_inoutline_id
+    WHERE iol.m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.m_costdetail 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+UPDATE adempiere.m_inoutline 
+SET m_rmaline_id = NULL 
+WHERE m_rmaline_id IN (
+    SELECT rma.m_rmaline_id 
+    FROM adempiere.m_rmaline rma
+    JOIN adempiere.m_inoutline iol ON rma.m_inoutline_id = iol.m_inoutline_id
+    WHERE iol.m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+DELETE FROM adempiere.m_rmaline 
+WHERE m_inoutline_id IN (
+    SELECT m_inoutline_id 
+    FROM adempiere.m_inoutline 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+);
+
+-- DELETE FROM adempiere.m_rmatax 
+-- WHERE m_rma_id IN (
+--     SELECT m_rma_id 
+--     FROM adempiere.m_rma 
+--     WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+-- );
+
+UPDATE adempiere.m_inout 
+SET m_rma_id = NULL 
+WHERE m_rma_id IN (
+    SELECT m_rma_id 
+    FROM adempiere.m_rma 
+    WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735)
+)
+AND m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735);
+
+-- DELETE FROM adempiere.m_rma 
+-- WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735);
+
+DELETE FROM adempiere.m_inoutline 
+WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735);
+
+DELETE FROM adempiere.m_inout 
+WHERE m_inout_id IN (1001661,1001662,1001663,1001664,1001702,1001703,1001704,1001705,1001725,1001726,1001727,1001735);
+============================================================================================================================================
+C_Order:-
+C_Order Delted by C_Order_Id
+-- Reset Order Header
+UPDATE adempiere.c_order 
+SET docstatus = 'DR', docaction = 'CO', processed = 'N' 
+WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234);
+
+-- Delete cost history linked to order lines
+DELETE FROM adempiere.m_costhistory 
+WHERE m_costdetail_id IN (
+    SELECT m_costdetail_id FROM adempiere.m_costdetail 
+    WHERE c_orderline_id IN (
+        SELECT c_orderline_id FROM adempiere.c_orderline 
+        WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+    )
+);
+
+DELETE FROM adempiere.m_costdetail 
+WHERE c_orderline_id IN (
+    SELECT c_orderline_id FROM adempiere.c_orderline 
+    WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+);
+
+DELETE FROM adempiere.c_ordertax 
+WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234);
+
+DELETE FROM adempiere.pi_productlabel 
+WHERE c_orderline_id IN (
+    SELECT c_orderline_id FROM adempiere.c_orderline 
+    WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+);
+
+-- Delete Order Lines
+DELETE FROM adempiere.c_orderline 
+WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234);
+
+-- Finally delete Orders
+DELETE FROM adempiere.c_order 
+WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234);
+
+
+
+-- Delete PP_CostCollector and related tables
+-- DELETE FROM pp_cost_collectorma 
+-- WHERE pp_cost_collector_id IN (
+--     SELECT pp_cost_collector_id FROM pp_cost_collector 
+--     WHERE pp_order_id IN (
+--         SELECT pp_order_id FROM pp_order 
+--         WHERE c_orderline_id IN (
+--             SELECT c_orderline_id FROM c_orderline 
+--             WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--         )
+--     )
+-- );
+
+-- DELETE FROM pp_cost_collector 
+-- WHERE pp_order_id IN (
+--     SELECT pp_order_id FROM pp_order 
+--     WHERE c_orderline_id IN (
+--         SELECT c_orderline_id FROM c_orderline 
+--         WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--     )
+-- );
+
+-- -- Delete PI Order Receipt
+-- DELETE FROM adempiere.pi_productlabel 
+-- WHERE pi_orderreceipt_id IN (
+--     SELECT pi_orderreceipt_id FROM adempiere.pi_orderreceipt 
+--     WHERE pp_order_id IN (
+--         SELECT pp_order_id FROM pp_order 
+--         WHERE c_orderline_id IN (
+--             SELECT c_orderline_id FROM c_orderline 
+--             WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--         )
+--     )
+-- );
+
+-- DELETE FROM pi_orderreceipt 
+-- WHERE pp_order_id IN (
+--     SELECT pp_order_id FROM pp_order 
+--     WHERE c_orderline_id IN (
+--         SELECT c_orderline_id FROM c_orderline 
+--         WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--     )
+-- );
+
+-- Delete PP related structures (BOM, Node, Workflow)
+-- DELETE FROM pp_mrp WHERE c_orderline_id IN (
+--     SELECT c_orderline_id FROM c_orderline 
+--     WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+-- );
+
+-- DELETE FROM pp_order_cost WHERE pp_order_id IN (
+--     SELECT pp_order_id FROM pp_order 
+--     WHERE c_orderline_id IN (
+--         SELECT c_orderline_id FROM c_orderline 
+--         WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--     )
+-- );
+
+-- DELETE FROM pp_order_node_trl WHERE pp_order_node_id IN (
+--     SELECT pp_order_node_id FROM pp_order_node 
+--     WHERE pp_order_id IN (
+--         SELECT pp_order_id FROM pp_order 
+--         WHERE c_orderline_id IN (
+--             SELECT c_orderline_id FROM c_orderline 
+--             WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--         )
+--     )
+-- );
+
+-- DELETE FROM pp_order_node WHERE pp_order_id IN (
+--     SELECT pp_order_id FROM pp_order 
+--     WHERE c_orderline_id IN (
+--         SELECT c_orderline_id FROM c_orderline 
+--         WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+--     )
+-- );
+
+-- DELETE FROM pp_order WHERE c_orderline_id IN (
+--     SELECT c_orderline_id FROM c_orderline 
+--     WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234)
+-- );
+
+-- Delete Order Lines
+DELETE FROM adempiere.c_orderline 
+WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234);
+
+-- Finally delete Orders
+DELETE FROM adempiere.c_order 
+WHERE c_order_id IN (1001427,1001424,1001422,1001421,1001420,1001418,1001416,1001415,1001414,1001413,1001411,1001410,1001289,1001288,1001287,1001286,1001285,1001284,1001283,1001282,1001281,1001280,1001279,1001278,1001274,1001273,1001271,1001272,1001265,1001260,1001253,1001252,1001234);
+================================================================================================================================================================
+
+
 M_Inout :-
 -- Reset shipments
 UPDATE adempiere.m_inout 
@@ -62,9 +320,59 @@ WHERE m_inout_id IN (SELECT m_inout_id FROM adempiere.m_inout WHERE AD_Client_ID
 
 DELETE FROM adempiere.m_inout WHERE AD_Client_ID = 1000000;
 
+
+
+=========================================================================
+Clean up Transactions and Storage on hand:-
+
+select * from adempiere.m_transaction
+where ad_client_id = 1000000 
+and m_product_id = 1008557
+
+select * from adempiere.m_storageonhand
+where ad_client_id = 1000000 
+and m_product_id = 1008557
+
+DELETE FROM adempiere.m_transaction
+WHERE ad_client_id = 1000000
+  AND m_product_id = 1008567;
+
+  DELETE FROM adempiere.m_storageonhand
+WHERE ad_client_id = 1000000
+  AND m_product_id = 1008557;
+
+
 ************************************************************************
 ========================================================================
 ************************************************************************
+
+WITH child_labels AS (
+    SELECT 
+        pl.labeluuid,
+        p.name AS product_name,
+        pl.quantity,
+        l.value AS locator_name
+    FROM adempiere.pi_productlabel pl
+    LEFT JOIN adempiere.m_product p ON p.m_product_id = pl.m_product_id
+    LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pl.m_locator_id
+    WHERE pl.parentlabel = '770e807f-8c29-41f7-afa4-5bcbc6ccb366'
+)
+SELECT * FROM child_labels
+UNION ALL
+SELECT 
+    pl.labeluuid,
+    p.name AS product_name,
+    pl.quantity,
+    l.value AS locator_name
+FROM adempiere.pi_productlabel pl
+LEFT JOIN adempiere.m_product p ON p.m_product_id = pl.m_product_id
+LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pl.m_locator_id
+WHERE pl.labeluuid = '770e807f-8c29-41f7-afa4-5bcbc6ccb366'
+AND NOT EXISTS (SELECT 1 FROM child_labels)
+LIMIT 100;
+
+
+==================================================================================
 String sqlUpdateInvoices = "UPDATE adempiere.c_invoice SET docstatus = 'DR', docaction = 'CO', processed = 'N' WHERE AD_Client_ID = ?";
 			String sqlDeleteInvoiceLines = "DELETE FROM adempiere.c_invoiceline WHERE c_invoice_id IN (SELECT c_invoice_id FROM adempiere.c_invoice WHERE AD_Client_ID = ?)";
 			String sqlDeleteAllocationLines = "DELETE FROM adempiere.c_allocationline WHERE c_invoice_id IN (SELECT c_invoice_id FROM adempiere.c_invoice WHERE AD_Client_ID = ?)";

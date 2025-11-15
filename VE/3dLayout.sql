@@ -7,6 +7,7 @@ command to run in server:
 node 14 req.
 npx serve . (local)
  nohup npx serve . & (server side)
+ pm2 start "npx serve ."
 
 
 ================================================
