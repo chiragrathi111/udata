@@ -1,4 +1,53 @@
-if (request.getIsRMPicked() != paOrder.isrmpicked())
-          paOrder.setisrmpicked(request.getIsRMPicked());
+public static List<Map<String, Object>> getTcTableIds(Properties ctx) {
 
-          
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        // Fetch only TC_ tables
+        int[] tableIds = MTable.getAllIDs("AD_Table", "tablename ILIKE 'TC_%'", null);
+
+        // Sort table IDs in ascending order
+        Arrays.sort(tableIds);
+
+        for (int tableId : tableIds) {
+            MTable table = MTable.get(ctx, tableId);
+
+            if (table != null) {
+                String tableName = table.getTableName();
+
+                // Double check name starts with TC_
+                if (tableName != null && tableName.startsWith("TC_")) {
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("TableName", tableName);
+                    map.put("TableID", table.getAD_Table_ID());
+
+                    list.add(map);
+                }
+            }
+        }
+
+        return list;
+    }
+
+
+JSONObject tableIds = new JSONObject();
+            JSONArray tableArray = new JSONArray();
+            
+            try {
+                List<Map<String, Object>> datas = TCUtills.getTcTableIds(ctx);
+
+                
+
+                for (Map<String, Object> row : datas) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("TableName", row.get("TableName"));
+                    obj.put("TableID", row.get("TableID"));
+
+                    tableArray.put(obj);     // add to array
+                }
+
+                
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }    
