@@ -53,6 +53,21 @@ l__3rVXT#aX-
 RootPassword: l__3rVXT#aX-
 Main IP: 45.120.137.143
 DB - vinayERP
+
+postgres
+Dev
+
+ssh details - 
+Ip: 188.241.187.186
+User : root
+
+ssh root@188.241.187.186
+
+Password: >9J[?PV3r[175^Iu
+
+
+App Domain: https://dev.warepro.vinayelectricals.com/webui
+
 <<<<<<< HEAD
 >>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 
@@ -249,8 +264,14 @@ WHERE p.ad_client_id = 1000000
   AND p.PI_Deptartment_ID <> 1000005 AND p.PI_Deptartment_ID <> 1000004
   AND p.description IS DISTINCT FROM 'crt' order by p.PI_Deptartment_ID;
 
- 
 	
 
-
+can you review my api code and suggestion if need any changes
+class name is RealmedsTissueWebserviceImpl.java class
+api methos name is
+getTraceabilityDataForQR
+line no 11268 to 11450
 -----------------------------------------------------------------------
+fields:-
+
+ ALTER TABLE adempiere.C_Order ADD COLUMN isMobileOrder CHAR(1) NOT NULL DEFAULT 'N'::bpchar;

@@ -18,6 +18,7 @@ cd /opt/activemq/bin
 
 Check Active mq side:-
 http://3.111.186.59:8161/admin/index.jsp
+http://117.239.77.73:8161/admin/index.jsp
 admin/admin 
 
 Restart Active mq

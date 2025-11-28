@@ -431,95 +431,205 @@ JOIN adempiere.m_product_category pc ON pr.m_product_category_id = pc.m_product_
 WHERE pc.name = 'BMedia' AND pr.ad_client_id = $P{AD_CLIENT_ID} ;
 
 
+-----------------------------------------------------------------------------------------------------------------------------
+*****************************************************************************************************************************
+-----------------------------------------------------------------------------------------------------------------------------
+Sales Invoices updated Postgres Query:-
+
+select iv.c_invoice_id, iv.documentno as Invoice_No, to_char(iv.DateInvoiced, 'DD-Mon-YYYY') as Date_Invoiced, org.name as OrgName, org_loc.address as org_address, org_loc.city as org_city, org_loc.regionname as org_regionname,
+org_loc.countryname as org_countryname, org_loc.postal as org_postal, bp_loc.address as bp_address, bp_loc.city as bp_city, bp_loc.regionname as bp_regionname,
+bp_loc.countryname as bp_countryname, bp_loc.postal as bp_postal,ivl.description,
+(case when ivl.m_product_id>0 then mp.name else cha.name end) as item,
+iv.totallines as SubTotal, iv.grandtotal as Total_Amount, (iv.grandtotal-iv.totallines) as Tax_Amount,
+ivl.line as Product_SNo, mp.name as Product_Name, ivl.qtyinvoiced as Product_Qty_Invoiced, round(ivl.priceentered,2) as Product_Price_Entered,
+cr.iso_code as Product_Currency_Name, tax.name as Product_Tax_Name, tax.rate as Product_Tax_Rate, ivl.taxamt as Product_Tax_Amount, mp.hsncode as Product_HSN,
+ivl.linenetamt as Product_Line_Amount, iv.description, iv.poreference, bp.name as customer_name,
+to_char(
+    CASE 
+        WHEN sh.created IS NOT NULL THEN sh.created
+        WHEN ph.created IS NOT NULL THEN ph.created
+        ELSE NULL
+    END,
+    'DD/MM/YYYY'
+) AS date_of_hardening,
+CASE 
+    WHEN sh.parentcultureline IS NOT NULL THEN sh.parentcultureline
+    WHEN ph.parentcultureline IS NOT NULL THEN ph.parentcultureline
+    ELSE NULL
+END AS parentcultureline,
+CASE 
+    WHEN sh.tc_variety_id IS NOT NULL THEN tv_sh.name
+    WHEN ph.tc_variety_id IS NOT NULL THEN tv_ph.name
+END AS variety,
+
+-- fnNumberToWords(iv.grandtotal::BIGINT) as AmountInWord,
+	cr.description as currency_name,cor.secondaryhardeninguuid As secondaryhardeninguuid,
+wh.name as wareName, ware_loc.address as ware_address, ware_loc.city as ware_city, ware_loc.regionname as ware_regionname, io.documentno as InOutNo, to_char(io.movementdate, 'DD-Mon-YYYY') as InOutDate,
+ware_loc.countryname as ware_countryname, ware_loc.postal as ware_postal, orginfo.Phone,
+cli.gstno client_gstno, cli.panno as client_panno, bp.gstno as bp_gstno, bp.panno as bp_panno, cr.cursymbol, encode(org_img.binarydata,'base64') as logo_binarydata, cli.Name as companyname
+from adempiere.c_invoice iv
+left join adempiere.c_invoiceline ivl on (iv.c_invoice_id=ivl.c_invoice_id)
+left join adempiere.c_order cor On (cor.c_order_id = iv.c_order_id) 	
+left join adempiere.m_inout io on (cor.c_order_id=io.c_order_id)
+left join adempiere.c_bpartner bp on (bp.c_bpartner_id=iv.c_bpartner_id)
+left join adempiere.ad_org org on (org.AD_Org_ID=iv.AD_Org_ID)
+left join adempiere.ad_orginfo orginfo on (orginfo.AD_Org_ID=iv.AD_Org_ID)
+left join adempiere.ad_image org_img on (orginfo.Logo_ID=org_img.ad_image_id)
+left join adempiere.m_warehouse wh on (wh.m_warehouse_id=orginfo.m_warehouse_id)
+left join adempiere.ad_client cli on (cli.ad_client_id=iv.ad_client_id)
+left join adempiere.location_details ware_loc on (ware_loc.c_location_id=wh.c_location_id)
+left join adempiere.location_details org_loc on (org_loc.c_location_id=orginfo.c_location_id)
+left join adempiere.c_bpartner_location bpl on (bpl.c_bpartner_location_id=iv.c_bpartner_location_id)
+left join adempiere.location_details bp_loc on (bp_loc.c_location_id=bpl.c_location_id)
+left join adempiere.m_product mp on (mp.m_product_id=ivl.m_product_id)
+left join adempiere.c_charge cha on (cha.c_charge_id=ivl.c_charge_id)
+left join adempiere.c_uom uom on (uom.c_uom_id=ivl.c_uom_id)
+left join adempiere.c_tax tax on (tax.c_tax_id=ivl.c_tax_id)
+left join adempiere.c_currency cr on (cr.c_currency_id=iv.c_currency_id)
+LEFT JOIN adempiere.TC_SecondaryHardeningLabel sh ON sh.c_uuid = cor.secondaryhardeninguuid
+LEFT JOIN adempiere.TC_PrimaryHardeningLabel ph ON ph.c_uuid = cor.secondaryhardeninguuid
+LEFT JOIN adempiere.tc_variety tv_sh ON tv_sh.tc_variety_id = sh.tc_variety_id
+LEFT JOIN adempiere.tc_variety tv_ph ON tv_ph.tc_variety_id = ph.tc_variety_id
+
+where (iv.C_Invoice_ID = 1000034 OR iv.C_Invoice_ID = 1000034 ) AND iv.ad_client_id = 1000002 
+Order by ivl.line;
+
+
+
+</textField>
+			<line>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="77" y="69" width="1" height="19" forecolor="#000000" uuid="942d1447-2172-4786-a868-4bbff026d52c"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</line>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="34" y="69" width="171" height="19" uuid="0cd1b030-dd52-4c52-93df-cf8b8515cd2f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
+			</textField>
+		</band>
+
 
 
 
 
 =======================================================================================================
-List<PO> poList = new Query(ctx, "TC_VisitType", "ad_client_id=?", trxName)
-			        .setParameters(clientId)
-			        .list();
+Customer invoice & Sales QR line align query and its working on Postgres:-
 
-			StringBuilder visitTypeListQuoted = new StringBuilder();
+SELECT iv.c_invoice_id,iv.documentno AS Invoice_No,TO_CHAR(iv.DateInvoiced, 'DD-Mon-YYYY') AS Date_Invoiced,org.name AS OrgName,
+org_loc.address AS org_address,org_loc.city AS org_city,org_loc.regionname AS org_regionname,org_loc.countryname AS org_countryname,
+org_loc.postal AS org_postal,bp_loc.address AS bp_address,bp_loc.city AS bp_city,bp_loc.regionname AS bp_regionname,
+bp_loc.countryname AS bp_countryname,bp_loc.postal AS bp_postal,ivl.description,(CASE WHEN ivl.m_product_id>0 THEN mp.name ELSE cha.name END) AS item,
+iv.totallines AS SubTotal,iv.grandtotal AS Total_Amount,(iv.grandtotal-iv.totallines) AS Tax_Amount,ivl.line AS Product_SNo,
+mp.name AS Product_Name,ivl.qtyinvoiced AS Product_Qty_Invoiced,ROUND(ivl.priceentered,2) AS Product_Price_Entered,
+cr.iso_code AS Product_Currency_Name,tax.name AS Product_Tax_Name,tax.rate AS Product_Tax_Rate,ivl.taxamt AS Product_Tax_Amount,
+mp.hsncode AS Product_HSN,ivl.linenetamt AS Product_Line_Amount,iv.description,iv.poreference,bp.name AS customer_name,
+TO_CHAR(CASE 
+WHEN sh.created IS NOT NULL THEN sh.created WHEN ph.created IS NOT NULL THEN ph.created
+    ELSE NULL END, 'DD/MM/YYYY') AS date_of_hardening,
+CASE 
+WHEN sh.parentcultureline IS NOT NULL THEN sh.parentcultureline WHEN ph.parentcultureline IS NOT NULL THEN ph.parentcultureline
+    ELSE NULL  END AS parentcultureline,
+CASE 
+WHEN sh.tc_variety_id IS NOT NULL THEN tv_sh.name WHEN ph.tc_variety_id IS NOT NULL THEN tv_ph.name
+    END AS variety,
+-- fnNumberToWords(iv.grandtotal::BIGINT) as AmountInWord,
+cor.secondaryhardeninguuid,q2.village,q2.talukname,q2.district,q2.collection_updated_date,cr.description AS currency_name,
+wh.name AS wareName,ware_loc.address AS ware_address,ware_loc.city AS ware_city,ware_loc.regionname AS ware_regionname,
+io.documentno AS InOutNo,TO_CHAR(io.movementdate, 'DD-Mon-YYYY') AS InOutDate,ware_loc.countryname AS ware_countryname,
+ware_loc.postal AS ware_postal,orginfo.Phone,cli.gstno AS client_gstno,cli.panno AS client_panno,bp.gstno AS bp_gstno,bp.panno AS bp_panno,
+cr.cursymbol,ENCODE(org_img.binarydata,'base64') AS logo_binarydata,cli.Name AS companyname
+FROM adempiere.c_invoice iv LEFT JOIN adempiere.c_invoiceline ivl ON (iv.c_invoice_id=ivl.c_invoice_id)
+LEFT JOIN adempiere.c_order cor ON (cor.c_order_id = iv.c_order_id) LEFT JOIN adempiere.m_inout io ON (cor.c_order_id=io.c_order_id)
+LEFT JOIN adempiere.c_bpartner bp ON (bp.c_bpartner_id=iv.c_bpartner_id) LEFT JOIN adempiere.ad_org org ON (org.AD_Org_ID=iv.AD_Org_ID)
+LEFT JOIN adempiere.ad_orginfo orginfo ON (orginfo.AD_Org_ID=iv.AD_Org_ID) LEFT JOIN adempiere.ad_image org_img ON (orginfo.Logo_ID=org_img.ad_image_id)
+LEFT JOIN adempiere.m_warehouse wh ON (wh.m_warehouse_id=orginfo.m_warehouse_id) LEFT JOIN adempiere.ad_client cli ON (cli.ad_client_id=iv.ad_client_id)
+LEFT JOIN adempiere.location_details ware_loc ON (ware_loc.c_location_id=wh.c_location_id) LEFT JOIN adempiere.location_details org_loc ON (org_loc.c_location_id=orginfo.c_location_id)
+LEFT JOIN adempiere.c_bpartner_location bpl ON (bpl.c_bpartner_location_id=iv.c_bpartner_location_id) LEFT JOIN adempiere.location_details bp_loc ON (bp_loc.c_location_id=bpl.c_location_id)
+LEFT JOIN adempiere.m_product mp ON (mp.m_product_id=ivl.m_product_id) LEFT JOIN adempiere.c_charge cha ON (cha.c_charge_id=ivl.c_charge_id)
+LEFT JOIN adempiere.c_uom uom ON (uom.c_uom_id=ivl.c_uom_id) LEFT JOIN adempiere.c_tax tax ON (tax.c_tax_id=ivl.c_tax_id)
+LEFT JOIN adempiere.c_currency cr ON (cr.c_currency_id=iv.c_currency_id) LEFT JOIN adempiere.TC_SecondaryHardeningLabel sh ON sh.c_uuid = cor.secondaryhardeninguuid
+LEFT JOIN adempiere.TC_PrimaryHardeningLabel ph ON ph.c_uuid = cor.secondaryhardeninguuid LEFT JOIN adempiere.tc_variety tv_sh ON tv_sh.tc_variety_id = sh.tc_variety_id
+LEFT JOIN adempiere.tc_variety tv_ph ON tv_ph.tc_variety_id = ph.tc_variety_id
+LEFT JOIN LATERAL (
+WITH RECURSIVE cte AS (
+SELECT cl.parentuuid,cl.c_uuid,cl.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,NULL AS collection_updated_date
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+WHERE cl.c_uuid = cor.secondaryhardeninguuid
+UNION ALL
+SELECT phs.cultureuuid AS parentuuid,cl.c_uuid,cl.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,
+NULL AS collection_updated_date FROM adempiere.TC_PrimaryHardeningLabel ph
+JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
+JOIN adempiere.tc_culturelabel cl ON phs.cultureuuid = cl.c_uuid JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+WHERE ph.c_uuid = cor.secondaryhardeninguuid
+UNION ALL
+SELECT phs.cultureuuid AS parentuuid,cl.c_uuid,cl.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,
+NULL AS collection_updated_date FROM adempiere.TC_SecondaryHardeningLabel sh JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
+JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
+JOIN adempiere.tc_culturelabel cl ON phs.cultureuuid = cl.c_uuid JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
+WHERE sh.c_uuid = cor.secondaryhardeninguuid
+UNION ALL
+SELECT cl2.parentuuid,cl2.c_uuid,cl2.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,
+NULL AS collection_updated_date FROM cte JOIN adempiere.tc_culturelabel cl2 ON cte.parentuuid = cl2.c_uuid
+JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id),
+culture_result AS (
+SELECT cte.parentuuid,cte.c_uuid,cte.created,cte.variety,cte.village,cte.talukname,cte.district,cte.collection_updated_date
+FROM cte GROUP BY cte.parentuuid, cte.c_uuid, cte.created, cte.variety, cte.village, cte.talukname, cte.district, cte.collection_updated_date
+UNION ALL
+SELECT DISTINCT tcc.parentuuid,tcc.c_uuid,tcc.created,cte.variety,cte.village,cte.talukname,cte.district,NULL AS collection_updated_date
+FROM cte LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
+UNION ALL
+SELECT DISTINCT NULL,tpt.c_uuid,tpt.created,cte.variety,f.villagename2 AS village,f.talukname,f.district,
+TO_CHAR(cp.updated, 'DD/MM/YYYY') AS collection_updated_date FROM cte
+LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid LEFT JOIN adempiere.tc_planttag tpt ON tcc.parentuuid = tpt.c_uuid
+JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
+JOIN adempiere.TC_collectionjoinplant cp ON cp.TC_PlantDetails_ID = pd.TC_PlantDetails_ID
+JOIN adempiere.tc_farmer f ON pd.tc_farmer_id = f.tc_farmer_id WHERE tpt.c_uuid IS NOT NULL),
+explant_result AS (
+SELECT DISTINCT tcc.parentuuid,tcc.c_uuid,tcc.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,
+NULL AS collection_updated_date FROM adempiere.tc_explantlabel tcc
+JOIN adempiere.tc_variety var ON var.tc_variety_id = tcc.tc_variety_id WHERE tcc.c_uuid = cor.secondaryhardeninguuid
+UNION ALL
+SELECT DISTINCT NULL,tpt.c_uuid,tpt.created,var.name AS variety,f.villagename2 AS village,f.talukname,f.district,
+TO_CHAR(cp.updated, 'DD/MM/YYYY') AS collection_updated_date FROM adempiere.tc_planttag tpt
+JOIN adempiere.tc_explantlabel tcc ON tcc.parentuuid = tpt.c_uuid JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
+JOIN adempiere.TC_collectionjoinplant cp ON cp.TC_PlantDetails_ID = pd.TC_PlantDetails_ID JOIN adempiere.tc_farmer f ON pd.tc_farmer_id = f.tc_farmer_id
+JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id
+WHERE tcc.c_uuid = cor.secondaryhardeninguuid AND tpt.c_uuid IS NOT NULL),
+plant_tag_result AS (
+SELECT DISTINCT NULL,tpt.c_uuid,tpt.created,var.name AS variety,f.villagename2 AS village,f.talukname,f.district,
+TO_CHAR(cp.updated, 'DD/MM/YYYY') AS collection_updated_date FROM adempiere.tc_planttag tpt
+JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid JOIN adempiere.TC_collectionjoinplant cp ON cp.TC_PlantDetails_ID = pd.TC_PlantDetails_ID
+JOIN adempiere.tc_farmer f ON pd.tc_farmer_id = f.tc_farmer_id JOIN adempiere.tc_variety var ON var.tc_variety_id = pd.tc_variety_id
+WHERE tpt.c_uuid = cor.secondaryhardeninguuid),
+primary_result AS (
+SELECT phs.cultureuuid AS parentuuid,ph.c_uuid,ph.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,
+NULL AS collection_updated_date FROM adempiere.TC_PrimaryHardeningLabel ph
+JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
+JOIN adempiere.tc_variety var ON var.tc_variety_id = ph.tc_variety_id WHERE ph.c_uuid = cor.secondaryhardeninguuid),
+secondary_result AS (
+SELECT sh.parentuuid,sh.c_uuid,sh.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,NULL AS collection_updated_date
+FROM adempiere.TC_SecondaryHardeningLabel sh JOIN adempiere.tc_variety var ON var.tc_variety_id = sh.tc_variety_id
+WHERE sh.c_uuid = cor.secondaryhardeninguuid
+UNION ALL
+SELECT phs.cultureuuid AS parentuuid,ph.c_uuid,ph.created,var.name AS variety,NULL AS village,NULL AS talukname,NULL AS district,
+NULL AS collection_updated_date FROM adempiere.TC_SecondaryHardeningLabel sh
+JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
+JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
+JOIN adempiere.tc_variety var ON var.tc_variety_id = ph.tc_variety_id WHERE sh.c_uuid = cor.secondaryhardeninguuid)
+SELECT * FROM secondary_result	
+UNION ALL
+SELECT * FROM primary_result
+UNION ALL
+SELECT * FROM culture_result WHERE (parentuuid IS NULL OR parentuuid <> c_uuid)
+UNION ALL
+SELECT * FROM explant_result WHERE NOT EXISTS (SELECT 1 FROM culture_result)
+UNION ALL
+SELECT * FROM plant_tag_result WHERE NOT EXISTS (SELECT 1 FROM explant_result) AND NOT EXISTS (SELECT 1 FROM culture_result) ORDER BY created ASC LIMIT 1	
+) q2 ON TRUE
+WHERE (iv.C_Invoice_ID = 1000034) AND iv.ad_client_id = 1000002 ORDER BY ivl.line;
 
-			for (int i = 0; i < poList.size(); i++) {
-			    PO record = poList.get(i);
-			    X_TC_VisitType tt = new X_TC_VisitType(ctx, record.get_ID(), trxName);
-			    String name = tt.getName();
-
-			    if (i > 0) visitTypeListQuoted.append(",");
-			    visitTypeListQuoted.append("'").append(name).append("'");
-			}
-
-			String allVisitTypes = visitTypeListQuoted.toString();
-
-			if (visitType == null || visitType.trim().isEmpty() || visitType.equalsIgnoreCase("all")) {
-			    visitType = allVisitTypes;
-			}else {
-		        visitType = "'" + visitType + "'";
-		    }
-			
-			String sql = null;
-			if (userInput.equals("day")) {
-				sql = "SELECT TO_CHAR(CURRENT_DATE, 'Day') AS day_name,CURRENT_DATE AS date,COUNT(DISTINCT v.tc_visit_id) AS visit_count\n"
-						+ "FROM adempiere.tc_visit v INNER JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby\n"
-						+ "INNER JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'\n"
-						+ "INNER JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id\n"
-						+ "AND vt.name IN (" + visitType + ")  WHERE v.updated::date = CURRENT_DATE\n"
-						+ "AND v.ad_client_id = ? AND u.name = ?;";
-			} else if (userInput.equals("week")) {
-				sql = "WITH days AS (SELECT generate_series(0, 6) AS day_of_week),\n"
-						+ "visit_counts AS (SELECT v.updated::date AS visit_day,to_char(v.updated::date, 'FMDay') AS day_name,\n"
-						+ "EXTRACT(dow FROM v.updated::date)::int AS day_of_week,COUNT(DISTINCT v.tc_visit_id) AS visit_count\n"
-						+ "FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby           \n"
-						+ "JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'\n"
-						+ "JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id\n"
-						+ "AND vt.name IN (" + visitType + ") WHERE v.ad_client_id = ? AND TRIM(u.name) = ?\n"
-						+ "AND v.updated::date BETWEEN (CURRENT_DATE - INTERVAL '6 days')::date AND CURRENT_DATE\n"
-						+ "GROUP BY v.updated::date,to_char(v.updated::date, 'FMDay'),EXTRACT(dow FROM v.updated::date))\n"
-						+ "SELECT (CURRENT_DATE - INTERVAL '6 days' + d.day_of_week * INTERVAL '1 day')::date AS dates,\n"
-						+ "COALESCE(vc.day_name,to_char((CURRENT_DATE - INTERVAL '6 days' + d.day_of_week * INTERVAL '1 day')::date, 'FMDay')) AS day_name,\n"
-						+ "COALESCE(vc.visit_count, 0) AS visit_count FROM days d\n"
-						+ "LEFT JOIN visit_counts vc ON (CURRENT_DATE - INTERVAL '6 days' + d.day_of_week * INTERVAL '1 day')::date = vc.visit_day ORDER BY dates;";
-			} else if (userInput.equals("month")) {
-				sql = "WITH weeks AS (SELECT generate_series(0, 4) AS week_number),\n"
-						+ "visit_counts AS (SELECT date_trunc('week', v.updated)::date AS week_start,\n"
-						+ "to_char(date_trunc('week', v.updated), 'YYYY-MM-DD') AS week_start_str,COUNT(*) AS visit_count\n"
-						+ "FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby\n"
-						+ "JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'\n"
-						+ "JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id AND vt.name IN (" + visitType + ") \n"
-						+ "WHERE v.ad_client_id = ? AND u.name = ? AND v.updated::date >= (current_date - interval '29 days')::date\n"
-						+ "AND v.updated::date <= current_date GROUP BY date_trunc('week', v.updated)),\n"
-						+ "date_range AS (SELECT (current_date - interval '29 days')::date + generate_series(0, 29) AS day)\n"
-						+ "SELECT to_char(date_trunc('week', day), 'YYYY-MM-DD') AS week_start,COALESCE(vc.visit_count, 0) AS visit_count\n"
-						+ "FROM date_range LEFT JOIN visit_counts vc ON date_trunc('week', day) = vc.week_start\n"
-						+ "GROUP BY date_trunc('week', day),vc.visit_count ORDER BY week_start;";
-			} else if (userInput.equals("year")) {
-				sql = "WITH months AS (SELECT generate_series(0, 11) AS month),\n"
-						+ "visit_counts AS (SELECT date_trunc('month', v.updated)::date AS month_year,to_char(v.updated, 'FMMonth') AS month_name,COUNT(*) AS visit_count\n"
-						+ "FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby\n"
-						+ "JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'\n"
-						+ "JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id AND vt.name IN (" + visitType + ") \n"
-						+ "WHERE v.ad_client_id = ? AND u.name = ?\n"
-						+ "AND v.updated::date >= (current_date - interval '364 days')::date AND v.updated::date <= current_date\n"
-						+ "GROUP BY date_trunc('month', v.updated),to_char(v.updated, 'FMMonth'))\n"
-						+ "SELECT to_char(date_trunc('month', current_date)  - (m.month || ' months')::interval, 'YYYY-MM-01') AS month_date,\n"
-						+ "COALESCE(vc.visit_count, 0) AS visit_count FROM months m LEFT JOIN visit_counts vc\n"
-						+ "ON date_trunc('month', current_date) - (m.month || ' months')::interval = vc.month_year\n"
-						+ "ORDER BY date_trunc('month', current_date) - (m.month || ' months')::interval;";
-			} else if (userInput.equals("all")) {
-				sql = "WITH year_counts AS (SELECT date_trunc('year', v.updated)::date AS year_start,COUNT(*) AS counts\n"
-						+ "FROM adempiere.tc_visit v JOIN adempiere.ad_user u ON u.ad_user_id = v.updatedby\n"
-						+ "JOIN adempiere.tc_status s ON s.tc_status_id = v.tc_status_id AND s.name = 'Completed'\n"
-						+ "JOIN adempiere.tc_visittype vt ON vt.tc_visittype_id = v.tc_visittype_id AND vt.name IN (" + visitType + ") \n"
-						+ "WHERE v.ad_client_id = ? AND u.name = ? GROUP BY date_trunc('year', v.updated)),\n"
-						+ "year_range AS (SELECT date_trunc('year', CURRENT_DATE)::date AS year_start\n"
-						+ "UNION ALL\n"
-						+ "SELECT generate_series((SELECT MIN(year_start) FROM year_counts),date_trunc('year', CURRENT_DATE)::date,interval '1 year')::date AS year_start),\n"
-						+ "all_years AS (SELECT DISTINCT year_start FROM year_range)\n"
-						+ "SELECT to_char(a.year_start, 'YYYY-01-01') AS year_date,COALESCE(y.counts, 0) AS counts FROM all_years a\n"
-						+ "LEFT JOIN year_counts y ON a.year_start = y.year_start ORDER BY a.year_start;";
-
-			}			
+-----------------------------------------------------------------------------------------------------------------		
 
 
