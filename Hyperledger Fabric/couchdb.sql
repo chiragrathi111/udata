@@ -1,1 +1,3 @@
 <ip>:5984/_utils/#/_all_dbs
+
+docker restart mycontainer

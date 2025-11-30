@@ -1,0 +1,12 @@
+# Ignore Terraform local state and crash files
+*.tfstate
+*.tfstate.*
+crash.log
+.terraform/
+
+# Lock file and any per-environment variable files
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfvars.json
+env
+.env

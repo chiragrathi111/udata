@@ -1,0 +1,14 @@
+# Example variable values — copy to terraform.tfvars then edit before running terraform
+# Do NOT commit terraform.tfvars (it may contain secrets). Add it to .gitignore.
+
+access_key = "YOUR_AWS_ACCESS_KEY_ID"
+secret_key = "YOUR_AWS_SECRET_ACCESS_KEY"
+region     = "us-east-1"
+ami_id     = "ami-0123456789abcdef0"
+instance_type = "t3.micro"
+key_name   = "your-ssh-key-name"
+
+# port and port1 are lists of numbers, used for multiple ingress rules.
+# Example: allow HTTP and HTTPS for web (ALB) / app ports for app SG
+port  = [80, 443]
+port1 = [4000]
