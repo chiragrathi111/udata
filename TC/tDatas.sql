@@ -1397,6 +1397,23 @@ if (description.getValue() != null) {
     result = ""; 
 }
 
+====================================================================
+Current Config table:-
+CREATE TABLE adempiere.tc_currentconfig (
+    tc_currentconfig_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    tc_currentconfig_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    night_mode_start_time TIME,
+    night_mode_end_time TIME,
+    created TIMESTAMP without time zone DEFAULT now() not null,
+    createdby NUMERIC(10,0) not null,
+    updated TIMESTAMP without time zone DEFAULT now() not null,
+    updatedby NUMERIC(10,0) not null,
+    description VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    isdefault CHAR(1) NOT NULL DEFAULT 'N'::bpchar); 
+
 
 
 =========================================================================

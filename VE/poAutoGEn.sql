@@ -99,3 +99,203 @@ public class POAutoGenerate extends SvrProcess{
 		return po;
 	}
 }
+
+
+
+------------------------------------------------------
+@Override
+	public CustomerListResponseDocument customerList(CustomerListRequestDocument customerListRequestDocument) {
+		Trx trx = null;
+		CustomerListResponseDocument customerListResponseDocument = CustomerListResponseDocument.Factory.newInstance();
+		CustomerListResponse listResponse = customerListResponseDocument.addNewCustomerListResponse();
+		CustomerListRequest customerListRequest = customerListRequestDocument.getCustomerListRequest();
+		ADLoginRequest loginReq = customerListRequest.getADLoginRequest();
+		String serviceType = customerListRequest.getServiceType();
+
+		try {
+			getCompiereService().connect();
+			CompiereService m_cs = getCompiereService();
+			String trxName = Trx.createTrxName(getClass().getName() + "_");
+			trx = Trx.get(trxName, true);
+			trx.start();
+			Properties ctx = m_cs.getCtx();
+
+			int client_id = loginReq.getClientID();
+			org.idempiere.adInterface.x10.ADLoginRequest adLoginReq = VeUtils.convertAdLogin(loginReq);
+			String err = login(adLoginReq, webServiceName, "sOList", serviceType);
+			if (err != null && err.length() > 0) {
+				listResponse.setError(err);
+				listResponse.setIsError(true);
+				return customerListResponseDocument;
+			}
+
+			if (!serviceType.equalsIgnoreCase("sOList")) {
+				listResponse.setIsError(true);
+				listResponse.setError("Service type " + serviceType + " not configured");
+				return customerListResponseDocument;
+			}
+			int pageNo  = customerListRequest.getPageNo() > 0 ? customerListRequest.getPageNo() : 1;
+	        int pageSize = customerListRequest.getPageSize() > 0 ? customerListRequest.getPageSize() : 20;
+	        
+	        String searchKey = customerListRequest.getSearchKey(); 
+	        boolean hasSearch = (searchKey != null && searchKey.trim().length() > 0);
+	        
+	        StringBuilder sql = new StringBuilder("AD_Client_ID=? AND IsActive='Y'");
+
+	        Boolean type = customerListRequest.getIsVendor();
+
+	        if (type) {
+	            sql.append(" AND IsVendor='Y'");
+	        } else { 
+	            sql.append(" AND IsCustomer='Y'");
+	        }
+
+	        if (hasSearch) {
+	            sql.append(" AND (UPPER(Value) LIKE ? OR UPPER(Name) LIKE ?)");
+	        }
+	        	        
+	        Query q = new Query(ctx, MBPartner.Table_Name, sql.toString(), trxName)
+	                .setParameters(client_id);
+
+	        if (hasSearch) {
+	            String like = "%" + searchKey.trim().toUpperCase() + "%";
+	            q.setParameters(client_id, like, like);
+	        }
+	        
+	        List<PO> customers = q.list();
+
+	        int fromIndex = (pageNo - 1) * pageSize;
+	        if (fromIndex >= customers.size()) {
+	            fromIndex = 0;
+	        }
+	        int toIndex = Math.min(fromIndex + pageSize, customers.size());
+
+	        List<PO> listOfCustomer = customers.subList(fromIndex, toIndex);
+
+	        if (listOfCustomer == null || customers.size() == 0) {
+	            listResponse.setIsError(true);
+	            listResponse.setError("Customers not found");
+	            return customerListResponseDocument;
+	        }
+
+			for (PO po : listOfCustomer) {
+				MBPartner customer = new MBPartner(ctx, po.get_ID(), trxName);
+				Customer cust = listResponse.addNewCustomer();
+				cust.setCustomerId(customer.getC_BPartner_ID());
+				cust.setCustomerName(customer.getName());
+			}
+
+			trx.commit();
+			listResponse.setIsError(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			listResponse.setError(e.getMessage());
+			listResponse.setIsError(true);
+		} finally {
+			if (manageTrx && trx != null)
+				trx.close();
+			getCompiereService().disconnect();
+		}
+		return customerListResponseDocument;
+	}
+
+	----------------------
+
+@Override
+	public BPartnerListResponseDocument customerList(BPartnerListRequestDocument customerListRequestDocument) {
+		Trx trx = null;
+		BPartnerListResponseDocument bPartnerListResponseDocument = BPartnerListResponseDocument.Factory.newInstance();
+		BPartnerListResponse listResponse = bPartnerListResponseDocument.addNewBPartnerListResponse();
+		BPartnerListRequest customerListRequest = customerListRequestDocument.getBPartnerListRequest();
+		ADLoginRequest loginReq = customerListRequest.getADLoginRequest();
+		String serviceType = customerListRequest.getServiceType();
+
+		try {
+			getCompiereService().connect();
+			CompiereService m_cs = getCompiereService();
+			String trxName = Trx.createTrxName(getClass().getName() + "_");
+			trx = Trx.get(trxName, true);
+			trx.start();
+			Properties ctx = m_cs.getCtx();
+
+			int client_id = loginReq.getClientID();
+			org.idempiere.adInterface.x10.ADLoginRequest adLoginReq = VeUtils.convertAdLogin(loginReq);
+			String err = login(adLoginReq, webServiceName, "sOList", serviceType);
+			if (err != null && err.length() > 0) {
+				listResponse.setError(err);
+				listResponse.setIsError(true);
+				return bPartnerListResponseDocument;
+			}
+
+			if (!serviceType.equalsIgnoreCase("sOList")) {
+				listResponse.setIsError(true);
+				listResponse.setError("Service type " + serviceType + " not configured");
+				return bPartnerListResponseDocument;
+			}
+			int pageNo  = customerListRequest.getPageNo() > 0 ? customerListRequest.getPageNo() : 1;
+	        int pageSize = customerListRequest.getPageSize() > 0 ? customerListRequest.getPageSize() : 20;
+	        
+	        String searchKey = customerListRequest.getSearchKey(); 
+	        boolean hasSearch = (searchKey != null && searchKey.trim().length() > 0);
+	        
+	        StringBuilder sql = new StringBuilder("AD_Client_ID=? AND IsActive='Y'");
+
+	        Boolean type = customerListRequest.getIsVendor();
+
+	        if (type) {
+	            sql.append(" AND IsVendor='Y'");
+	        } else { 
+	            sql.append(" AND IsCustomer='Y'");
+	        }
+
+	        if (hasSearch) {
+	            sql.append(" AND (UPPER(Value) LIKE ? OR UPPER(Name) LIKE ?)");
+	        }
+	        	        
+	        Query q = new Query(ctx, MBPartner.Table_Name, sql.toString(), trxName)
+	                .setParameters(client_id);
+
+	        if (hasSearch) {
+	            String like = "%" + searchKey.trim().toUpperCase() + "%";
+	            q.setParameters(client_id, like, like);
+	        } else {
+	            q.setParameters(client_id);
+	        }
+	        
+	        List<PO> bpartners = q.list();
+
+	        int fromIndex = (pageNo - 1) * pageSize;
+	        if (fromIndex >= bpartners.size()) {
+	        	listResponse.setIsError(false);
+	            return bPartnerListResponseDocument;
+	        }
+	        int toIndex = Math.min(fromIndex + pageSize, bpartners.size());
+
+	        List<PO> listOfBPartner = bpartners.subList(fromIndex, toIndex);
+
+	        if (listOfBPartner.isEmpty()) {
+	            listResponse.setIsError(true);
+	            listResponse.setError("Business Partner not found");
+	            return bPartnerListResponseDocument;
+	        }
+
+			for (PO po : listOfBPartner) {
+				MBPartner bpartner = (MBPartner) po;
+				BusinessPartners cust = listResponse.addNewBusinessPartners();
+				cust.setBPartnerId(bpartner.getC_BPartner_ID());
+				cust.setBusinessPartnerName(bpartner.getName());
+			}
+
+			trx.commit();
+			listResponse.setIsError(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			listResponse.setError(e.getMessage());
+			listResponse.setIsError(true);
+		} finally {
+			if (manageTrx && trx != null)
+				trx.close();
+			getCompiereService().disconnect();
+		}
+		return bPartnerListResponseDocument;
+	}	

@@ -70,7 +70,7 @@ App Domain: https://dev.warepro.vinayelectricals.com/webui
 
 <<<<<<< HEAD
 >>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
-
+800990,800989,800991,800994
 ===========================================================
 New server RAM -12 GB
 Server IP: 45.120.138.56
@@ -152,7 +152,7 @@ cd /opt/idempiere-server# cat idempiereEnv.properties
 scp root@45.120.137.143:/root/vinaydatas.dmp /home/chirag/
 
 Dump data:-
-pg_dump -U adempiere -W vinayerpcr > /home/chirag/ram/vinayDBDMPFolder/vinayerpcr13.dmp
+pg_dump -U adempiere -W vinayERPNew > vk12.dmp
 
 testing:-
 ls ~/ram/vinayDBDMPFolder/ | grep vinayerp
@@ -211,7 +211,17 @@ GROUP BY l.m_locator_id, l.value,s.ad_client_id,s.ad_org_id
 HAVING COALESCE(SUM(s.quantity), 0) = 0 ORDER BY l.m_locator_id;		
 
 =============================================================
+Product Label New:-
 
+SELECT pi.labeluuid AS label, mp.name AS productName,ml.m_inout_id,pi.quantity AS quantity,l.value As locatorName,
+mp.name AS productName FROM adempiere.pi_productlabel pi
+JOIN adempiere.m_inoutline ml on ml.m_inoutline_id = pi.m_inoutline_id 
+JOIN adempiere.m_product mp on mp.m_product_id = pi.m_product_Id 
+JOIN adempiere.m_locator l ON l.m_locator_id = pi.m_locator_id
+JOIN adempiere.m_inout mi ON mi.m_inout_id = ml.m_inout_id
+JOIN adempiere.c_order co ON co.c_order_id = mi.c_order_id
+WHERE ml.ad_client_id = 1000000 AND l.m_locator_id = 1000124 AND pi.m_product_id = 1001485
+AND co.documentno = '800996';
 
 
 =====================================================================

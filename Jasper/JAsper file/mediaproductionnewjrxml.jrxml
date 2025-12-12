@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TemperatureStatus" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8c4b2ec7-8f19-4d15-8483-8fd99440a968">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="tc.jrdax"/>
+	<parameter name="Date" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="DateTo" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT pr.m_product_id,pr.name AS mediacategory,pr.description AS codeifany,
+COALESCE(ml.openingstock, 0::numeric) AS openingbalance,COALESCE(ml.stocked, 0::numeric) AS mediastocked,
+COALESCE(mol.totalqty, 0::numeric) AS issuetoct,COALESCE(ml.openingstock, 0::numeric) + COALESCE(ml.stocked, 0::numeric)
+ - COALESCE(mol.totalqty, 0::numeric) - COALESCE(di.discarded_qty, 0::numeric) AS balance,ml.updated,
+COALESCE(di.discarded_qty, 0::numeric) AS discardedquantity FROM adempiere.m_product pr
+LEFT JOIN (SELECT  pr_1.m_product_id,MAX(date(ml_1.updated)) AS updated,        
+SUM(CASE WHEN date(ml_1.created) < $P{Date} THEN ml_1.quantity ELSE 0  END) AS openingstock,        
+SUM(CASE  WHEN date(ml_1.created) BETWEEN  $P{Date} AND $P{DateTo} THEN ml_1.quantity ELSE 0  END) AS stocked
+FROM adempiere.tc_medialine ml_1 JOIN adempiere.m_product pr_1 ON pr_1.m_product_id = ml_1.m_product_id
+WHERE ml_1.ad_client_id = $P{AD_CLIENT_ID}  GROUP BY pr_1.m_product_id) ml ON pr.m_product_id = ml.m_product_id
+LEFT JOIN (SELECT pro.m_product_id,
+SUM(CASE  WHEN date(mol_1.created) BETWEEN  $P{Date} AND $P{DateTo} THEN mol_1.quantity  ELSE 0  END) AS totalqty
+FROM adempiere.tc_mediaoutline mol_1 JOIN adempiere.m_product pro ON pro.m_product_id = mol_1.m_product_id
+WHERE mol_1.ad_client_id = $P{AD_CLIENT_ID} GROUP BY pro.m_product_id) mol ON pr.m_product_id = mol.m_product_id
+LEFT JOIN (SELECT ml_1.m_product_id,
+SUM(CASE  WHEN mlq.isdiscarded = 'Y' AND date(ml_1.created) BETWEEN  $P{Date}  AND $P{DateTo} THEN ml_1.quantity ELSE 0  END) AS discarded_qty
+FROM adempiere.tc_medialine ml_1 JOIN adempiere.tc_medialabelqr mlq ON ml_1.tc_medialine_id = mlq.tc_medialine_id
+WHERE ml_1.ad_client_id = $P{AD_CLIENT_ID} GROUP BY ml_1.m_product_id) di ON pr.m_product_id = di.m_product_id
+JOIN adempiere.m_product_category pc ON pr.m_product_category_id = pc.m_product_category_id
+WHERE pc.name = 'BMedia' AND pr.ad_client_id = $P{AD_CLIENT_ID} ;]]>
+	</queryString>
+	<field name="m_product_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="mediacategory" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="mediacategory"/>
+		<property name="com.jaspersoft.studio.field.label" value="mediacategory"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="codeifany" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codeifany"/>
+		<property name="com.jaspersoft.studio.field.label" value="codeifany"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="openingbalance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="openingbalance"/>
+		<property name="com.jaspersoft.studio.field.label" value="openingbalance"/>
+	</field>
+	<field name="mediastocked" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="mediastocked"/>
+		<property name="com.jaspersoft.studio.field.label" value="mediastocked"/>
+	</field>
+	<field name="issuetoct" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="issuetoct"/>
+		<property name="com.jaspersoft.studio.field.label" value="issuetoct"/>
+	</field>
+	<field name="balance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="balance"/>
+		<property name="com.jaspersoft.studio.field.label" value="balance"/>
+	</field>
+	<field name="updated" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="updated"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated"/>
+	</field>
+	<field name="discardedquantity" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="discardedquantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="discardedquantity"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="-10" y="3" width="580" height="55" forecolor="#298F60" backcolor="#298F60" uuid="6e379921-4868-45be-ab5d-67aba2eda8a2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="5" width="450" height="30" forecolor="#000000" backcolor="#000000" uuid="f344d519-5f06-49d0-b8c2-486576983c25">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Media Production]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="373" y="35" width="66" height="20" forecolor="#000000" uuid="4b8633ee-9e78-4d36-9890-237ff3bcafd7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Discarded]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="278" y="35" width="87" height="20" forecolor="#000000" uuid="83c19f9e-307e-4f0b-b3c0-b51a3e988e06">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Media Stocked]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="35" width="102" height="20" forecolor="#000000" uuid="d1bea8ad-3e19-4cd1-a822-9eff22fabb36">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Media Category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="35" width="74" height="20" forecolor="#000000" uuid="3f4fc22d-475b-418b-bf88-3f563b6e228d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Issued To CT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="176" y="35" width="101" height="20" forecolor="#000000" uuid="b604fcc0-e5d6-4baa-8b73-905d59a2ff50">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Opening Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="35" width="60" height="20" forecolor="#000000" uuid="776c220c-276f-4faa-89ea-e94cd790a9d0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Code If Any]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="521" y="35" width="47" height="20" forecolor="#000000" uuid="688c4793-5cd7-4ede-892a-8e1dd77a2f93">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Balance]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="377" y="1" width="49" height="20" backcolor="#000000" uuid="b9e4460a-fc48-4562-9b75-70e874b720af">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{discardedquantity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="189" y="1" width="72" height="20" uuid="5dbffdb9-585f-4e5f-afda-87c4c88bffd7">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{openingbalance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="288" y="1" width="71" height="20" uuid="efd2a9c9-8695-4cc3-af80-2c5371e025e3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mediastocked}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="125" y="1" width="49" height="20" backcolor="#000000" uuid="4bda98a9-b320-4788-8b06-225bdfc25435">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codeifany}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-10" y="1" width="132" height="20" uuid="05265953-902e-4c60-bbcb-a39e1514ca4a">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mediacategory}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="519" y="1" width="49" height="20" uuid="746d1c4c-b994-4929-b631-f586b38d5871">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{balance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="446" y="1" width="58" height="20" uuid="422fb7b5-ca84-4f71-843e-55b605cde8ca">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{issuetoct}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="50">
+			<textField>
+				<reportElement x="81" y="6" width="398" height="40" uuid="bf8e2028-1ea7-4813-8819-d3f431b53ec5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Records Found"]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>
