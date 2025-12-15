@@ -76,3 +76,73 @@
 # weekday(timestamp())  // it will return current weekday name (e.g., "Monday")
 # isodate(timestamp())  // it will return current date in ISO 8601 format
 # rfc3339(timestamp())  // it will return current timestamp in RFC 3339 format
+
+
+# Lookup Functions:-
+# Their have two type of functions (lookup, contains)
+# If you want to go to terraform console
+# terraform console  //it this commands
+# lookup({"a" = 1, "b" = 2}, "a", 0)  // it will return 1
+# contains(["apple", "banana", "cherry"], "banana")  // it will return true
+# element(["a", "b", "c"], 1)  // it will return "b"
+# index(["a", "b", "c"], "b")  // it will return 1
+# keys({"a" = 1, "b" = 2})  // it will return ["a", "b"]
+# values({"a" = 1, "b" = 2})  // it will return [1, 2]
+# length(["a", "b", "c"])  // it will return 3
+# merge({"a" = 1}, {"b" = 2})  // it will return {"a" = 1, "b" = 2}
+# zipmap(["a", "b"], [1, 2])  // it will return {"a" = 1, "b" = 2}
+# map("a", 1, "b", 2)  // it will return {"a" = 1, "b" = 2}
+# flatten([["a", "b"], ["c", "d"]])  // it will return ["a", "b", "c", "d"]
+# chunklist(["a", "b", "c", "d"], 2)  // it will return [["a", "b"], ["c", "d"]
+
+# give me more example for lookup function in terraform
+# lookup({"a" = 1, "b" = 2}, "a", 0)  // it will return 1
+# lookup({"name" = "John", "age" = 30}, "name", "Unknown")  // it will return "John"
+# lookup({"name" = "John", "age" = 30}, "gender", "Unknown")  // it will return "Unknown"
+# lookup(var.my_map, "key1", "default_value")  // it will return the value of "key1" in var.my_map or "default_value" if "key1 does not exist
+# lookup({"x" = 10, "y" = 20}, "y", 0)  // it will return 20
+# lookup({"x" = 10, "y" = 20}, "z", 0)  // it will return 0
+
+# Means Lookup function is used to retrieve thhe value of a specified key from a map, if your entered key not match it will return default value.
+# terraform example:-
+# variable "config" {
+#   type = map(string)
+#   default = {
+#     dev = "us-west-2"
+#     prod = "us-east-1"
+#   }
+# lookup(var.config, "dev", "ap-south-1")  //
+
+# Validation Functions:-
+# Their have two type of functions (can, cannot)
+# If you want to go to terraform
+# ive me more example for validation function in terraform
+# can(1 + 1)  // it will return true
+# can(length("hello"))  // it will return true
+
+# variable "x" {
+#   type = number
+#   validation {
+#     condition = can(1 + 1)
+#     error_message = "1 + 1 is not 2"
+#   }
+
+variable "instance_type" {
+    default = "t2.micro"
+
+    validation {
+      condition = length(var.instance_type) >=2 && length(var.instance_type <=20)
+      error_message = "instance type must be between 2 to 20 character"
+    }
+
+    validation {
+      condition = can(regex("^t[2-3]\\.", var.instance_type))
+      error_message = "Instance type must be t2 or t3"
+    }
+}
+
+# sensitive variable example:-
+variable "db_password" {
+  type      = string
+  sensitive = true  //this will hide the value of the variable in the terraform plan and apply output
+}
