@@ -14,12 +14,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# AWS Key Pairs (NEVER commit private keys)
-*.pem
-*.key
-primary-key.pem
-secondary-key.pem
-
 # OS files
 .DS_Store
 Thumbs.db
