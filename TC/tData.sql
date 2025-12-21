@@ -74,6 +74,10 @@
         FOREIGN KEY (m_product_id) REFERENCES adempiere.m_product(m_product_id));
         
         
+Alter table adempiere.tc_temperaturestatus
+Add column isacknowledge character(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
   Alter table adempiere.tc_order
   Add column docstatus character(2) NOT NULL,
   Add column docaction character(2) NOT NULL,

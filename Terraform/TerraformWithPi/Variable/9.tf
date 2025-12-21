@@ -20,10 +20,7 @@
 
 resource "aws_s3_bucket" "name" {
   bucket = "tf-day08-lifecycle-bucket-20251016"
-  acl    = "private"
-  versioning {
-    enabled = true
-  }
+
 
 lifecycle {
   create_before_destroy = true  // Create new bucket before destroying the old one
@@ -32,27 +29,24 @@ lifecycle {
 }
 
 # ------------------------------------------------------------------------------------------------
-resource "aws_s3_bucket_object" "name" {
-  bucket = aws_s3_bucket.name.bucket
-  key    = "test.txt"
-  source = "test.txt"
-  lifecycle {
-    ignore_changes = [
-      key,source
-    #   This ignore_changges will use for if want any key value not changes,just for example if instance count = 1
-    # and this count key inside on ignore_changes then it will not change the count value
-    ]
-  }
-}
+# resource "aws_s3_bucket_object" "name" {
+#   bucket = aws_s3_bucket.name.bucket
+#   key    = "test.txt"
+#   source = "test.txt"
+#   lifecycle {
+#     ignore_changes = [
+#       key,source
+#     #   This ignore_changges will use for if want any key value not changes,just for example if instance count = 1
+#     # and this count key inside on ignore_changes then it will not change the count value
+#     ]
+#   }
+# }
 
 # ========================================================================================================
 #  prevent_destroy example
 resource "aws_s3_bucket" "prevent_destroy_example" {
   bucket = "tf-day08-prevent-destroy-bucket-20251016"
-  acl    = "private"
-    versioning {
-        enabled = true
-    }
+    
     lifecycle {
         prevent_destroy = true
     # This will prevent the bucket from being destroyed
@@ -65,10 +59,7 @@ resource "aws_s3_bucket" "prevent_destroy_example" {
 # replace_triggered_by example
 resource "aws_s3_bucket" "replace_triggered_by_example" {
   bucket = "tf-day08-replace-triggered-by-bucket-20251016"
-  acl    = "private"
-    versioning {
-        enabled = true
-    }
+   
     lifecycle {
         replace_triggered_by = [aws_s3_bucket.name]
     # This will replace the bucket when the aws_s3_bucket.name resource changes
@@ -80,10 +71,7 @@ resource "aws_s3_bucket" "replace_triggered_by_example" {
 #  Pre and Post condition example
 resource "aws_s3_bucket" "pre_post_condition_example" {
   bucket = "tf-day08-pre-post-condition-bucket-20251016"
-  acl    = "private"
-    versioning {
-        enabled = true
-    }
+   
     lifecycle {
         precondition {
             condition     = length(aws_s3_bucket.name.bucket) > 0

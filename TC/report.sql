@@ -344,3 +344,62 @@ FROM (
     SELECT * FROM regular
 ) s
 ORDER BY RoomId, deviceId, sort_ts, ord;
+
+
+=================================================================================
+Alert Dashboard Query:-
+
+SELECT COUNT(*) AS total_overheat
+FROM adempiere.tc_temperaturestatus t
+JOIN adempiere.tc_tempstatus ts
+  ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+WHERE ts.name = 'OverHeat'
+AND t.ad_client_id = 1000002
+AND t.created >=
+    CASE lower('year')
+        WHEN 'day'   THEN CURRENT_DATE
+        WHEN 'month' THEN date_trunc('month', CURRENT_DATE)
+        WHEN 'year'  THEN date_trunc('year', CURRENT_DATE)
+    END
+AND t.created <
+    CASE lower('year')
+        WHEN 'day'   THEN CURRENT_DATE + INTERVAL '1 day'
+        WHEN 'month' THEN date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+        WHEN 'year'  THEN date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'
+    END;
+
+------------------------------------------------------------------------------------------------
+Day,month,year:-
+
+SELECT COUNT(*)
+FROM adempiere.tc_temperaturestatus t
+JOIN adempiere.tc_tempstatus ts
+  ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+WHERE ts.name = 'OverHeat'
+AND t.created >= CURRENT_DATE
+AND t.created < CURRENT_DATE + INTERVAL '1 day'
+AND t.ad_client_id = 1000002;
+
+SELECT COUNT(*)
+FROM adempiere.tc_temperaturestatus t
+JOIN adempiere.tc_tempstatus ts
+  ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+WHERE ts.name = 'OverHeat'
+AND t.created >= date_trunc('month', CURRENT_DATE)
+AND t.created <  date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+AND t.ad_client_id = 1000002;
+
+SELECT COUNT(*) AS total_overheat
+FROM adempiere.tc_temperaturestatus t
+JOIN adempiere.tc_tempstatus ts
+  ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+WHERE ts.name = 'OverHeat'
+AND t.created >= date_trunc('year', CURRENT_DATE)
+AND t.created <  date_trunc('year', CURRENT_DATE) + INTERVAL '1 year'
+AND t.ad_client_id = 1000002;
+------------------------------------------------------------------------------------------------------------------
+select * from adempiere.tc_temperaturestatus t
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = t.m_locatortype_id
+JOIN adempiere.tc_tempstatus ts ON ts.tc_tempstatus_id = t.tc_tempstatus_id
+WHERE t.ad_client_id = 1000002 AND ts.name = 'OverHeat' AND isacknowledge = 'N' ORDER BY t.updated DESC,t.custom_timestamp DESC
+    

@@ -1,16 +1,17 @@
 Hi,
 
-Here’s a quick update on Weekly Achievements & Challenges (6-Oct-2025 - 10-Oct-2025).
+Here’s a quick update on Weekly Achievements & Challenges (15-Dec-2025 - 19-Dec-2025).
 
 Achievements:
 
-Bulk Locator Addition Using CSV File:
-Challenge: While adding locators in bulk using a CSV file, the records were successfully created on the server. However, the height, depth, and width fields were automatically set to 0 instead of being left empty. Because of this, the 3D layout data failed to load properly and resulted in an error.
+Tissue Culture:-
+I added IOT Desbaoard widget,Room soing on drop down afetr select any room temperature and current table latest reocrds comes, and i changed date box and refresh button to all dashboards widgget.
 
-Resolution: A SQL query was written to update the affected locators by replacing the values 0 with NULL (empty) for the fields height, depth, and width, based on the locator ID range. After executing the query, the 3D layout data reflected correctly without any errors.
+Vinay Electrial:-
+I added new Org for mumbai depos accoding and added testing product,warehouse,locator and chancked whole flow in my local and creaed document 
 
 Support Needed:
-Currently, no major blockers. Continuing to explore ways to optimize framework performance and automation efficiency.
+Currently, no support needed.
 
 Thanks,
 Chirag Rathi
