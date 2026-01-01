@@ -1,0 +1,19 @@
+variable "region" {
+  type = string
+}
+
+variable "project_name" {
+  type = string
+}
+
+variable "environment" {
+  type = string
+}
+
+variable "memorySize" {
+  type = number
+}
+
+variable "timeout" {
+  type = number
+}
