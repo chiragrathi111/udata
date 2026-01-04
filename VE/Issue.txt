@@ -1,17 +1,303 @@
-Hi Team,
+*** 2026-01-04 00:08:13.743 idempiere Log (CLogFile) ***
+00:08:13.743-----------> Msg.getMsg: NOT found: Hi, Welcome to  [141595]
+00:08:13.744-----------> Msg.getMsg: NOT found: WarePro! [141595]
+00:08:13.744-----------> Msg.getMsg: NOT found: User Id [141595]
+00:08:13.744-----------> Msg.getMsg: NOT found: Forgot your password? [141595]
+02:30:35.304-----------> DataEngine.loadPrintData: NO Rows - ms=13 [138]
+02:30:35.305-----------> RWPLMailProcess.generateSalesPlanDetailViewReport: No data found for date: 2026-01-03 [138]
+02:35:03.682-----------> ProxyLeakTask.warn: Connection leak detection triggered for org.postgresql.jdbc.PgConnection@6828e966 on thread Test, stack trace follows [110]
+java.lang.Exception: Apparent connection leak detected
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:100)
+	at org.compiere.db.DB_PostgreSQL.getCachedConnection(DB_PostgreSQL.java:602)
+	at org.compiere.db.CConnection.getConnection(CConnection.java:1135)
+	at org.compiere.util.DB.createConnection(DB.java:446)
+	at org.compiere.util.Trx.getConnection(Trx.java:228)
+	at org.compiere.util.Trx.getConnection(Trx.java:207)
+	at org.compiere.db.PreparedStatementProxy.init(PreparedStatementProxy.java:73)
+	at org.compiere.db.PreparedStatementProxy.<init>(PreparedStatementProxy.java:45)
+	at org.compiere.db.ProxyFactory.newCPreparedStatement(ProxyFactory.java:57)
+	at org.compiere.util.DB.prepareStatement(DB.java:753)
+	at org.compiere.util.DB.prepareStatement(DB.java:711)
+	at org.compiere.model.Query.firstOnly(Query.java:392)
 
-Here’s a quick update on my work for the week of Dec 1–5, 2025:
+02:46:22.667-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 11597 ms [91]
+02:46:43.709-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 36898 ms [91]
+02:46:47.717-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] BroadcastOperationControlTask delayed 47925 ms [91]
+02:47:12.413-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 15235 ms [91]
+02:47:50.136-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 19882 ms [91]
+02:48:35.940-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 19966 ms [91]
+02:48:35.940-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 23838 ms [91]
+02:48:35.940-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] BroadcastOperationControlTask delayed 30804 ms [91]
+02:48:35.942-----------> HikariPool.warn: HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=49s989ms36µs489ns). [110]
+02:48:35.943-----------> ClusterHeartbeatManager: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] Resetting heartbeat timestamps because of huge system clock jump! Clock-Jump: 49196 ms, Heartbeat-Timeout: 60000 ms [143188]
+02:50:31.897-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 93876 ms [91]
+02:50:31.897-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] BroadcastOperationControlTask delayed 92510 ms [91]
+02:50:31.897-----------> ClusterHeartbeatManager: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] Resetting heartbeat timestamps because of huge system clock jump! Clock-Jump: 94094 ms, Heartbeat-Timeout: 60000 ms [143225]
+02:50:48.756-----------> Node: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] Terminating forcefully... [143206]
+02:52:54.200-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 23721 ms [91]
+02:52:54.200-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 99723 ms [91]
+02:52:54.201-----------> InvocationMonitor: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] BroadcastOperationControlTask delayed 114657 ms [91]
+03:00:47.019===========> OperationExecutorImpl: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] null [79]
+java.lang.IllegalMonitorStateException
+	at java.base/java.util.concurrent.locks.ReentrantLock$Sync.tryRelease(ReentrantLock.java:149)
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.release(AbstractQueuedSynchronizer.java:1302)
+	at java.base/java.util.concurrent.locks.ReentrantLock.unlock(ReentrantLock.java:439)
+	at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:440)
+	at com.hazelcast.spi.impl.operationexecutor.impl.OperationQueueImpl.take(OperationQueueImpl.java:85)
+	at com.hazelcast.spi.impl.operationexecutor.impl.OperationThread.run(OperationThread.java:105)
 
-Achievements
-Tissue Culture
+03:00:59.748-----------> ProxyLeakTask.warn: Connection leak detection triggered for org.postgresql.jdbc.PgConnection@6f930846 on thread RWPL - Accounting Processor, stack trace follows [110]
+java.lang.Exception: Apparent connection leak detected
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:100)
+	at org.compiere.db.DB_PostgreSQL.getCachedConnection(DB_PostgreSQL.java:602)
+	at org.compiere.db.CConnection.getConnection(CConnection.java:1135)
+	at org.compiere.util.DB.createConnection(DB.java:446)
+	at org.idempiere.db.util.AutoCommitConnectionBroker.getConnection(AutoCommitConnectionBroker.java:48)
+	at org.compiere.db.PreparedStatementProxy.init(PreparedStatementProxy.java:75)
+	at org.compiere.db.PreparedStatementProxy.<init>(PreparedStatementProxy.java:45)
+	at org.compiere.db.ProxyFactory.newCPreparedStatement(ProxyFactory.java:57)
+	at org.compiere.util.DB.prepareStatement(DB.java:753)
+	at org.compiere.util.DB.prepareStatement(DB.java:711)
+	at org.compiere.server.AcctProcessor.postSession(AcctProcessor.java:166)
+	at org.compiere.server.AcctProcessor.doWork(AcctProcessor.java:105)
+	at org.compiere.server.AdempiereServer.doRun(AdempiereServer.java:278)
+	at org.compiere.server.AdempiereServer.run(AdempiereServer.java:257)
+	at org.compiere.server.AdempiereServerMgr$LocalServerController.run(AdempiereServerMgr.java:780)
 
-I added the Night Mode feature in the Current Report.
-The report now reads the time from the configuration, which means Night Mode timing is fully dynamic.
-If the user does not enter any value, the system will use the default Night Mode timing.
+03:01:12.549-----------> QueuedThreadPool.warn: Job failed [141595]
+java.lang.OutOfMemoryError: Java heap space
 
-I added validation to check if the user enters any Base64 Encoded, URL Encoded, Double Encoded, or Bypass Technique payload.
-This prevents invalid or harmful data from being processed.
+03:00:55.495===========> ExecutionService: [172.31.9.187]:5701 [adempiere.idempiere/localhost:5432] [3.12.12] Failed to execute java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@13c8ef77[Completed exceptionally: java.lang.OutOfMemoryError: Java heap space] [73]
+java.lang.OutOfMemoryError: Java heap space
 
-Support Needed
+03:00:59.748===========> AcctProcessor.postSession: SELECT DISTINCT ProcessedOn FROM M_MatchInv WHERE AD_Client_ID=? AND ProcessedOn<? AND Processed='Y' AND Posted IN ('N','d') AND IsActive='Y' [182]
+java.lang.reflect.UndeclaredThrowableException
+	at com.sun.proxy.$Proxy16.executeQuery(Unknown Source)
+	at org.compiere.server.AcctProcessor.postSession(AcctProcessor.java:169)
+	at org.compiere.server.AcctProcessor.doWork(AcctProcessor.java:105)
+	at org.compiere.server.AdempiereServer.doRun(AdempiereServer.java:278)
+	at org.compiere.server.AdempiereServer.run(AdempiereServer.java:257)
+	at org.compiere.server.AdempiereServerMgr$LocalServerController.run(AdempiereServerMgr.java:780)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.compiere.db.StatementProxy.invoke(StatementProxy.java:130)
+	at com.sun.proxy.$Proxy16.executeQuery(Unknown Source)
+	at org.compiere.server.AcctProcessor.postSession(AcctProcessor.java:169)
+	at org.compiere.server.AcctProcessor.doWork(AcctProcessor.java:105)
+	at org.compiere.server.AdempiereServer.doRun(AdempiereServer.java:278)
+	at org.compiere.server.AdempiereServer.run(AdempiereServer.java:257)
+	at org.compiere.server.AdempiereServerMgr$LocalServerController.run(AdempiereServerMgr.java:780)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+caused by: java.lang.OutOfMemoryError: Java heap space
 
-No support required this week.
+03:01:12.553===========> RWPLMailProcess.process: Java heap space [138]
+java.lang.OutOfMemoryError: Java heap space
+
+03:01:17.083-----------> Node: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] No join method is enabled! Starting standalone. [180]
+03:01:17.084-----------> Node: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] Config seed port is 5701 and cluster size is 1. Some of the ports seem occupied! [180]
+03:27:09.338-----------> Msg.getMsg: NOT found: Hi, Welcome to  [140575]
+03:27:09.338-----------> Msg.getMsg: NOT found: WarePro! [140575]
+03:27:09.338-----------> Msg.getMsg: NOT found: User Id [140575]
+03:27:09.339-----------> Msg.getMsg: NOT found: Forgot your password? [140575]
+03:27:14.138-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143363]
+03:27:14.138-----------> Msg.getMsg: NOT found: WarePro! [143363]
+03:27:14.138-----------> Msg.getMsg: NOT found: User Id [143363]
+03:27:14.138-----------> Msg.getMsg: NOT found: Forgot your password? [143363]
+03:27:26.574-----------> Msg.getMsg: NOT found: Tenant [141593]
+03:27:26.574-----------> Msg.getMsg: NOT found: Organization  [141593]
+03:27:26.596-----------> Msg.getMsg: NOT found: Select your role in WarePro [141593]
+03:27:26.596-----------> Msg.translate: NOT found: Continue [141593]
+03:27:26.596-----------> Msg.translate: NOT found: Back to Sign In [141593]
+03:27:28.367-----------> Msg.getMsg: NOT found: Dashboard [141593]
+03:27:47.367-----------> Msg.getMsg: NOT found: Dashboard [143359]
+03:29:22.115-----------> Msg.getMsg: NOT found: Hi, Welcome to  [141593]
+03:29:22.116-----------> Msg.getMsg: NOT found: WarePro! [141593]
+03:29:22.116-----------> Msg.getMsg: NOT found: User Id [141593]
+03:29:22.116-----------> Msg.getMsg: NOT found: Forgot your password? [141593]
+03:29:39.279-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143357]
+03:29:39.280-----------> Msg.getMsg: NOT found: WarePro! [143357]
+03:29:39.280-----------> Msg.getMsg: NOT found: User Id [143357]
+03:29:39.280-----------> Msg.getMsg: NOT found: Forgot your password? [143357]
+03:29:43.555-----------> Msg.getMsg: NOT found: Tenant [143358]
+03:29:43.555-----------> Msg.getMsg: NOT found: Organization  [143358]
+03:29:47.755-----------> Msg.getMsg: NOT found: Select your role in WarePro [143358]
+03:29:47.756-----------> Msg.translate: NOT found: Continue [143358]
+03:29:47.756-----------> Msg.translate: NOT found: Back to Sign In [143358]
+03:30:13.446-----------> Msg.getMsg: NOT found: Dashboard [143358]
+03:30:38.881-----------> Msg.getMsg: NOT found: Hi, Welcome to  [139288]
+03:30:38.882-----------> Msg.getMsg: NOT found: WarePro! [139288]
+03:30:38.882-----------> Msg.getMsg: NOT found: User Id [139288]
+03:30:38.882-----------> Msg.getMsg: NOT found: Forgot your password? [139288]
+03:31:51.716-----------> Login.getClients: No Apps User [143363]
+03:32:20.871-----------> HttpChannel.warn: /webui/zkau/web/bdf04d0/theme/default/images/logoLeft1.png;jsessionid=node010ywcfamdns9p1pu5z2s5nt7b0187.node0 [143379]
+java.lang.OutOfMemoryError: Java heap space
+
+03:32:25.098-----------> HttpChannel.warn: /webui/zkau;jsessionid=node0znwi77hwb5cx1rmbq389dxiep186.node0 [141622]
+org.zkoss.zk.ui.DesktopUnavailableException: Unable to activate destroyed desktop, [Desktop z_Lh_a4dphjcplcUJ_AT3tGw:/index.zul]
+	at org.zkoss.zk.ui.impl.UiEngineImpl.doActivate(UiEngineImpl.java:1969)
+	at org.zkoss.zk.ui.impl.UiEngineImpl.execUpdate(UiEngineImpl.java:1273)
+	at org.zkoss.zk.au.http.DHtmlUpdateServlet.process(DHtmlUpdateServlet.java:571)
+	at org.zkoss.zk.au.http.DHtmlUpdateServlet.doGet(DHtmlUpdateServlet.java:451)
+	at org.zkoss.zk.au.http.DHtmlUpdateServlet.doPost(DHtmlUpdateServlet.java:459)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:523)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.eclipse.jetty.servlet.ServletHolder$NotAsync.service(ServletHolder.java:1410)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:764)
+	at org.eclipse.jetty.servlet.ServletHandler$ChainEnd.doFilter(ServletHandler.java:1630)
+	at org.eclipse.jetty.websocket.servlet.WebSocketUpgradeFilter.doFilter(WebSocketUpgradeFilter.java:170)
+	at org.eclipse.jetty.servlet.FilterHolder.doFilter(FilterHolder.java:202)
+	at org.eclipse.jetty.servlet.ServletHandler$Chain.doFilter(ServletHandler.java:1600)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:506)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:131)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:578)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:122)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:223)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1571)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:221)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1378)
+
+03:32:29.373-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143357]
+03:32:29.374-----------> Msg.getMsg: NOT found: WarePro! [143357]
+03:32:29.376-----------> Msg.getMsg: NOT found: User Id [143357]
+03:32:29.376-----------> Msg.getMsg: NOT found: Forgot your password? [143357]
+03:33:20.644===========> MLocator.load: NO Data found for M_Locator_ID=77180100 [143382]
+java.lang.Exception
+	at org.compiere.model.PO.load(PO.java:1493)
+	at org.compiere.model.PO.load(PO.java:1410)
+	at org.compiere.model.PO.load(PO.java:1368)
+	at org.compiere.model.PO.<init>(PO.java:226)
+	at org.compiere.model.PO.<init>(PO.java:162)
+	at org.compiere.model.X_M_Locator.<init>(X_M_Locator.java:39)
+	at org.compiere.model.MLocator.<init>(MLocator.java:249)
+	at com.pipra.rwpl.service.impl.RwplServiceImpl.getLocatorDetailsById(RwplServiceImpl.java:3183)
+	at jdk.internal.reflect.GeneratedMethodAccessor142.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.glassfish.jersey.server.model.internal.ResourceMethodInvocationHandlerFactory.lambda$static$0(ResourceMethodInvocationHandlerFactory.java:52)
+	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher$1.run(AbstractJavaResourceMethodDispatcher.java:124)
+	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.invoke(AbstractJavaResourceMethodDispatcher.java:167)
+	at org.glassfish.jersey.server.model.internal.JavaResourceMethodDispatcherProvider$ResponseOutInvoker.doDispatch(JavaResourceMethodDispatcherProvider.java:176)
+	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.dispatch(AbstractJavaResourceMethodDispatcher.java:79)
+	at org.glassfish.jersey.server.model.ResourceMethodInvoker.invoke(ResourceMethodInvoker.java:475)
+	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:397)
+	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:81)
+	at org.glassfish.jersey.server.ServerRuntime$1.run(ServerRuntime.java:255)
+	at org.glassfish.jersey.internal.Errors$1.call(Errors.java:248)
+
+03:34:11.829-----------> InvocationMonitor: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 15968 ms [143289]
+03:34:11.829-----------> HttpChannel.warn: /webui/zkau/web/bdf04d0/theme/default/images/logoLeft1.png;jsessionid=node0m7o2haxu4hbs18lw5vifd3188188.node0 [139288]
+java.lang.OutOfMemoryError: Java heap space
+
+03:34:16.066-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143359]
+03:34:16.066-----------> Msg.getMsg: NOT found: WarePro! [143359]
+03:34:16.066-----------> Msg.getMsg: NOT found: User Id [143359]
+03:34:16.066-----------> Msg.getMsg: NOT found: Forgot your password? [143359]
+03:34:58.662-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143360]
+03:34:58.663-----------> Msg.getMsg: NOT found: WarePro! [143360]
+03:35:02.927-----------> Msg.getMsg: NOT found: User Id [143360]
+03:35:02.927-----------> Msg.getMsg: NOT found: Forgot your password? [143360]
+03:35:45.108-----------> HttpChannel.warn: /webui/zkau/web/bdf04d0/js/zk.wpd;jsessionid=node01um8srano0pbnneq3hs7q0jiz189.node0 [141593]
+java.lang.OutOfMemoryError: Java heap space
+
+03:36:48.893-----------> Msg.getMsg: NOT found: Hi, Welcome to  [139288]
+03:36:48.893-----------> Msg.getMsg: NOT found: WarePro! [139288]
+03:36:48.893-----------> Msg.getMsg: NOT found: User Id [139288]
+03:36:48.893-----------> Msg.getMsg: NOT found: Forgot your password? [139288]
+03:37:14.644-----------> InvocationMonitor: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 11848 ms [143289]
+03:37:14.644-----------> InvocationMonitor: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] BroadcastOperationControlTask delayed 10762 ms [143289]
+03:37:14.644-----------> HttpChannel.warn: /webui/zkau/web/bdf04d0/js/zk.wpd;jsessionid=node0lffxuv6gdikgjpg8ydh6jbn8190.node0 [139288]
+java.lang.OutOfMemoryError: Java heap space
+
+03:40:09.690===========> UiEngineImpl.error:  [143356]
+java.lang.OutOfMemoryError: Java heap space
+
+03:40:13.845-----------> Msg.getMsg: NOT found: Hi, Welcome to  [141593]
+03:40:13.846-----------> Msg.getMsg: NOT found: WarePro! [141593]
+03:40:13.846-----------> Msg.getMsg: NOT found: User Id [141593]
+03:40:13.846-----------> Msg.getMsg: NOT found: Forgot your password? [141593]
+03:40:15.028-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143361]
+03:40:15.028-----------> Msg.getMsg: NOT found: WarePro! [143361]
+03:40:15.028-----------> Msg.getMsg: NOT found: User Id [143361]
+03:40:15.029-----------> Msg.getMsg: NOT found: Forgot your password? [143361]
+03:40:18.466-----------> Msg.getMsg: NOT found: Tenant [143361]
+03:40:18.466-----------> Msg.getMsg: NOT found: Organization  [143361]
+03:40:18.478-----------> Msg.getMsg: NOT found: Select your role in WarePro [143361]
+03:40:18.478-----------> Msg.translate: NOT found: Continue [143361]
+03:40:18.478-----------> Msg.translate: NOT found: Back to Sign In [143361]
+03:40:20.578-----------> Msg.getMsg: NOT found: Dashboard [143361]
+03:40:39.226-----------> Msg.getMsg: NOT found: Dashboard [143360]
+03:42:32.800-----------> Msg.getMsg: NOT found: Hi, Welcome to  [141593]
+03:42:32.800-----------> Msg.getMsg: NOT found: WarePro! [141593]
+03:42:32.800-----------> Msg.getMsg: NOT found: User Id [141593]
+03:42:32.800-----------> Msg.getMsg: NOT found: Forgot your password? [141593]
+03:42:54.216-----------> Login.getClients: No Apps User [143415]
+03:42:54.240-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143415]
+03:42:54.240-----------> Msg.getMsg: NOT found: WarePro! [143415]
+03:42:54.240-----------> Msg.getMsg: NOT found: User Id [143415]
+03:42:54.240-----------> Msg.getMsg: NOT found: Forgot your password? [143415]
+03:43:02.278-----------> Msg.getMsg: NOT found: Tenant [143417]
+03:43:02.278-----------> Msg.getMsg: NOT found: Organization  [143417]
+03:43:02.291-----------> Msg.getMsg: NOT found: Select your role in WarePro [143417]
+03:43:02.291-----------> Msg.translate: NOT found: Continue [143417]
+03:43:02.292-----------> Msg.translate: NOT found: Back to Sign In [143417]
+03:44:05.587-----------> Msg.getMsg: NOT found: Dashboard [143406]
+03:46:00.754-----------> InvocationMonitor: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] MonitorInvocationsTask delayed 16071 ms [143289]
+03:46:00.754-----------> InvocationMonitor: [172.31.9.187]:5702 [adempiere.idempiere/localhost:5432] [3.12.12] BroadcastOperationControlTask delayed 10592 ms [143289]
+03:46:00.755===========> UiEngineImpl.error:  [139288]
+java.lang.OutOfMemoryError: Java heap space
+
+03:46:05.036-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143417]
+03:46:05.036-----------> Msg.getMsg: NOT found: WarePro! [143417]
+03:46:05.037-----------> Msg.getMsg: NOT found: User Id [143417]
+03:46:05.037-----------> Msg.getMsg: NOT found: Forgot your password? [143417]
+03:46:05.609-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143417]
+03:46:05.609-----------> Msg.getMsg: NOT found: WarePro! [143417]
+03:46:05.609-----------> Msg.getMsg: NOT found: User Id [143417]
+03:46:05.610-----------> Msg.getMsg: NOT found: Forgot your password? [143417]
+03:46:09.366-----------> Msg.getMsg: NOT found: Tenant [143406]
+03:46:09.366-----------> Msg.getMsg: NOT found: Organization  [143406]
+03:46:09.378-----------> Msg.getMsg: NOT found: Select your role in WarePro [143406]
+03:46:09.379-----------> Msg.translate: NOT found: Continue [143406]
+03:46:09.379-----------> Msg.translate: NOT found: Back to Sign In [143406]
+03:46:10.943-----------> Msg.getMsg: NOT found: Dashboard [143432]
+03:46:29.700-----------> Msg.getMsg: NOT found: Dashboard [143413]
+03:48:49.640-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143431]
+03:48:49.640-----------> Msg.getMsg: NOT found: WarePro! [143431]
+03:48:49.640-----------> Msg.getMsg: NOT found: User Id [143431]
+03:48:49.641-----------> Msg.getMsg: NOT found: Forgot your password? [143431]
+03:49:27.518-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143413]
+03:49:27.518-----------> Msg.getMsg: NOT found: WarePro! [143413]
+03:49:27.518-----------> Msg.getMsg: NOT found: User Id [143413]
+03:49:27.519-----------> Msg.getMsg: NOT found: Forgot your password? [143413]
+03:49:44.203-----------> Msg.getMsg: NOT found: Tenant [143417]
+03:49:44.203-----------> Msg.getMsg: NOT found: Organization  [143417]
+03:49:52.724-----------> Msg.getMsg: NOT found: Select your role in WarePro [143417]
+03:49:52.725-----------> Msg.translate: NOT found: Continue [143417]
+03:49:52.727-----------> Msg.translate: NOT found: Back to Sign In [143417]
+03:51:47.701===========> UiEngineImpl.error:  [143361]
+java.lang.OutOfMemoryError: Java heap space
+
+03:51:52.039-----------> Msg.getMsg: NOT found: Dashboard [139288]
+03:52:19.006-----------> Msg.getMsg: NOT found: Dashboard [143412]
+03:53:03.834-----------> Msg.getMsg: NOT found: Hi, Welcome to  [139288]
+03:53:03.834-----------> Msg.getMsg: NOT found: WarePro! [139288]
+03:53:03.834-----------> Msg.getMsg: NOT found: User Id [139288]
+03:53:03.835-----------> Msg.getMsg: NOT found: Forgot your password? [139288]
+03:53:04.815-----------> Msg.getMsg: NOT found: Hi, Welcome to  [143412]
+03:53:04.815-----------> Msg.getMsg: NOT found: WarePro! [143412]
+03:53:04.815-----------> Msg.getMsg: NOT found: User Id [143412]
+03:53:04.815-----------> Msg.getMsg: NOT found: Forgot your password? [143412]
