@@ -1,0 +1,20 @@
+# =============================================================================
+# TERRAFORM VARIABLES EXAMPLE - Configure your deployment
+# =============================================================================
+# Copy this file to terraform.tfvars and customize the values
+# =============================================================================
+
+# AWS Configuration
+region = "us-east-1"
+
+# Project Configuration
+project_name = "image-processing"
+environment  = "dev"
+
+# Notification Configuration
+# IMPORTANT: Replace with your actual email address
+notification_email = "your-email@example.com"
+
+# Lambda Configuration (Optional - defaults are usually fine)
+lambda_timeout = 300  # 5 minutes
+lambda_memory  = 512  # 512 MB

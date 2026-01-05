@@ -1672,7 +1672,39 @@ ORDER BY created ASC;
 
 
 =======================================================================================================================================
+New Culture Stage wise :-
 
+WITH stages AS (
+SELECT 'Initiation'     AS stage_name, 1 AS seq
+UNION ALL SELECT 'Callusing',        2
+UNION ALL SELECT 'Multiplication',   3
+UNION ALL SELECT 'Elongation',        4
+UNION ALL SELECT 'Rooting',           5),
+stage_counts AS (SELECT cs.name AS stage_name,COUNT(cl.tc_culturelabel_id) AS quantity
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
+WHERE cl.ad_client_id = 1000002 AND cl.isdiscarded = 'N' AND cl.tosubculturecheck = 'N' GROUP BY cs.name)
+SELECT s.stage_name AS Category,COALESCE(sc.quantity, 0) AS TotalQuantity
+FROM stages s LEFT JOIN stage_counts sc ON sc.stage_name = s.stage_name ORDER BY s.seq;
+
+-------------------------------------------------------------------------------------------------------
+Its workin on Room wise datas:-
+
+WITH stages AS (
+SELECT 'Initiation'     AS stage, 1 AS seq
+UNION ALL SELECT 'Callusing',        2
+UNION ALL SELECT 'Multiplication',   3
+UNION ALL SELECT 'Elongation',        4
+UNION ALL SELECT 'Rooting',           5),
+rooms AS (SELECT lt.name AS room FROM adempiere.m_locatortype lt WHERE lt.description LIKE 'Room'),
+data AS (
+SELECT lt.name AS room,cs.name AS stage,COUNT(cl.tc_culturelabel_id) AS qty
+FROM adempiere.tc_culturelabel cl JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
+JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id JOIN adempiere.m_locator l ON l.m_locator_id = o.m_locator_id
+JOIN adempiere.m_locatortype lt ON lt.m_locatortype_id = l.m_locatortype_id
+WHERE cl.ad_client_id = 1000002 AND cl.isdiscarded = 'N' AND cl.tosubculturecheck = 'N'
+GROUP BY lt.name,cs.name)
+SELECT r.room,s.stage,COALESCE(d.qty, 0) AS qty FROM rooms r CROSS JOIN stages s
+LEFT JOIN data d ON d.room  = r.room AND d.stage = s.stage ORDER BY r.room,s.seq;
 
 
 
