@@ -1707,6 +1707,58 @@ SELECT r.room,s.stage,COALESCE(d.qty, 0) AS qty FROM rooms r CROSS JOIN stages s
 LEFT JOIN data d ON d.room  = r.room AND d.stage = s.stage ORDER BY r.room,s.seq;
 
 
+*****************************************************
+Old Query for storage on hand
+
+WITH categories AS (
+    SELECT 'Initiation' AS Category
+    UNION ALL SELECT 'Callusing'
+    UNION ALL SELECT 'Multiplication'
+    UNION ALL SELECT 'Elongation'
+    UNION ALL SELECT 'Rooting'
+),
+category_counts AS (
+    SELECT
+        lt.name AS RoomType,
+        CASE
+            WHEN pr.name LIKE 'BI%' OR pr.name LIKE 'N%'  THEN 'Initiation'
+            WHEN pr.name LIKE 'BC%'                      THEN 'Callusing'
+            WHEN pr.name LIKE 'BM%' OR pr.name LIKE 'M%' THEN 'Multiplication'
+            WHEN pr.name LIKE 'BE%' OR pr.name LIKE 'E1%' THEN 'Elongation'
+            WHEN pr.name LIKE 'BR%' OR pr.name LIKE 'R%' THEN 'Rooting'
+            ELSE 'Other'
+        END AS Category,
+        SUM(o.qtyonhand)::INT AS TotalQuantity
+    FROM adempiere.m_storageonhand o
+    JOIN adempiere.m_product pr
+        ON pr.m_product_id = o.m_product_id
+    JOIN adempiere.m_locator l
+        ON l.m_locator_id = o.m_locator_id
+    JOIN adempiere.m_locatortype lt
+        ON lt.m_locatortype_id = l.m_locatortype_id
+WHERE o.ad_client_id = 1000000 AND lt.description LIKE 'Room' GROUP BY lt.name,
+        CASE
+            WHEN pr.name LIKE 'BI%' OR pr.name LIKE 'N%'  THEN 'Initiation'
+            WHEN pr.name LIKE 'BC%'                      THEN 'Callusing'
+            WHEN pr.name LIKE 'BM%' OR pr.name LIKE 'M%' THEN 'Multiplication'
+            WHEN pr.name LIKE 'BE%' OR pr.name LIKE 'E1%' THEN 'Elongation'
+            WHEN pr.name LIKE 'BR%' OR pr.name LIKE 'R%' THEN 'Rooting'
+            ELSE 'Other'
+        END),
+room_types AS (SELECT DISTINCT lt.name AS RoomType FROM adempiere.m_locatortype lt WHERE lt.description LIKE 'Room')
+SELECT rt.RoomType,c.Category,COALESCE(cc.TotalQuantity, 0) AS TotalQuantity
+FROM room_types rt CROSS JOIN categories c
+LEFT JOIN category_counts cc ON rt.RoomType = cc.RoomType AND c.Category = cc.Category
+ORDER BY CASE WHEN rt.RoomType LIKE 'C%' THEN 1 ELSE 2 END,
+rt.RoomType,CASE c.Category
+        WHEN 'Initiation'      THEN 1
+        WHEN 'Callusing'       THEN 2
+        WHEN 'Multiplication'  THEN 3
+        WHEN 'Elongation'      THEN 4
+        WHEN 'Rooting'         THEN 5
+        ELSE 6  END;
+
+
 
 =======================================================================================================================================
 
