@@ -1,0 +1,32 @@
+--- # TArget,Task and Handler example
+- hosts: cr
+  user: ubuntu
+  become: yes
+  connection: ssh
+
+  vars:
+    package_name: appache2
+
+  tasks:
+    - name: Install appache2
+      apt:
+        name: "{{ package_name }}"
+        state: present
+        update_cache: yes
+      notify: ReStart apache2 service
+
+  handlers:
+    - name: ReStart apache2 service
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes
+
+# Handler using ansible-playbook test4_handler.yml, their is main reason if we ave any dependency task 
+# so we use handler to manage service restarts or any other operations
+# If we install two different package like appache2 and tree then time no need to use handler because both are independent task
+# but if we install appache2 and then change its configuration file then we need to restart apache2 service 
+# so in that case we use handler
+
+# Dry run command
+# ansible-playbook test4_handler.yml --check

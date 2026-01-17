@@ -1,0 +1,13 @@
+This type file fully secure not open any one person directly first enter the password thhen open
+
+What is the benifit?
+If i write playbook for specific server but my laptop some oter person use ,so that person easily watch my command
+so that is a security issue so that is the reason we using valut in ansible 
+below some commands
+
+#ansible-vault create vault.txt   (create any new file)
+#ansible-vault edit vault.txt     (edit existing file)
+#ansible-vault view vault.txt     (view file)
+#ansible-vault encrypt vault.txt  (encrept any normal file)
+#ansible-vault decrypt vault.txt  (decrept file)
+#ansible-vault rekey vault.txt    (change password)

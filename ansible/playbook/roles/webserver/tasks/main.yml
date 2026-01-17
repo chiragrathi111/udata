@@ -1,0 +1,7 @@
+- name: Install Apache web server
+  apt:
+    name: "{{ package_name }}"
+    state: present
+    update_cache: yes
+  notify:
+    - Start Apache  

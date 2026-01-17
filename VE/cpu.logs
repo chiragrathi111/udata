@@ -1,0 +1,81 @@
+* sudo nano /usr/local/bin/idempiere-health.sh
+
+below code paste it
+
+#!/bin/bash
+
+LOG_DIR="/var/log/idempiere-health"
+LOG_FILE="$LOG_DIR/health.log"
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+mkdir -p $LOG_DIR
+
+echo "===============================" >> $LOG_FILE
+echo "Time: $DATE" >> $LOG_FILE
+
+# CPU
+echo "CPU Load:" >> $LOG_FILE
+uptime >> $LOG_FILE
+
+# Memory
+echo "Memory:" >> $LOG_FILE
+free -h >> $LOG_FILE
+
+# Disk
+echo "Disk:" >> $LOG_FILE
+df -h / >> $LOG_FILE
+
+# Java Process
+echo "Java Process:" >> $LOG_FILE
+ps -eo pid,comm,%cpu,%mem --sort=-%mem | grep java | head -n 5 >> $LOG_FILE
+
+# ================= PostgreSQL Process =================
+echo "PostgreSQL Process (Top 5 by CPU):" >> $LOG_FILE
+ps -eo pid,comm,%cpu,%mem --sort=-%cpu | grep postgres | head -n 5 >> $LOG_FILE
+
+# ================= PostgreSQL Active Queries =================
+echo "PostgreSQL Active Queries:" >> $LOG_FILE
+psql -U adempiere -d idempiere -c "
+select pid,
+       state,
+       wait_event_type,
+       wait_event,
+       now() - query_start as running_time
+from pg_stat_activity
+where state <> 'idle'
+order by running_time desc
+limit 5;
+" >> $LOG_FILE 2>/dev/null
+
+# OOM killer
+echo "OOM Kill Check:" >> $LOG_FILE
+dmesg -T | grep -i "killed process" | tail -n 3 >> $LOG_FILE
+
+echo "" >> $LOG_FILE
+
+
+* sudo chmod +x /usr/local/bin/idempiere-health.sh
+
+* sudo crontab -e
+
+*    */10 * * * * /usr/local/bin/idempiere-health.sh
+
+============================
+📂 Log location
+* cat /var/log/idempiere-health/health.log
+
+
+🔍 WHAT YOU’LL SEE (Example)
+
+Time: 2026-01-12 02:40:00
+CPU Load:
+ 2:40:00 up 10 days, load average: 6.8, 7.2, 8.1
+
+Memory:
+Mem: 15G total, 14G used, 200M free
+
+Java Process:
+java 98% CPU 75% MEM
+
+OOM Kill Check:
+Killed process 3241 (java) total-vm:21G

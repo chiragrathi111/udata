@@ -143,6 +143,8 @@ scp /home/chirag/vinayERPlatest4.dmp root@45.120.138.56:/root/
 
 scp root@45.120.138.56:/root/vinayERPlatestN2025.dmp /home/chirag/
 
+scp root@188.241.187.186:/root/vedev26.dmp /home/chirag/
+
 psql -U adempiere -d vinayERP < /root/WarePro/ExpDat.dmp
 
 cd /opt/idempiere-server# cat idempiere.properties
@@ -160,6 +162,26 @@ ls ~/ram/vinayDBDMPFolder/ | grep vinayerp
 for aws server:-
 scp -i "pemFile/democ.pem" ubuntu@13.233.84.2:/home/ubuntu/erp5.dmp /home/chirag/
 
+
+=====================================================================================================
+Heap space:-
+
+sudo nano /opt/idempiere-server/utils/myEnvironment.sh
+
+IDEMPIERE_JAVA_OPTIONS="
+-Xms4G -Xmx6G
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/opt/idempiere-server/heapdump
+-Xlog:gc*
+-DIDEMPIERE_HOME=$IDEMPIERE_HOME"
+
+sudo mkdir -p /opt/idempiere-server/heapdump
+sudo chown -R idempiere:idempiere /opt/idempiere-server/heapdump
+
+
+ps -ef | grep java
 ======================================================================================================
 Reports:-
 -- to see storage detail by locator

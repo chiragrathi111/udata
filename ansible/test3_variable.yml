@@ -1,0 +1,15 @@
+--- # using variable in playbook
+- hosts: cr
+  user: ubuntu
+  become: yes
+  connection: ssh
+
+  vars:
+    package_name: apache2
+
+  tasks:
+    - name: Install apache using variable
+      apt:
+        name: "{{ package_name }}"
+        state: present
+        update_cache: yes

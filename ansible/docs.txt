@@ -1,0 +1,12 @@
+# Ad hoc ,Module and Playbook
+
+1. Ad hoc:- This is a simple linux command,its using linux performing like create a file
+but this ad hoc a big fault this is no Idempotency means if ad hoc create a file1 and if run command again then again over write this file
+we can't use ad hhoc for configuration and deployment
+ad hoc hhave no any idea if doing any repeated task, its every time execute, so this problem resolving we use module and playbook
+
+2. ad hoc problem solution using module, but their have execute only one task like if you install httpd server is fine but you can't enable or other thing 
+another word if we doin only one task so module is good
+
+3. playbook is a collection of module, annother word if want two and more module so we use playbook
+module and playbook both write on yaml file.   

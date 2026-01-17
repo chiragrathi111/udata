@@ -1,0 +1,27 @@
+--- # Looping through a list of items
+- hosts: all
+  user: ubuntu
+  become: yes
+  connection: ssh
+
+  tasks:
+    - name: Install multiple packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - git
+        - curl
+        - vim
+        - htop
+
+    - name: Create multiple users
+      user:
+        name: "{{ item }}"
+        state: present
+        shell: /bin/bash
+      loop:
+        - user1
+        - user2
+        - user3

@@ -1,0 +1,24 @@
+--- # When condition example
+- hosts: cr
+  user: ubuntu
+  become: yes
+  connection: ssh
+
+  vars:
+    apache2: apache2
+    httpd: httpd
+
+  tasks:
+    - name: Install apache2 for ubuntu
+      apt:
+        name: "{{ apache2 }}"
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+
+    - name: Install httpd for centos
+      yum:
+        name: "{{ httpd }}"
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"

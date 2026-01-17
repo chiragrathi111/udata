@@ -1,0 +1,12 @@
+--- #Targget with task
+- hosts: cr
+  user: ubuntu
+  become: yes
+  connection: ssh
+  
+  tasks:
+    - name: Install appachhe
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
