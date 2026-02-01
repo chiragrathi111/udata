@@ -1,0 +1,28 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: liveness-exec
+  labels:
+    test: liveness
+spec:
+  containers:
+  - name: liveness
+    image: ubuntu
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 1000
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 30
+
+
+# kubectl apply -f liveness.yml
+# cat /tmp/healthy 
+# root@liveness-exec:/# echo $?   (that is to check last command status)
+# o/p :- 0  (If system ealty then 0 else 1)

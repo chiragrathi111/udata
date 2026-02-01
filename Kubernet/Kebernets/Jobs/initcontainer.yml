@@ -1,0 +1,38 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: init-container-pod
+spec:
+  initContainers:
+    - name: init-myservice
+      image: busybox
+      command: ['sh', '-c', 'echo Initializing...; sleep 5; echo Initialization complete.']
+      volumeMounts:
+        - name: xchange
+          mountPath: /tmp/xchange
+  containers:
+    - name: c1
+      image: nginx
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: xchange
+          mountPath: /tmp/data
+  volumes:
+    - name: xchange
+      emptyDir: {}
+
+# Init containers run to completion before the main containers start.
+# Means if we want need any dependency to be ready before the main application starts, we can use init containers.
+
+# example: Database migration before starting the main application container.
+# In this example, the init container named "init-myservice" uses the busybox image and executes a shell script that prints initialization messages.
+# The init container also mounts a volume named "xchange" to "/tmp/xchange" for sharing data between the init container and the main container.
+
+# This Pod configuration includes an init container that runs before the main nginx container starts. The init container simulates 
+# an initialization process by printing messages and sleeping for 5 seconds. Once the init container completes, the main nginx container 
+# starts serving traffic. The restart policy is set to "Never" to avoid automatic restarts of the Pod.
+# To apply this configuration, save it to a file (e.g., initcontainer.yml) and run:
+
+# kubectl apply -f initcontainer.yml
+

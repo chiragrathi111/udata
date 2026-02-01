@@ -1,0 +1,25 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: reqlimitpod
+spec:
+  containers:
+    - name: reqlimitcontainer
+      image: nginx:latest
+      resources:
+        limits:
+          cpu: 1
+      ports:
+        - containerPort: 80
+
+
+# This Pod definition specifies only a CPU limit of 1 CPU for the container.
+# Since there is no CPU request defined, the container will not reserve any CPU resources.
+# However, if there is a LimitRange defined in the namespace that sets default CPU requests,
+# the container will inherit that default request.
+# In this case, if the LimitRange from the previous snippet is applied,
+# the container will have a default CPU request of 500m (0.5 CPU).
+# Therefore, the effective resource configuration for this container will be:
+# - CPU Request: 500m (inherited from LimitRange)
+# - CPU Limit: 1 CPU (explicitly defined in the Pod)  
+# Limit = Request is valid (If request is not defined, it takes default from limitrange)

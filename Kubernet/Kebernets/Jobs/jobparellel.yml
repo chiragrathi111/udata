@@ -1,0 +1,26 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: parallel-job
+spec:
+  parallelism: 5
+  activeDeadlineSeconds: 10
+  template:
+    metadata:
+      name: parallel-job
+    spec:
+      containers:
+        - name: parallel-job
+          image: busybox
+          command: ["sh", "-c", "echo Hello from parallel job! && sleep 20"]
+      restartPolicy: Never
+
+
+# This Job creates multiple pods that run busybox containers in parallel.
+# The parallelism field is set to 5, meaning that up to 5 pods can run simultaneously.
+# Each container executes a simple shell command that prints "Hello from parallel job!" to the console
+# and then sleeps for 20 seconds before terminating.
+# The activeDeadlineSeconds field is set to 10, which means that the entire job must complete within 10 seconds.
+# If the job does not complete within this time frame, any running pods will be terminated.
+# The restartPolicy is set to Never, meaning that the pods will not be restarted if they fail or complete.
+

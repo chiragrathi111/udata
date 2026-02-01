@@ -1,0 +1,24 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nepod1
+spec:
+  containers:
+    - name: coo
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+  restartPolicy: Never
+
+# kubectl apply -f namespace/nspod1.yml -n dev
+# kubectl get pods -n dev
+# kubectl describe pod nepod1 -n dev
+# kubectl delete pod nepod1 -n dev
+# kubectl config set-context $(kubectl config current-context) --namespace=dev
+# After running this commands, you can simply use: dev namespace without specifying -n dev flag
+# Means, you can run: kubectl get pods (our dev namespace is set as default now)
+# To switch back to default namespace, run:
+# kubectl config set-context $(kubectl config current-context) --namespace=default
+
+# To check current namespace
+# kubectl config view | grep namespace:

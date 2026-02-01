@@ -1,0 +1,29 @@
+Services is a object and their have 4 type
+1.ClusterIP
+2.NodePort
+3.LoadBalancer
+4.ExternalName
+
+1.ClusterIP :- 
+    This is a default type of Services.
+    This type of service is only reachable from within the cluster.
+    It exposes the service on a cluster-internal IP.
+    This type makes the service only accessible from within the cluster.
+  Benifit:-
+    Their ave several benifits:-
+    1. Simple and easy to use for internal communication between pods.
+    2. Provides a stable IP address for accessing services within the cluster.
+    3. Pod is not every time running,because replica set starting scale size 2 if i modify 4 then 2 new pod added,
+    main reason if any case i modfiy my file then apply my old pod deleted and create a new pod so their ip different, end user facing issue,
+    If any case i use Deployment type Object and we run the file so version updated and pod also change that case also facing same issue.
+    So that is the reason we use Services Object.       
+
+2.NodePort:-
+    If you want your response ot outside cluster so we use this type of services that called NodePort.
+    This type of service exposes the service on each Node's IP at a static port (the NodePort).
+    A ClusterIP service, to which the NodePort service routes, is automatically created.
+    You can contact the NodePort service, from outside the cluster, by requesting <NodeIP
+>:<NodePort>.
+    NodePort Range :- 30000-32767 means (2676 type port available)
+    Benifit:-
+        1. 

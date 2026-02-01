@@ -1,0 +1,37 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: reqlimitpod
+spec:
+  containers:
+    - name: reqlimitcontainer
+      image: nginx:latest
+      resources:
+        requests:
+          memory: "600Mi"
+        limits:
+          memory: "800Mi"
+
+# If i increse limit rane more than 1Gi it will give error as it is exceeding the limit set in limitrange
+# This Pod specifies memory requests and limits for its container.m.
+# The memory request is set to 600Mi and the memory limit is set to 800Mi.
+# These values must comply with the LimitRange constraints defined in the namespace.
+
+
+# If I decrease the memory request below 500Mi it will give error as it is below the limit set in limitrange
+# This Pod specifies memory requests and limits for its container.
+# The memory request is set to 400Mi and the memory limit is set to 800Mi.
+# These values must comply with the LimitRange constraints defined in the namespace.
+#kind: Pod
+#apiVersion: v1
+#metadata:
+#  name: reqlimitpod
+#spec:
+#  containers:
+#    - name: reqlimitcontainer
+#      image: nginx:latest
+#      resources:
+#        requests:
+#          memory: "400Mi"
+#        limits:
+#          memory: "800Mi"

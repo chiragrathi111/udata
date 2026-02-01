@@ -1,0 +1,238 @@
+Kubernet Commands:-
+
+⭐ Daily Use Commands
+
+kubectl get nodes
+kubectl get pods
+kubectl get pods -o wide
+kubectl apply -f file.yml
+kubectl delete -f file.yml
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+kubectl exec -it <pod-name> -- /bin/bash
+
+⭐ Deployment & Rollout
+
+kubectl get deploy
+kubectl describe deploy <name>
+kubectl rollout status deployment <name>
+kubectl rollout history deployment <name>
+kubectl rollout undo deployment <name>
+
+⭐ Scaling
+
+kubectl scale deployment <name> --replicas=3
+kubectl scale rs <name> --replicas=3
+
+⭐ Services
+
+kubectl get svc
+kubectl describe svc <name>
+
+⭐ Namespaces
+
+kubectl get ns
+kubectl create ns dev
+kubectl get pods -n dev
+kubectl apply -f file.yml -n dev
+kubectl delete namespace <name>
+
+⭐ Config & Secrets
+
+kubectl get configmap
+kubectl get secrets
+kubectl describe configmap <name>
+kubectl describe secret <name>
+
+kubectl create configmap <name> --from-file=<file>
+kubectl create secret generic <name> --from-file=<file>
+
+⭐ Helm
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install <release> bitnami/tomcat
+helm list
+helm uninstall <release>
+
+⭐ Cluster Info
+
+kubectl cluster-info
+kubectl get componentstatuses
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+⭐ Context Management
+
+kubectl config get-contexts
+kubectl config use-context <context-name>
+
+⭐ Health Checks
+
+kubectl describe pod liveness-exec
+
+------------------
+Advanced Commands:-
+
+⭐⭐ Ingress
+
+kubectl get ingress
+kubectl describe ingress <name>
+kubectl apply -f ingress.yml
+kubectl delete -f ingress.yml
+
+example ingress.yml:
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /
+          pathType: Prefix
+        backend:
+          service:
+            name: example-service
+            port:
+              number: 80
+
+⭐⭐ Persistent Volumes
+
+kubectl get pv
+kubectl get pvc
+kubectl describe pv <name>
+kubectl describe pvc <name>
+kubectl apply -f pv-pvc.yml
+kubectl delete -f pv-pvc.yml
+
+example pv-pvc.yml:
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+⭐⭐ StatefulSets
+
+kubectl get statefulsets
+kubectl describe statefulset <name>
+kubectl apply -f statefulset.yml
+kubectl delete -f statefulset.yml
+
+example statefulset.yml:
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: example-statefulset
+spec:
+  serviceName: "example-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - name: example-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  volumeClaimTemplates:
+  - metadata:
+      name: example-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+⭐⭐ Network Policies
+
+kubectl get networkpolicies
+kubectl describe networkpolicy <name>
+kubectl apply -f networkpolicy.yml
+kubectl delete -f networkpolicy.yml
+
+example networkpolicy.yml:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: example-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          role: backend
+    ports:
+    - protocol: TCP
+      port: 3306
+
+⭐⭐ Custom Resource Definitions (CRDs)
+
+kubectl get crds
+kubectl describe crd <name>
+kubectl apply -f crd.yml
+kubectl delete -f crd.yml
+
+example crd.yml:
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: examples.mygroup.example.com
+spec:
+  group: mygroup.example.com
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              foo:
+                type: string
+  scope: Namespaced
+  names:
+    plural: examples
+    singular: example
+    kind: Example
+    shortNames:
+    - ex
+

@@ -1,0 +1,20 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: reqlimitpod
+spec:
+  containers:
+    - name: reqlimitcontainer
+      image: nginx:latest
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "100m"
+        limits:
+          memory: "128Mi"
+          cpu: "200m"
+      ports:
+        - containerPort: 80
+
+# 1CPU = 1000m
+# limit >= requests

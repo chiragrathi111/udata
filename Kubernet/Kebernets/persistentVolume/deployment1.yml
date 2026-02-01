@@ -1,0 +1,25 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: pvdeploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pvapp
+  template:
+    metadata:
+      labels:
+        app: pvapp
+    spec:
+      containers:
+        - name: shell
+          image: rockylinux:9
+          command: ["/bin/bash", "-c", "sleep 3600"]
+          volumeMounts:
+            - mountPath: "/tmp/persistent"
+              name: mypd
+      volumes:
+        - name: mypd
+          persistentVolumeClaim:
+            claimName: myebsvol-claim  # reference to PVC created earlier

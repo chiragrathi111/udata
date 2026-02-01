@@ -55,6 +55,22 @@ after run last command ask one time password then next time never ask again
 * ssh <ip> OR 
 * ssh ubuntu@<ip>
 
+If this copy-id not working for pem file case so then time you manually copy and paste pub key, first pararaph details alraedy provided
+
+---------------------------------------------------
+sudo nano /etc/ansible/hosts
+
+[cr]
+3.85.204.185
+
+[cr:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/Downloads/vpc2.pem
+
+Starting i use ubuntu@<ip>, but best way name:vars :- we added more ting so easily gotting connection
+
+after added this thing ansible commands ruuing properly
+
 
 ==============================================
 # update ec2 if password need or not need

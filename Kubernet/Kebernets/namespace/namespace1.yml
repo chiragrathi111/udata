@@ -1,0 +1,10 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: dev
+  labels:
+    name: dev
+
+# kubectl apply -f namespace/namespace1.yml
+# kubectl get namespaces
+# kubectl get pods -n dev

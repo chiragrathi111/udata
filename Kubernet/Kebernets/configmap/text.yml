@@ -1,0 +1,23 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: myvolconfig
+spec:
+  containers:
+    - name: c1
+      image: rockylinux:9
+      command: 
+        - /bin/bash
+        - -c
+        - while true; do echo Hello-chirag; sleep 5; done
+      volumeMounts:
+        - name: config-volume
+          mountPath: /tmp/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: myapp
+        items:
+          - key: sample.conf
+            path: sample.conf
+# This config uses ConfigMap as a volume in a Pod

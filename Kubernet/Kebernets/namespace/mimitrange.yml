@@ -1,0 +1,16 @@
+kind: LimitRange
+apiVersion: v1
+metadata:
+  name: resource-limits
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultrequest:
+      cpu: 500m
+    type: Container
+
+
+# This LimitRange sets default CPU limits and requests for containers in the namespace.
+# If a container does not specify its own CPU limits or requests, it will inherit these defaults.
+# Default CPU limit is set to 1 CPU and default CPU request is set to 500

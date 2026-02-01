@@ -28,6 +28,8 @@
 * ssh <ip>  or 
 * ssh ubuntu@<ip>
 
+* curl http://ipinfo.io/ip   (get public ip)
 
-
-
+# added any ec2 server ssh access thhen next time no need pem file
+* ssh-add ~/.ssh/vpc2.pem
+* ssh ubuntu@100.48.212.149

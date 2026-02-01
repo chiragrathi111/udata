@@ -1,0 +1,25 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: liveness-pod
+spec:
+  containers:
+    - name: c1
+      image: rockylinux:9
+      command: 
+        - /bin/bash
+        - -c
+        - while true; do echo Hello-chirag; sleep 5; done
+      env:
+        - name: MYENV
+          valueFrom:
+            configMapKeyRef:
+              name: myapp   # reference to ConfigMap name
+              key: sample.conf  # reference to specific key in ConfigMap
+
+
+# This config uses environment variable from ConfigMap in a Pod
+
+# After loin will check
+# kubectl exec -it liveness-pod -- /bin/bash  (login in pod)
+# [root@liveness-pod /]# env   (run env command to see environment variables)

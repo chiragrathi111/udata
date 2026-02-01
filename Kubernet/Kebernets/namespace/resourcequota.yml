@@ -1,0 +1,10 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: compute-resources
+spec:
+  hard:
+    requests.cpu: "200m"
+    requests.memory: "200Mi"
+    limits.cpu: "400m"
+    limits.memory: "400Mi"

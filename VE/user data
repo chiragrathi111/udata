@@ -47,11 +47,11 @@ java -cp /home/chirag/Downloads/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans
 <<<<<<< HEAD
 >>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 Vinay Client Server Login:
-ssh -l root 45.120.137.143
+ssh -l root 45.120.138.56
 l__3rVXT#aX-
 
 RootPassword: l__3rVXT#aX-
-Main IP: 45.120.137.143
+Main IP: 45.120.138.56
 DB - vinayERP
 
 postgres

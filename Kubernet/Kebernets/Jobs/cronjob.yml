@@ -1,0 +1,24 @@
+kind: CronJob
+apiVersion: batch/v1
+metadata:
+  name: cron-job
+spec:
+  schedule: "* * * * *"  # Runs at the top of every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: ubuntu
+            args:
+            - /bin/bash
+            - -c
+            - date; echo "Hello from the Kubernetes CronJob"; sleep 30
+          restartPolicy: Never
+
+
+
+# This CronJob is configured to run a job every minute. The job prints the current date and a greeting message, 
+# then sleeps for 30 seconds before completing. The restart policy is set to "Never" to ensure that failed jobs are not retried automatically.
+

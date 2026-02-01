@@ -1,0 +1,43 @@
+# That have two type of Volume like one inside pod and second use outside pode like node lavel.
+There are two types of Volumes:-
+1. EmptyDir Volume:-
+    This type of volume is created when a pod is assigned to a node and exists as long as that pod is running on that node.
+    It is initially empty and can be used by containers in the pod to read and write files.
+    When the pod is removed from the node for any reason, the data in the EmptyDir volume is deleted permanently.
+Note:- Pod specific volume (Working on same pod)
+    Use Case:-
+        1. Temporary storage for data that needs to be shared between containers in a pod.
+        2. Caching data that can be regenerated if lost.
+        3. Storing intermediate results during processing.
+    Limitation:- 
+        1. Data is lost when the pod is deleted or restarted.
+        2. Not suitable for persistent data storage needs.
+        3. Limited to the lifecycle of the pod.
+
+2. HostDir Volume:-
+    This type of volume mounts a file or directory from the host node's filesystem into a pod.
+    It allows containers in the pod to access files on the host machine.
+Note:- Node specific volume (Working on same Node)
+    Use Case:-
+        1. Sharing configuration files between the host and the pod.
+        2. Accessing log files stored on the host.
+        3. Using host-level resources that need to be accessed by the pod.  
+    Limitation:-
+        1. Tightly couples the pod to the specific node, reducing portability.
+        2. Potential security risks if sensitive host files are exposed to the pod.
+        3. Changes to the host files can affect the pod's operation, leading to instability
+        if not managed carefully.   
+
+3. Persistent Volume:-
+    This type of volume is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes.
+    It exists independently of any pod that uses it and retains data even after the pod is deleted.
+Note:- cluster specific volume (means one or more node access possible)
+    Use Case:-
+        1. Storing databases or application data that needs to persist beyond the lifecycle of a pod.
+        2. Sharing data between multiple pods.
+        3. Backing up important data that should not be lost when pods are recreated.
+    Limitation:-
+        1. Requires proper management and provisioning by administrators.
+        2. May incur additional costs depending on the underlying storage solution.
+        3. Performance can vary based on the storage backend used.   
+        

@@ -1,0 +1,31 @@
+# helm all commands:-
+-- This SQL script provides a reference for all Helm commands.
+-- It includes commands for managing Helm charts, releases, repositories, and more.
+-- Note: This is a reference document and not executable SQL code.
+-- Helm Commands Reference
+-- Chart Commands
+-- helm create [chart-name]               # Create a new Helm chart
+-- helm package [chart-path]              # Package a Helm chart directory into a chart archive
+-- helm lint [chart-path]                 # Check a chart for possible issues
+-- helm show all [chart]                  # Show all information of a chart
+-- helm show values [chart]               # Show the values of a chart
+-- Release Commands
+-- helm install [release-name] [chart]    # Install a Helm chart as a new release
+-- helm upgrade [release-name] [chart]    # Upgrade a release to a new version of a chart
+-- helm rollback [release-name] [revision] # Rollback a release to a previous revision
+-- helm uninstall [release-name]          # Uninstall a release
+-- helm list                             # List all releases
+-- Repository Commands
+-- helm repo add [repo-name] [repo-url]   # Add a Helm chart repository
+-- helm repo update                      # Update information of available charts locally from chart repositories
+-- helm repo list                        # List all Helm chart repositories
+-- Other Commands
+-- helm search repo [keyword]            # Search for charts in the Helm chart repositories
+-- helm history [release-name]          # Show the history of a release
+-- helm get all [release-name]          # Get all information about a release
+-- helm get values [release-name]       # Get the values of a release
+-- helm dependency update [chart-path]  # Update the dependencies for a chart
+-- helm plugin list                     # List all installed Helm plugins
+-- helm version                         # Show the Helm version
+-- End of Helm Commands Reference   
+

@@ -1,0 +1,141 @@
+Kubernet is an open source Container management tool (Orchestration tool)
+Which automate Container scaling & Load Balancing.
+All top cloud provider suppot K8s.
+Kubernet is a master-slave or client-server tool
+Architecture.
+Master Node:
+1. API Server: Expose REST API to interact with cluster.
+2. Scheduler: Schedule the container on worker node based on resource availability.
+3. Controller Manager: Monitor the cluster and make necessary changes.
+4. etcd: Distributed key-value store to store cluster data.
+Worker Node:
+1. Kubelet: Agent that runs on each worker node and communicate with master node.
+2. Kube-proxy: Network proxy that runs on each worker node and maintain network rules
+3. Container Runtime: Software that runs the containers (e.g., Docker, containerd)
+Key Concepts:
+1. Pod: Smallest deployable unit in K8s, can contain one or more
+    container
+2. Service: Abstraction that defines a logical set of Pods and a policy to access them.
+3. Deployment: Declarative updates for Pods and ReplicaSets.
+4. Namespace: Virtual cluster within a K8s cluster to separate resources.
+Basic Commands:
+1. kubectl get nodes: List all nodes in the cluster.
+2. kubectl get pods: List all pods in the cluster.
+3. kubectl create -f <file.yaml>: Create resources from a YAML file.
+4. kubectl apply -f <file.yaml>: Apply changes to resources from a YAML file
+5. kubectl delete -f <file.yaml>: Delete resources defined in a YAML file.
+6. kubectl describe pod <pod-name>: Get detailed information about a specific pod.
+7. kubectl logs <pod-name>: View logs of a specific pod.
+8. kubectl exec -it <pod-name> -- /bin/bash: Access the shell
+of a specific pod.
+Kubernet supports various networking models, storage options, and can be extended using custom resources and controllers.
+
+Kubernet is widely used for deploying, scaling, and managing containerized applications in production environments.
+Kubernet is an open source Container management tool (Orchestration tool)
+Which automate Container scaling & Load Balancing.
+All top cloud provider suppot K8s.
+
+Cluster Diagram
+https://kubernetes.io/images/docs/components-of-kubernetes.svg
+
+
+---------------------------------------------------------------------------------------------
+# Kebernet Worker:-
+Pod :- This is Smallest point in Kebernet,inside pod contain one or more container,but best practice store one container each pod,
+        becasue if any reason one container dead ten rest container also dead.
+        every pod have IP means if one pod have multiple container but that pod only one ip so this is also critical, so that is thhe reason 
+        stay one container each pod. 
+        Note:- If pod damage and every time create a new pod for same configuration means old pod never use again
+
+Kubelet :- prod raleted any information provide to api server.
+Kube-proxy :- Network proxy that runs on each worker node and maintain network rules        
+
+---------------------------------------------------------------------------------------------
+Admin / Developer
+      |
+      | kubectl
+      v
++-------------------+
+|   API SERVER      |
++-------------------+
+      |
+      | Read / Write
+      v
++-------------------+
+|      ETCD         |
+| (Cluster State)   |
++-------------------+
+
+API SERVER
+   |
+   +--> Kube Scheduler
+   |        |
+   |        v
+   |   Select Node
+   |
+   +--> Controller Manager
+   |        |
+   |        v
+   |  Desired = Actual
+   |
+   +--> Kubelet (Node 1)
+   |        |
+   |        v
+   |   Container Runtime
+   |        |
+   |        v
+   |     Pod A, Pod B
+   |
+   +--> Kubelet (Node 2)
+            |
+            v
+     Container Runtime
+            |
+            v
+         Pod C, Pod D
+
+Kube-Proxy (Node 1 & Node 2)
+        |
+        v
+ Service / Networking
+
+
+------------------------------------------------------------------------------
+graph TD
+    User[Admin / Developer] -->|kubectl| API[API Server]
+
+    API --> ETCD[etcd Cluster]
+
+    API --> SCH[Kube Scheduler]
+    SCH --> API
+
+    API --> CM[Controller Manager]
+    CM --> API
+
+    API --> K1[Kubelet - Node 1]
+    API --> K2[Kubelet - Node 2]
+
+    K1 --> CR1[Container Runtime]
+    CR1 --> P1[Pod A]
+    CR1 --> P2[Pod B]
+
+    K2 --> CR2[Container Runtime]
+    CR2 --> P3[Pod C]
+    CR2 --> P4[Pod D]
+
+    KP1[Kube-Proxy] --> SVC[Service / Networking]
+    KP2[Kube-Proxy] --> SVC
+--------------------------------------------------------------------------------
+kubectl
+   |
+API Server
+   |
+etcd
+   |
+Scheduler
+   |
+Kubelet
+   |
+Container Runtime
+   |
+Pod

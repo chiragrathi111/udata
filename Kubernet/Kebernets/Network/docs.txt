@@ -1,0 +1,24 @@
+# This is using for hhow can communicate container to container in a same pod
+
+* use curl localost:<port>
+Means if we communicate c1 to c2 , so first login c1 container then if c2 have nginx server on 80 port so if i want check is tis access posible or not
+then i run 
+* curl localhost:80 
+if it give me response then its working fine
+
+# This is using for how can communicate pod to pod in a same node
+* use curl <pod-ip>:<port>
+Means if we communicate pod1 to pod2 , so first login pod1 container then if pod
+2 have nginx server on 80 port so if i want check is tis access posible or not
+then i run
+* curl <pod2-ip>:80
+if it give me response then its working fine.
+
+# This is using for how can communicate pod to pod in different node
+* use curl <pod-ip>:<port>
+Means if we communicate pod1 in node1 to pod2 in node2 , so first login
+pod1 container then if pod2 have nginx server on 80 port so if i want check is tis access posible or not
+then i run
+* curl <pod2-ip>:80
+if it give me response then its working fine.
+

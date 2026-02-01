@@ -1,0 +1,33 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: hori-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name:: deployment-hori
+  template:
+    metadata:
+      labels:
+        name: deployment-hori
+    spec:
+      containers:
+        - name: c000
+          image: nginx:latest
+          port:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "200m"
+            limits:
+              cpu: "500m"
+
+# This Deployment creates a pod with a single container running the nginx image.
+# The container has CPU resource requests set to 200m and limits set to 500m.
+# This configuration ensures that the container will request at least 200m of CPU and can use
+# up to 500m of CPU when available.
+
+# Horizontal Pod Autoscaler (HPA) can be configured separately to scale this deployment
+# based on CPU utilization or other metrics, but it is not included in this YAML file.
+# To create an HPA for this deployment, you would typically use a separate YAML file or kubectl command.

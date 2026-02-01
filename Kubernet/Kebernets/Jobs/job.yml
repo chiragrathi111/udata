@@ -1,0 +1,20 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: job-record
+spec:
+  template:
+    metadata:
+      name: job-record
+    spec:
+      containers:
+        - name: job-record
+          image: busybox
+          command: ["sh", "-c", "echo Hello, Kubernetes! && sleep 30"]
+      restartPolicy: Never
+
+# This Job creates a single pod that runs a busybox container.
+# The container executes a simple shell command that prints "Hello, Kubernetes!" to the console
+# and then sleeps for 30 seconds before terminating.
+# The restartPolicy is set to Never, meaning that the pod will not be restarted if it fails or completes.
+
