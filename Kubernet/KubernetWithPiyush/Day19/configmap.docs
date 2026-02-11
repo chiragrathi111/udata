@@ -1,0 +1,20 @@
+ConfigMap Imperative Value:-
+
+The ConfigMap can be created imperatively using the `kubectl create configmap` command. 
+This command allows you to create a ConfigMap from literal values, files, or directories.
+
+* kubectl create cm <name> --from-literal=<key>=<value>
+* kubectl create cm <name> --from-literal=<Firatname>=chirag --from-literal=<lastvaluie>=rathi
+* kubectl get cm 
+* kubectl describe cm <name>
+* kubectl create cm <name> --from-file=<path-to-file>
+* kubectl create cm <name> --from-file=<path-to-directory>
+
+declarative value:-
+The ConfigMap can also be created declaratively using a YAML manifest file.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: day19-configmap
+data:
+  user_name: Chirag

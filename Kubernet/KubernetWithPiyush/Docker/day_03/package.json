@@ -1,0 +1,13 @@
+{
+  "name": "node-app",
+  "version": "1.0.0",
+  "description": "A simple Node.js application",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "echo 'Building application...'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,73 @@
+1️⃣ Install Go 1.17+ (Ubuntu way)
+
+* sudo rm -rf /usr/local/go
+
+* wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
+* sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
+
+* echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+* source ~/.bashrc
+
+* go version
+
+2️⃣ Disable Swap (MANDATORY for Kubernetes)
+
+* sudo swapoff -a
+* sudo sed -i '/ swap / s/^/#/' /etc/fstab
+* free -h
+
+3️⃣ Enable required kernel modules
+
+* sudo modprobe overlay
+* sudo modprobe br_netfilter
+
+* cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+4️⃣ Sysctl settings for Kubernetes networking
+
+* cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+* sudo sysctl --system
+
+5️⃣ Install kubectl
+
+* sudo apt update
+* sudo apt install -y curl apt-transport-https ca-certificates
+
+* curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key \
+| sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+# Remove the broken file (If getting error then run below first commands)
+
+* sudo rm /etc/apt/sources.list.d/kubernetes.list
+
+* echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /" \
+| sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+* sudo apt update
+
+* sudo apt install -y kubectl
+
+* kubectl version --client
+
+o/p:- 
+Client Version: v1.29.x
+
+
+
+
+
+
+
+
+
+local:-
+kubeadm join 192.168.1.52:6443 --token alwi9d.jdm0rd2xfmqoh1tm \
+	--discovery-token-ca-cert-hash sha256:85ca352ab0c91f8c40dc8035ffdb626d6ba051363d24e0517a2b8ded44a6bb9b

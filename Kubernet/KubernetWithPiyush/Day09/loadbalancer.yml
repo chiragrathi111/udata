@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-loadbalancer-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: my-app
+
+# Commands:-
+# kubectl apply -f loadbalancer.yml
+# kubectl get svc
+# kubectl describe svc my-loadbalancer-service
+# Access the service using LoadBalancer IP:80 (Note: In kind, LoadBalancer type services may not get an external IP)
+# kubectl delete svc my-loadbalancer-service
+
+

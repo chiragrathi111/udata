@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: my-app
+    name: chirag
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+
+# Commands:-
+# kubectl apply -f deployment.yml
+# kubectl get deployments
+# kubectl get pods -l app=my-app
+# kubectl describe deployment my-deployment
+# kubectl scale deployment my-deployment --replicas=4
+# kubectl get deployments
+# kubectl get pods -l app=my-app
+# Now total 4 pods are running
+# kubectl delete deployment my-deployment
+# kubectl get pods
+# All pods are deleted automatically when we delete deployment
+
+# If we want to modify the image
+# kubectl set image deployment/my-deployment \
+# my-container=nginx:1.9.1
+#  my-container= name of container
+
+# kubectl get deployments
+# kubectl get pods -l app=my-app
+# Check the updated image in running pods
+# kubectl rollout status deployment/my-deployment
+# To check the history of deployment
+# kubectl rollout history deployment/my-deployment
+# To rollback to previous version
+# kubectl rollout undo deployment/my-deployment
+# kubectl get pods -l app=my-app  
+
+# To rollback history
+# kubectl rollout history deploy my-deployment
+# OR
+# kubectl rollout history deploy/my-deployment
+
+# To Rollout undo
+# kubectl rollout undo deploy/my-deployment

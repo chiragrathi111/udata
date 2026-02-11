@@ -1,0 +1,33 @@
+Authentication
+who are you?
+
+* Symmetric key Encryption
+* Asymmetric key Encryption
+* certificates
+
+Symmetric key Encryption
+* same key for encryption and decryption
+
+Asymmetric key Encryption
+* different keys for encryption and decryption
+
+certificates
+* used to verify the identity of a website or server
+
+Authorization
+what are you allowed to do?
+or
+what can you do?
+* Role based access control
+* Attribute based access control
+* Access control lists
+
+Role based access control
+* access is based on the role of the user
+like ABAC,RBAC,Webhook,Node
+
+Attribute based access control
+* access is based on the attributes of the user
+
+Access control lists
+* access is based on a list of permissions for each user or group

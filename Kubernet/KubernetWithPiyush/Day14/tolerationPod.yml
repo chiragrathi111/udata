@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-data2
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: dev-cluster-worker2
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+  tolerations:
+  - key: "gpu"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+# Commands:-
+# kubectl apply -f tolerationPod.yml
+# kubectl get pods -o wide
+
+# First check the taints on node
+# kubectl describe node dev-cluster-worker2 | grep -i taints
+# To add toleration in pod yaml file
+# spec:
+#   nodeSelector:
+#     kubernetes.io/hostname: dev-cluster-worker2
+#   tolerations:
+#   - key: "key1"
+#     operator: "Equal"
+#     value: "value1"
+#     effect: "NoSchedule"

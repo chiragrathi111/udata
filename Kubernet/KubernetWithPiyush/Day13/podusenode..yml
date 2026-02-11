@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx
+  labels:
+    run: nginx
+    name: chirag
+spec:
+  nodeName: dev-cluster-worker2
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+
+# Commands:
+# kgp --show-labels
+# kgp -l name=chirag
+# kgp -l name!=chirag

@@ -1,0 +1,42 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+- kind: User
+  name: myuser # Name of the user to bind the Role to
+  apiGroup: rbac.authorization.k8s.io 
+
+roleRef:
+  kind: Role
+  name: pod-reader # Name of the Role to bind
+  apiGroup: rbac.authorization.k8s.io
+
+# command to create the RoleBinding:
+# kubectl apply -f binding.yml
+# command to view the RoleBinding:
+# kubectl get rolebinding read-pods -n default -o yaml
+# or
+# kubectl get rolebinding
+# kubectl describe rolebinding read-pods
+
+# I observe after gave role binding specific user, that user can access the resource which is defined in role. 
+# In this case, the user "myuser" can access the pods in the default namespace as per the permissions defined in the 
+# "pod-reader" Role.
+
+# k auth can-i get pod --as myuser
+# Output: yes
+
+# k auth whoami --as myuser
+# Output:
+# ATTRIBUTE   VALUE
+# Username    myuser
+# Groups      [system:authenticated]
+
+# k get role -A  (Show all roles in all namespaces)
+
+# kubectl get role -A --no-headers | wc -l
+# Output: 1 (This indicates that there is only one Role named "pod-reader" in the cluster, which is in the default namespace.)
+# IUf we want actual count below let's remove --no-headers option
+# kubectl get role -A | wc -l

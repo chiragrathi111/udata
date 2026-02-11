@@ -1,0 +1,84 @@
+✅ Docker already installed & running
+
+❌ No Minikube
+
+❌ No kubeadm needed
+
+✅ Want multi-node cluster
+
+1️⃣ Install kind on Ubuntu
+
+* curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+* chmod +x kind
+* sudo mv kind /usr/local/bin/kind
+
+* kind version
+* kubectl version --client
+
+2️⃣ Install kubectl (if not already)
+
+If missing run below two commands :-
+* sudo apt update
+* sudo apt install -y kubectl
+* kubectl version --client
+
+3️⃣ Create a multi-node kind cluster (1 control + 2 workers)
+
+* cat <<EOF > kind-multinode.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+- role: worker
+- role: worker
+EOF
+
+* kind create cluster --name dev-cluster --config kind-multinode.yaml
+
+* kubectl get nodes
+
+If getting error then run below commands:-
+* rm -rf ~/.kube
+* mkdir ~/.kube
+
+* unset KUBECONFIG
+
+Step 2: Create the kind cluster (THIS WAS MISSING)
+
+* kind create cluster --name dev-cluster --config kind-multinode.yaml
+
+🔁 Step 3: Verify kubectl context
+
+* kubectl config get-contexts
+
+* kubectl config use-context kind-dev-cluster
+(just above commands for safe running)
+
+* kubectl get nodes
+
+
+=================
+After shut down run below commands:-
+* sudo systemctl start docker
+* docker ps 
+* kubectl get nodes
+
+
+================================
+Pod and container crearted using Imperative way:-
+
+* kubectl run nginx-pod --image=nginx:latest
+* kubectl get pods
+* kubectl describe pod nginx-pod
+
+
+=============================
+* kubectl explain pod
+o/p:-
+KIND:       Pod
+VERSION:    v1
+
+===============================
+Pod and container crearted using Declarative way:-
+
+

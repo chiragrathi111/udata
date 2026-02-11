@@ -1,0 +1,26 @@
+
+ 
+  
+   
+    
+# If we want run aotu-scalimg commands directly:-
+# kubectl autoscale deployment hpa --cpu-percent=50 --min=1 --max=10
+# hpa = name of deployment
+# --cpu-percent = target cpu utilization percentage
+# --min = minimum number of pods
+# --max = maximum number of pods
+
+
+# after run this commands and i run load-generator file and run
+# some time i observed that it is not creating new pods and it is showing below error in describe load-generaator pod
+# reason pull problem so some i enter pull manually and it is working fine. so to avoid this problem we can add below line in deployment file after define image.
+# imagePullPolicy: IfNotPresent
+
+# Thsi hpa check the cpu utilization of php-apache deployment and if it is more than 50% then it will create new
+#  pods and if it is less than 50% then it will delete the pods. and it will maintain the minimum number of pods as 
+# 1 and maximum number of pods as 10.
+
+# kubectl get hpa
+# i saw after increasing load new pod created 
+# after some time i deleted load-generator pod then i observe cpu utilozation down and new pod deleted and 
+# it is maintain minimum number of pods as 1 and maximum number of pods as 10.

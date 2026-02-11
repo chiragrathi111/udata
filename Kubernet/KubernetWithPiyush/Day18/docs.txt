@@ -1,0 +1,5 @@
+Readiness:-
+If application is ready then run other this type not restart,instead  of liveness.
+
+Liveness:-
+If application is not live then restart the application,if application is live then do nothing.

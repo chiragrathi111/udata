@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-data4
+spec:
+  nodeSelector:
+    gpu: "false"
+  containers:
+  - name: nginx
+    image: nginx:latest
+
+# Their have two way if we have node name,so i directly use node name in node selector or if we have some label on node then we can use that label in node selector.
+# In this yaml file i am using node name in node selector and also i am using label in node selector, so if any one of the condition is true then pod will be scheduled on that node.
+# Commands:-
+# kubectl apply -f pod-node.yml
+# kubectl get pods -o wide
+
+# I observed that pod yaml file is correct but still pod is not running because of node selector.
+# This node is working but their have Taints define if we not added toleration in pod yml file then pod will not be scheduled on that node.
+# To check the taints on node
+# kubectl describe node dev-cluster-worker2 | grep -i taints
+# To add toleration in pod yaml file
+# spec:
+#   nodeSelector:
+#     kubernetes.io/hostname: dev-cluster-worker2
+#   tolerations:
+#   - key: "key1"
+#     operator: "Equal"
+#     value: "value1"
+#     effect: "NoSchedule"          

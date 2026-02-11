@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+
+# Commands:-
+# kubectl apply -f nodeport.yml
+# kubectl get ns
+# kubectl describe ns my-namespace
+# kubectl delete ns my-namespace
+# kubectl get ns --show-labels
+# kubectl get all -n my-namespace
+
+# kubectl apply -f pod.yml -n my-namespace
+# kubectl get pods -n my-namespace --show-labels
+# kubectl delete pod my-pod -n my-namespace
+
+# Impretive way to create namespace:-
+# kubectl create namespace my-namespace2
+# OR
+# kubectl create ns my-namespace2
+# kubectl get ns
+# kubectl delete ns my-namespace2
+
+# If i have two or more ns and login one ns,then i easily call to another ns pods
+# like using below command
+# kubectl exec -it my-pod -n my-namespace -- sh
+# curl <ip>
+# exit

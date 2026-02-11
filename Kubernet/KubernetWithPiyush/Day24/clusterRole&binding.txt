@@ -1,0 +1,57 @@
+# This commands getting list of resources:-
+# This commands run for namespaced lavel,This sean Pod lavel resources
+* k api-resources --namespaced=true
+
+# If we want cluster lavel,node lavel resources
+* kubectl api-resources --namespaced=false
+
+# Pod lavel check access:-
+* k auth can-i get pods --as myuser
+output: yes
+
+# Node lavel check access:-
+* k auth can-i get nodes --as myuser
+output:- 
+Warning: resource 'nodes' is not namespace scoped
+
+no
+
+# Create a cluster Role Affirative method
+* kubectl create clusterrole <cluster_name> --verb=<Action of nodes> --resource=<list of resource>
+* kubectl create clusterrole node-reader --verb=get,list,watch --resource=node
+output:-
+clusterrole.rbac.authorization.k8s.io/node-reader created
+
+* kubectl get clusterrole
+* kubectl describe clusterrole node-reader
+
+# create a cluster Binding and attached clusterrole and user
+* kubectl create clusterrolebinding reader-binding --clusterrole=node-reader --user=myuser
+output:-
+clusterrolebinding.rbac.authorization.k8s.io/reader-binding created
+
+* kubectl get clusterrolebinding
+
+* kubectl describe clusterrolebinding reader-binding
+
+# After Binding Run again previous command for checking user access:-
+* k auth can-i get nodes --as myuser
+output:-
+Warning: resource 'nodes' is not namespace scoped
+
+yes
+
+# Check Config context:-
+* kubectl config get-contexts
+
+# Check actual kind cluster
+* kubectl config get-clusters
+
+# Set Config context:-
+* kubectl config set-context myuser \
+  --cluster=kind-dev-cluster \
+  --user=myuser
+
+* kubectl config use-context kind-dev-cluster
+
+

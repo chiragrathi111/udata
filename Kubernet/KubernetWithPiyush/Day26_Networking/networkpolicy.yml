@@ -1,0 +1,32 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: db-test
+spec:
+  podSelector:
+    matchLabels:
+      name: mysql
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: backend
+    ports:
+    - protocol: TCP
+      port: 3306
+
+# Statement:-
+# This network policy will allow the pods which has label "role:backend" to access the mysql pod.
+
+# commands:-
+# kubectl apply -f networkpolicy.yml
+# kubectl get networkpolicy
+# OR
+# kubectl get netpol
+
+
+# Confirm to login inside pod,first install telnet and check it logging or not
+# kubectl exec -it frontend -- bash
+# telnet <pod-name> 3306

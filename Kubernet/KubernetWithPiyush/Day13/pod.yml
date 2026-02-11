@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2026-02-05T07:14:24Z"
+  labels:
+    run: nginx
+  name: nginx
+  namespace: default
+  resourceVersion: "105816"
+  uid: 5c1834f6-a5c0-4fd2-8f29-e20b994c7ff1
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: Always
+    name: nginx
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-hr5sk
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-hr5sk
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  phase: Pending
+  qosClass: BestEffort
+
+# Commands:-
+# If you have no idea how can write the file then run that commands then file and pod will be created.
+# kubectl run nginx --image=nginx -o yaml > pod.yml
+# k run nginx-cr --image=nginx -o yaml > pod2.yml
+
+# If we want craete a pod any specific node is this posible
+# use nodeName in spec
+# spec:
+#   nodeName: node1
+#   containers:
+#   - image: nginx
+#     name: nginx

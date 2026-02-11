@@ -1,0 +1,21 @@
+Affinity:-
+Affinity is a set of rules that determine where a pod can be scheduled based on the labels of the nodes and other pods. 
+It allows you to specify preferences for scheduling pods on certain nodes or with certain characteristics.
+
+There are two types of affinity:
+1. Node Affinity: This allows you to specify rules for scheduling pods on nodes based on
+  node label:- 
+    # kubectl get nodes --show-labels
+    # kubectl describe node <node-name> | grep Labels
+    node selector:- This is a simple way to specify that a pod should be scheduled on a
+    node with a specific label. For example, if you want to schedule a pod on a node with the label "disktype=ssd", 
+    you can use the following node selector:
+
+requiredDuringSchedulingIgnoredDuringExecution:-
+This means that the pod will only be scheduled on nodes that match the specified criteria. If no nodes match, the pod will not be scheduled.
+
+preferredDuringSchedulingIgnoredDuringExecution:-
+This means that the pod will prefer to be scheduled on nodes that match the specified criteria, but
+if no nodes match, the pod can still be scheduled on other nodes.
+
+

@@ -1,0 +1,40 @@
+I observer every ting is fine but docker have some problem that is the reason my container not up:-
+
+Solutions:-
+✅ Step 1 — Confirm DNS Problem
+
+* docker run busybox nslookup google.com
+If not getting responce then run below steps
+
+✅ Step 2 — Check Your Host DNS
+
+* cat /etc/resolv.conf
+output:-
+nameserver 127.0.0.53
+
+That means systemd-resolved is managing DNS (very common in Ubuntu).
+
+Step A — Edit Docker daemon config
+
+* sudo nano /etc/docker/daemon.json
+
+{
+  "dns": ["8.8.8.8", "1.1.1.1"]
+}
+
+Save and exit.
+
+Step B — Restart Docker
+
+* sudo systemctl restart docker
+
+Step C — Test Again
+
+* docker run busybox ping google.com
+output:-
+PING google.com (142.251.220.14): 56 data bytes
+64 bytes from 142.251.220.14: seq=0 ttl=113 time=23.220 ms
+64 bytes from 142.251.220.14: seq=1 ttl=113 time=1030.798 ms
+64 bytes from 142.251.220.14: seq=2 ttl=113 time=30.742 ms
+64 bytes from 142.251.220.14: seq=3 ttl=113 time=35.018 ms
+64 bytes from 142.251.220.14: seq=4 ttl=113 time=24.240 ms

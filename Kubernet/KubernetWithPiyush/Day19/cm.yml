@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: day19-configmap
+spec:
+  containers:
+  - name: day19-container
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: FIRST
+      valueFrom:
+        configMapKeyRef:
+          name: chirag
+          key: FIRSTNAME
+    command:
+    - /bin/sh
+    - -c
+    - echo "Hello $FIRST" && sleep 3600
+
+
+# First create a config map using below command and then create a pod which will use the configmap as env variable and then we can access the value of env variable inside the container.
+# * kubectl create cm <name> --from-literal=<Firatname>=chirag --from-literal=<lastvaluie>=rathi
+# * kubectl create cm chirag --from-literal=FIRSTNAME=Chirag --from-literal=LASTNAME=Rathi
+#  kubectl get cm
+# * kubectl apply -f cm.yml
+
+# * kubectl describe cm chirag
+# kubectl exec -it day19-configmap -- sh
+# * echo $FIRST
+# o/p
+# chirag

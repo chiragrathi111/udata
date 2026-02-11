@@ -1,0 +1,28 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-data6
+spec:
+  containers:
+    - name: nginx2
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+              - key: "disktype"
+                operator: In
+                values:
+                  - hhd
+
+# Commands:-
+# kubectl apply -f affinity2.yml
+# kubectl get pods -o wide  
+
+# I observed that values does not matched any node but if i use preferredDuringSchedulingIgnoredDuringExecution then pod will be created 
+# but it will not be running because of node affinity.
+# and when i use requiredDuringSchedulingIgnoredDuringExecution  then pod will not create

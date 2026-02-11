@@ -1,0 +1,31 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30007
+    hostPort: 30007
+    protocol: TCP
+- role: worker
+- role: worker
+  
+
+# Note: This kind cluster configuration file sets up a Kubernetes cluster with one control-plane node and two worker nodes.
+# The second worker node has an extra port mapping that maps port 30007 on the host to port 30007 on the container.
+# This is useful for exposing services of type NodePort
+
+# kind create cluster --config kind.yml --name my-cluster3
+# kind delete cluster --name my-cluster3
+# kind get clusters
+
+# If kind create cluster giving error like image not found then use below command
+# sudo apt install -y iptables arptables ebtables
+# sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+# sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+# sudo update-alternatives --set arptables /usr/sbin/arptables-legacy
+# sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
+# sudo systemctl restart docker
+# iptables --version
+# kind delete cluster --name my-cluster3
+# Then run again
+# kind create cluster --config kind.yml --name my-cluster3

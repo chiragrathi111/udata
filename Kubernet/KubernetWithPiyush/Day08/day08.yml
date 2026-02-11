@@ -1,0 +1,30 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: rc
+  labels:
+    app: day08
+spec:
+  replicas: 3
+  selector:
+    app: day08
+  template:
+    metadata:
+      labels:
+        app: day08
+    spec:
+      containers:
+      - name: c01
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+
+# Commands:-
+# kubectl apply -f day08.yml
+# kubectl get rc
+# kubectl get pods -l app=day08
+# kubectl describe rc rc
+# kubectl delete rc rc
+# kubectl get pods
+# All pods are deleted automatically when we delete rc

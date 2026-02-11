@@ -1,0 +1,48 @@
+# Our system have plane-master-node and worker nodes.
+# Plane-master-node is responsible for managing the cluster, scheduling tasks, and maintaining the overall state of the system.
+# Worker nodes are responsible for executing the tasks assigned by the plane-master-node.
+
+# Master node contains 4 pods:
+# 1. etcd: A distributed key-value store that holds the configuration data and state of the cluster.
+# 2. API Server: The front-end for the cluster that exposes the Kubernetes API.
+# 3. Controller Manager: A component that runs various controllers to regulate the state of the cluster.
+# 4. Scheduler: A component that assigns tasks to worker nodes based on resource availability and other constraints.
+
+# Means every master node have these 4 pods running.
+
+# Worker nodes contain 2 pods:
+# 1. Kubelet: An agent that runs on each worker node and ensures that the containers are running in a Pod.
+# 2. Kube-Proxy: A network proxy that runs on each worker node and maintains network rules for Pod communication.
+
+# Whole flow first come to request client side then which place move and how can create a pod and container give me whole deatils
+
+When a client wants to create a Pod in the Kubernetes cluster, the following sequence of events occurs:
+1. Client Request: The client sends a request to the API Server to create a Pod. This request typically includes 
+a Pod specification that defines the desired state of the Pod, including container images, resource requirements, and other configurations.
+
+2. API Server Processing: The API Server receives the request and validates it. If the request is valid, the API Server stores
+ the Pod specification in etcd, the distributed key-value store that holds the cluster is state.
+
+3. Scheduler Assignment: The Scheduler monitors the API Server for new Pod creation requests. When it detects a new Pod, it evaluates the resource
+ requirements and constraints specified in the Pod specification. The Scheduler then selects an appropriate worker node based on these factors
+ such as available resources, node labels, and any specified scheduling policies and updates the Pod is status in etcd to reflect the assigned node.
+
+4. Kubelet Notification: The Kubelet on the selected worker node continuously watches the API Server for Pod assignments. When it detects that a new Pod
+ has been assigned to its node, the Kubelet retrieves the Pod specification from the API Server.
+ 
+5. Pod Creation: The Kubelet uses the Pod specification to create the necessary containers using a container runtime (e.g., Docker, containerd).
+  It sets up the networking, storage, and other configurations as defined in the Pod specification.`
+
+6. Pod Running: Once the containers are created and started, the Pod enters the "Running" state. The Kubelet continues to monitor the Pod's health and
+ resource usage,ensuring that it remains in the desired state. If a container within the Pod fails, the Kubelet can restart it based on the Pod's 
+ restart policy.
+
+7. Kube-Proxy Networking: The Kube-Proxy on the worker node manages the network rules to ensure that the Pod can communicate with other Pods and services
+ within the cluster. It handles load balancing and routing of network traffic to and from the Pod.
+
+Throughout this process, the Controller Manager may also be involved in ensuring that the desired state of the cluster is maintained. 
+For example, if the Pod is part of a Deployment, the Controller Manager will ensure that the specified
+number of replicas are running and will create new Pods if any of them fail or are deleted.
+
+# In summary, the flow of creating a Pod involves the client sending a request to the API Server, the Scheduler assigning the Pod to a worker node,
+the Kubelet on that node creating and managing the Pod, and the Kube-Proxy handling networking for the Pod.

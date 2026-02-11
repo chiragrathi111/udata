@@ -1,0 +1,59 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-pod-new
+  labels:
+    app: nginx
+    env: dev
+spec:
+ containers:
+ - name: nginx-container
+   image: nginx:latest
+   imagePullPolicy: IfNotPresent
+   ports:
+   - containerPort: 80
+
+
+# kubectl create -f day07.yml 
+# OR
+# kubectl apply -f day07.yml
+# kubectl get pods
+
+# If you by misstakely write wrong image name and apply pod then don't delete this you easily edit and updated
+# kubectl edit pod nginx-pod-new (editor is open change and edit and save technic same as vi
+# kubectl describe pod nginx-pod-new (if any error in running of pod we can see error in this command)
+
+# kubectl exec -it nginx-pod-new -- sh
+# login to pod and check
+
+# kubectl get pods nginx-pod-new --show-labels
+# kubectl label pods nginx-pod-new env=prod (if any label is not there then we can add labels)
+
+# kubectl get pods -o wide
+# Details records is come like node_ip and pod _ip and more thing
+
+# Dry run for checking purpose:-
+# kubectl run nginx --image=nginx --dry-run=client
+# o/p :- pod/nginx created (dry run)  (means your image is fine
+
+# If i run this commands so i got sample yaml file
+# kubectl run nginx --image=nginx --dry-run=client -o yaml
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   creationTimestamp: null
+#   labels:
+#     run: nginx
+#   name: nginx
+# spec:
+#   containers:
+#   - image: nginx
+#     name: nginx
+#     resources: {}
+#   dnsPolicy: ClusterFirst
+#   restartPolicy: Always
+# status: {}
+
+# kubectl run nginx --image=nginx --port=80 --dry-run=client -o yaml > day07.yml
+# This commands craete a new file this sample yml file through

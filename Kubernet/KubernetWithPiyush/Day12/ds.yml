@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: my-daemonset
+  labels:
+    app: my-app-ds
+spec:
+  selector:
+    matchLabels:
+      app: my-app-ds
+  template:
+    metadata:
+      labels:
+        app: my-app-ds
+    spec:
+      containers:
+      - name: my-container
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+
+# Commands:-
+# kubectl apply -f ds.yml
+# kubectl get daemonsets (or ds)
+# kubectl get pods -l app=my-app-ds
+# kubectl describe daemonset my-daemonset
+# To delete DaemonSet
+# kubectl delete daemonset my-daemonset
+# kubectl get pods
+# All pods are deleted automatically when we delete DaemonSet
+
+# If we want to modify the image
+# kubectl set image daemonset/my-daemonset \
+# my-container=nginx:1.9.1
+#  my-container= name of container
+
+# If i run DaemonSet on a cluster with 3 nodes, it will create 3 pods, one on each node.
+# Means not need to define how much pod is created like in Deployment.
+# If node is one then pod also created one. same thing if node is 10 then pod created 10.
+
+# kubectl get ds -A (means all namespaces)
+# (If you need to run DaemonSet in specific namespace then use -n <namespace-name>)
+
+# How many cluster running will check below command
+# kind get clusters
+
+# Change Cluster Context
+# kubectl config use-context <cluster-name>
+# kubectl config get-contexts kind-dev-cluster

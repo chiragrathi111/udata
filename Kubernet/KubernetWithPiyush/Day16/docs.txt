@@ -1,0 +1,12 @@
+# kubectl get pods -n kube-system -w (live watch)
+# If matric yaml file run and getting any eror then pull image and use
+
+# This is monotioring commands:-
+# kubectl top nodes
+o/p
+NAME                        CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%   
+dev-cluster-control-plane   204m         2%     689Mi           4%        
+dev-cluster-worker          45m          0%     177Mi           1%        
+dev-cluster-worker2         37m          0%     202Mi           1%  
+
+# kubectl top pods -A

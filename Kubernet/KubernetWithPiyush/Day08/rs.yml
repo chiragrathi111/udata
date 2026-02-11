@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs
+  labels:
+    app: day08
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: day08
+  template:
+    metadata:
+      labels:
+        app: day08
+    spec:
+      containers:
+      - name: c01
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+
+
+# Commands:-
+# kubectl apply -f rs.yml
+# kubectl get rs
+# kubectl get pods -l app=day08
+# kubectl describe rs rs
+# kubectl delete rs rs
+# kubectl get pods
+# All pods are deleted automatically when we delete rs
+
+# getting version error in rs then we can use this command for getting version
+# kubectl explain rs
+# find version and use this version in yaml file and apply again
+
+# kubectl describe rs rs
+# This above command is used for checking the error in running of rs and if any error is there then we can easily find out through this command
+# kubectl get rs rs -o yaml
+
+# If want edit the rs
+# kubectl edit rs rs
+# editor is open change and edit and save technic same as vi
+
+# If we want to scale the rs
+# kubectl scale rs rs --replicas=5
+# kubectl get rs
+# kubectl get pods -l app=day08
+# Now total 5 pods are running

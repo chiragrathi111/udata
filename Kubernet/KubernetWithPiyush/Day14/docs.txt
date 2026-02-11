@@ -1,0 +1,62 @@
+Taint:- This is a applied to a node.
+usecase:- 
+1. If you want to avoid pod scheduling on specific node then we can use taint.
+2. If you want to dedicate specific node for specific workload then we can use taint.
+
+
+Toleration:- This is a applied to a pod.
+tolerations:
+- key: "node-role.kubernetes.io/control-plane"
+  operator: "Exists"
+  effect: "NoSchedule"
+
+
+Taint created specific node and also provide which reason created
+# kubectl taint nodes <node-name> key=value:NoSchedule
+# kubectl taint node dev-cluster-worker2 gpu=true:NoSchedule
+
+# kubectl describe node dev-cluster-worker2
+
+# k describe node dev-cluster-worker2 | grep Taints
+
+# how can unTaint to any node
+# kubectl taint nodes <node-name> key=value:NoSchedule-
+# kubectl taint node dev-cluster-worker2 gpu=true:NoSchedule-
+(Means if last line i use - that unTaint)
+
+
+
+# If you want pod running specific node so added below line in yml file
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-data2
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: dev-cluster-worker2
+  containers:
+  - name: nginx
+    image: nginx:latest
+-------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-data2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-data2
+  template:
+    metadata:
+      labels:
+        app: nginx-data2
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: dev-cluster-worker2
+      containers:
+      - name: nginx
+        image: nginx:latest
+
+
+

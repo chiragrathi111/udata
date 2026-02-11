@@ -1,0 +1,61 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30001
+    hostPort: 30001
+- role: worker
+- role: worker
+
+networking:
+  disableDefaultCNI: true
+  podSubnet: "10.32.0.0/12"
+
+
+# Statement:-
+# This file createing a new cluster and we disableDefaultCNI so that is the reson we getting error,
+# we need to install any CNI plugin like calico,weave etc.
+
+# kubectl create cluster --name=cka-new --config=kind.yml
+# kubectl get nodes
+# Starting Showing NotReady then run below commands
+
+# commands:-
+# kubectl apply -f "https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
+# output:-
+# serviceaccount/weave-net created
+# clusterrole.rbac.authorization.k8s.io/weave-net created
+# clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+# role.rbac.authorization.k8s.io/weave-net created
+# rolebinding.rbac.authorization.k8s.io/weave-net created
+# daemonset.apps/weave-net created
+
+# k get node
+# This time will saw Ready
+
+# kubectl get pods -n kube-system | grep weave
+
+
+# --------------------------------------------------
+# If getting any error run clean up commands:-
+# kind delete cluster --name cka-new
+# kind delete cluster --name kind
+# docker rm -f $(docker ps -aq) 2>/dev/null
+# docker network prune -f
+# sudo systemctl restart docker
+# sudo iptables --version
+# output:-
+# legacy
+# OR
+# output:-
+# nf_tables
+# then runbelow commands:-
+# sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+# sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+# sudo systemctl restart docker
+# iptables --version
+# output:-
+# legacy
+

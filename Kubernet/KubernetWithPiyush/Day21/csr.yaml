@@ -1,0 +1,43 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: myuser # Replace with your desired name
+spec:
+  request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ1ZqQ0NBVDRDQVFBd0VURVBNQTBHQTFVRUF3d0diWGwxYzJWeU1JSUJJakFOQmdrcWhraUc5dzBCQVFFRgpBQU9DQVE4QU1JSUJDZ0tDQVFFQXNqUWoxOFcrNmMxQWRPdStHSFFUaE8zMFRVdjV2N2h0bWZwZXNReFQ0VmZpCmFZUk1ia29vQVNnMThqYTh3TFhFVFBIVkNJTDFCZ0dJT2ZLemtISDBkbjFLcDJOdE1iT2J5ZjNETjJhblVjUDMKMk1yelNJU3U0OTdIUmxDL2JzenoyOEhtUERsQ3RLUkFHdnBLY0lvTEJuYUN1OWtLU01JcFVjamtqZW9xQnNHagp6c3I3Q3VWUGY4VWQ4UDduN0pIbVlvWUdiSVYyNVIxcHZhakJNK2NPTkt4N3l6T3hrdUFpMXl5NEtBamhQUGg1CnJyL2M1eDU4MVdVM3U5M0hTT3U0SEtVR0UrME0vMytUV0huOTBZbnFvZWdScXRhTnQvd3B2Y0ZVYUpybVJMRzEKYmgwQkt5aG5xbFRINjZ6aHZHS2lkWTJMTzVUOGt5dzhhWFB2WWVHczNRSURBUUFCb0FBd0RRWUpLb1pJaHZjTgpBUUVMQlFBRGdnRUJBRDB0Vmx5Nk5MbEt6cjFkbmpFVUFlWWt5L2EwM2trcU41OERPcllTaWg2K2R0ZXo2cy9wCnNudGxMazJJZ25wYXhIRVBnbHNMd1pHVWhrSzk3YVZZekVTTEFkZmtLZ2hKS2hOcmN4WkJIU1Y5YzU1MmZXM3YKUGQ5S1dMWnpGb3pqZElQeUZ1a3A0MU9FeWprS3pFU2VWVFdjVmtab003S2pFUkE1a2RTYU84b0hYWW5WemZ4bgpMRHRBMzhSK3BqSjZoelA3YXBtUzRoMlUrN2pNZXh0TXRwbW1seWYwV1lEMUltZGE1dCtWWUY0aGQ5NWZnZDBOCnc1MzRPZ28zbjI4dWc2ODE2ZmdyeXd0L3BoSTVSdWJFZEVmMGNCWHd2L2dVUXNiQkV4QlBqSVovaUFkRFRIcmYKeEpSZ1g5b2ZqSkhvZFlPY2FyVVdOeGxidDVQYTV2VnNpU009Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=
+  signerName: kubernetes.io/kube-apiserver-client
+  expirationSeconds: 86400 # 1 day
+  usages:
+  - client auth
+
+# To create a CertificateSigningRequest (CSR) in Kubernetes, you can use the above YAML manifest. Make sure to replace
+#  "myuser" with the desired name for your CSR.
+# After creating the CSR, you can approve it using the following command:
+
+# kubectl certificate approve myuser
+# Once approved, you can retrieve the signed certificate using:
+# kubectl get csr myuser -o jsonpath='{.status.certificate}' | base64 --decode > myuser.crt
+# This will save the signed certificate to a file named "myuser.crt". You can also retrieve the private key if needed,
+#  but be cautious with
+
+# cat myuser.csr | base64 | tr -d '\n'
+# This command encodes the CSR in base64 format, which is required for the "request" field in the CSR manifest.
+# after come this code i paste it in the "request" field of the CSR manifest.
+
+# Commands:-
+# kubectl apply -f csr.yml
+# kubectl certificate approve myuser
+# kubectl get csr
+# kubectl describe csr myuser
+
+# kubectl get csr myuser -o yaml > issuecrt.yaml
+# this commands will gave a new file issuecrt.yaml in which you can find the certificate in base64 format 
+# and you can decode it using below command
+
+# If we want created certificate in human readable format, we can use below command:
+# kubectl get csr myuser -o jsonpath='{.status.certificate}' | base64 -d > myuser.crt
+# 
+# openssl x509 -in myuser.crt -noout -dates -subject
+# output:
+# notBefore=Feb  9 09:30:06 2026 GMT
+# notAfter=Feb 10 09:30:06 2026 GMT
+# subject=CN = myuser

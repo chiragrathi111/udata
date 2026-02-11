@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: day19-pod
+  labels:
+    app: day19
+spec:
+  containers:
+  - name: day19-container
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 80
+    env:
+    - name: ENV_VAR
+      value: "This is an environment variable"
+    command:
+    - /bin/bash
+    - -c
+    - echo "Hello from the container!" && sleep 3600

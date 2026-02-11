@@ -1,0 +1,17 @@
+# If we don't have any ca.crt or ca.key then i copy this key master node and paste it in my local
+
+# docker ps
+# docker exec -it <container_id> bash
+# cd /etc/kubernetes/pki
+# cat ca.crt > ca.crt
+# cat ca.key > ca.key
+
+
+This key is important.
+
+#after that run below Commands
+
+openssl x509 -req -in ../Day21/myuser.csr \
+-CA ca.crt \
+-CAKey ca.key \
+-CAcreateserial -out myuser.crt -days 100

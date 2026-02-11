@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-nodeport-clusterip
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: my-app
+
+# Commands:-
+# kubectl apply -f clusterip.yml
+# kubectl get svc
+# kubectl describe svc my-nodeport-clusterip
+# Access the service using ClusterIP:80
+# kubectl delete svc my-nodeport-clusterip
+# kubectl get ep
+# OR
+# kubectl get endpoints

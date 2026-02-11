@@ -33,3 +33,13 @@
 # added any ec2 server ssh access thhen next time no need pem file
 * ssh-add ~/.ssh/vpc2.pem
 * ssh ubuntu@100.48.212.149
+
+* sudo nano .bashrc
+enter your alias (this file added your shortcut values)
+alias 'k=kubectl'
+alias kgp='kubectl get pods'
+* source .bashrc 
+* k
+# If your running terminal changes not reflected then again run this below cammand your existing terminal
+* source ~/.bashrc
+

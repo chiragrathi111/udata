@@ -1,0 +1,25 @@
+RBAC(Role Based Authorization Certificate):-
+* access is based on the role of the user
+* users are assigned to roles
+* roles are assigned permissions
+* users can have multiple roles
+* roles can have multiple permissions
+* permissions can be assigned to multiple roles
+* RBAC is a popular access control model used in many organizations
+* RBAC can be implemented using a variety of technologies, including databases, directories, and access control 
+
+
+# Commands:-
+*  kubectl auth can-i get pod (i have pod access or not)
+o/p:- 
+yes
+
+* k auth can-i get pod --as <user_name>  (myuser)
+
+* kubectl auth whoami
+o/p:-
+ATTRIBUTE   VALUE
+Username    kubernetes-admin
+Groups      [kubeadm:cluster-admins system:authenticated]
+
+

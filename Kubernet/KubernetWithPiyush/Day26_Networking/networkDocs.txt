@@ -1,0 +1,78 @@
+Why we need to create a network policies:-
+
+We have 3 tier architecture like
+frontend,backend and db
+currently we use 3 nodes
+and i observe their have no restriction
+
+like frontend node directly communicate to db node and their oppposite way db node also communicate frontendnode,
+that is the not a valid archiutecture
+
+                    +-----------------------+
+                    |    User / Browser     |
+                    +-----------+-----------+
+                                |
+                                |  HTTP Request
+                                v
+                    +-----------------------+
+                    |   Frontend Service    |
+                    |   (ClusterIP: 80)     |
+                    +-----------+-----------+
+                                |
+                                v
+                    +-----------------------+
+                    |     Frontend Pod      |
+                    |        (Nginx)        |
+                    +-----------+-----------+
+                                |
+                                | API Call
+                                v
+                    +-----------------------+
+                    |   Backend Service     |
+                    |   (ClusterIP: 80)     |
+                    +-----------+-----------+
+                                |
+                                v
+                    +-----------------------+
+                    |     Backend Pod       |
+                    |        (App)          |
+                    +-----------+-----------+
+                                |
+                                | DB Query
+                                v
+                    +-----------------------+
+                    |      DB Service       |
+                    |    (ClusterIP:3306)   |
+                    +-----------+-----------+
+                                |
+                                v
+                    +-----------------------+
+                    |       MySQL Pod       |
+                    |      (Database)       |
+                    +-----------------------+
+
+That is the actual flow but our architecture not full fill this flow first i check in our system this flow 
+is working or not if not theni create a network policies
+
+* kubectl get pod
+* kubectl exec -it frontend -- bash (using this command login to frontend pod)
+* curl backend:80 (this command getting response)
+
+But i observe we are not directly check to db and port that is the reson we install telnet inside pod
+* apt update && apt install telnet -y 
+
+after install run below commands then check responceis coming or not
+* telnet db 3306
+output:-
+Trying 10.96.62.183...
+Connected to db.
+Escape character is '^]'.
+J
+8.0.4_Ipm1J53hD\<:caching_sha2_password2
+
+means your frontend pod easily communicate db pod
+so that is the wrong way, this is the main reason i created network policy.
+
+
+I observation after create a network policy and apply this policy restriction is valid 
+like frontend user not directly communicate to db server

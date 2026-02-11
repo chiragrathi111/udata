@@ -1,0 +1,38 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-nodeport-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30007
+  selector:
+    app: my-app
+
+# Commands:-
+# kubectl apply -f nodeport.yml
+# kubectl get svc
+# kubectl describe svc my-nodeport-service
+# Access the service using NodeIP:30007
+# kubectl delete svc my-nodeport-service
+
+# Note: Ensure that there is a pod with label 'name: my-app' running on the cluster to route the traffic correctly.
+# This time i run nodeport on runnning pod directly without deployment,rs,rc etc.
+# but messure thing is both label name is same otherwise it will not work.
+
+# Starting Node:port its working fine but if you using kind this place its not working because kind not support nodeport
+# so that is rthe reason i added cluster and define port, kind is working outside port.
+
+# After setup perfeactly its working fine
+# curl <NodeIP>:30007
+# if you not added pods you run existing pod so first you seen label name and use same label name otherwise you can't gave any output
+# selector:
+#     name: my-app  (Nodeport)
+
+# labels:
+#         app: my-app (Pod)
+
+# both mismatch then you can't access the service and if you want to access the service then you have to use same label name in both place 
+# otherwise it will not work.

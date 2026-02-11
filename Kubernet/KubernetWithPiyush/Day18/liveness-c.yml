@@ -1,0 +1,40 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: liveness1
+  labels:
+    app: liveness1
+spec:
+  containers:
+  - name: liveness1
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5  #Waiting time before starting the liveness probe
+      periodSeconds: 5  #Time between each liveness probe
+
+# Statement:-
+# This YAML file defines a Kubernetes Pod named "liveness1" that contains a single container running the nginx image. 
+# The container executes a command that creates a file named "/tmp/healthy", waits for 30 seconds, deletes the file, 
+# and then continues to sleep for 600 seconds. The liveness probe checks for the existence of the "/tmp/healthy"
+#  file every 5 seconds, starting 5 seconds after the container has started. If the file is not found,
+#  the liveness probe will fail, indicating that the container is not healthy.
+
+# In simple words:-
+# The container starts and creates a file called "healthy". It then sleeps for 30 seconds and removes the file.
+
+# I live watch
+#  kubectl get pod -w
+# o/p
+# NAME        READY   STATUS    RESTARTS   AGE
+# liveness1   1/1     Running   0          4s
+# liveness1   1/1     Running   1 (1s ago)   77s
+# liveness1   1/1     Running   2 (1s ago)   2m32s

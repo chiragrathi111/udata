@@ -1,0 +1,36 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-data5
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: "disktype"
+                operator: In
+                values:
+                  - ssd
+
+# Commands:-
+# kubectl apply -f affinity.yml
+# kubectl get pods -o wide
+
+# kubectl describe pod nginx-data5
+#  Warning  FailedScheduling  29s   default-scheduler  0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: },
+# 2 node(s) didn't match Pod's node affinity/selector. preemption: 0/3 nodes are available: 3 Preemption is not helpful for scheduling.
+  
+# MatchExpressions:-
+# is not matches so that is the reason pod is not creatded because of node affinity.
+
+# if you want to added specific lable on node then you can use matchExpressions in node affinity and if you want to added specific node name then 
+# you can use matchFields in node affinity.
+
+# k label node dev-cluster-worker2 disktype=ssd
+# after run that command our panding pod will be running because of node affinity.

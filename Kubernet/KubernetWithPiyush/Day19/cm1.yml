@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  FIRSTNAME: Chirag
+  LASTNAME: Rathi
+  AGE: "30"
+  STATE: Chhattisgarh
+kind: ConfigMap
+metadata:
+  name: rathi # Name of the configmap
+
+
+
+# This is a declative method to create a configmap using yaml file. We can also create configmap using command 
+# line by using below command:
+# After creating config map, then inject the configmap into the pod using env variable and then we can access
+#  the value of env variable inside the container.

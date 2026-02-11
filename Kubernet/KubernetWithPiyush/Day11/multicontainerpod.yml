@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multicontainerpod
+  labels:
+    name: multicontainerpod
+spec:
+  containers:
+    - name: c01
+      image: busybox
+      command: ['sh', '-c', 'echo Container 1 is running; sleep 3600']
+      env:
+        - name: ENV_VAR_1
+          value: "Value1"
+    - name: c02
+      image: busybox
+      command: ['sh', '-c', 'echo Container 2 is running; sleep 3600']
+      env:
+        - name: ENV_VAR_2
+          value: "Value2"
+    - name: c03
+      image: busybox
+      command: ['sh', '-c', 'echo Container 3 is running; sleep 3600']
+      env:
+        - name: ENV_VAR_3
+          value: "Value3"
+
+# commands:-
+# k apply -f multicontainerpod.yml --dry-run=client

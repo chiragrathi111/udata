@@ -1,0 +1,33 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: default
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+
+# This Role allows read-only access to pods in the default namespace. It grants permissions to get, watch, and list pods.
+
+# Command to create the Role:
+# kubectl apply -f role.yml
+# Command to view the Role:
+# kubectl get role pod-reader -n default -o yaml
+
+# To bind this Role to a user, you can create a RoleBinding. For example, to bind it to the "developer" user:
+# kubectl create rolebinding pod-reader-binding --role=pod-reader --user=developer -n default
+
+# This RoleBinding grants the "developer" user the permissions defined in the "pod-reader" Role within the default namespace.
+
+# resources: ["pods"] - This specifies that the Role applies to the "pods" resource.
+# we also added deployment,cronjob,job,replicaset,daemonset,statefulset,service,ingress,configmap,secret,namespace,
+# pvc,pv,networkpolicy,serviceaccount,rolebinding,role,clusterrolebinding,clusterrole
+
+# I using kubernets in my local but i observe role created in UTC time means 5:30:00 difference
+#  k get role
+# NAME         CREATED AT
+# pod-reader   2026-02-09T07:26:03Z
+# Real time: 2026-02-09T12:56:03  +05:30
+

@@ -1,0 +1,40 @@
+# docker build -t <image_name> .
+* -t = Tag
+* . = use all the file in the current directory
+
+# docker images  (Show all the images)
+
+# This poc i login in docker hub
+
+# create a new repo 
+
+# docker tag day02:latest chiragrat/testrepo:latest
+* create a tag
+* day02 = image_name
+* chiragrat/testrepo = user_name/repo
+* latest = which version you want
+* After taging new image is added
+o/p :-
+chiragrat/testrepo   latest      0196be1bc1a7   27 minutes ago   1.09GB
+day02                latest      0196be1bc1a7   27 minutes ago   1.09GB
+
+# docker push chiragrat/testrepo:latest
+* after running this command are you getting any error then run below commands
+* docker login (in ubuntu go to link in browser and put the confirmation code) 
+* after login again run the command and that time every thing is working fine
+
+# docker run -dp 3000:3000 chiragrat/testrepo:latest
+* -d = Dettach
+* -p = port
+* chiragrat/testrepo = image_name
+
+# docker exec -it <container_name> sh/bash
+* login the container
+
+---------------
+If your index.js file is empty means not enter any logic means your image craete and pus on docker ub its posible but,
+if run command then container not created
+
+
+
+

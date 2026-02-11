@@ -1,0 +1,18 @@
+Kubernets Auto-Scaling:-
+If certain time ,period load increased our define thrashold then our requirement accroding automatic pod created or deleted,
+ that is called Auto-Scaling.
+
+ Their have two types:-
+1. Horizontal Pod Auto-Scaling (HPA):-
+    It is used to scale the number of pods in a deployment or replica set based on CPU utilization or 
+    other select metrics.
+
+2. Vertical Pod Auto-Scaling (VPA):-
+    It is used automatically adjust the resource requests and limits of pods based on their actual resource usage. 
+    It helps to optimize resource allocation and improve performance by ensuring that pods have the necessary
+     resources to run efficiently.
+Auto-Scaling is an important feature in Kubernetes that allows applications to handle varying workloads 
+efficiently by automatically adjusting the number of pods or their resource allocations based on demand. 
+This helps to ensure that applications remain responsive and can scale up or down as needed without manual
+intervention.
+
