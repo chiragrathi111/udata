@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim
+spec:
+  storageClassName: ""     # 👈 IMPORTANT
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+# Commands:-
+# kubectl apply -f pvc.yml
+# kubectl get pvc
+# kubectl describe pvc pv-claim
+
+# If your Persistent volume have not define any Storage class means by default take default value
+# So if you not added this line (storageClassName: "") means default then your pvc showingpending stage not in BOUND 
+# So this is very import point don't doing mistake otherwise you can't finding what is the mistake.task

@@ -63,7 +63,7 @@ Adempiere Setep:-
 	psql -U postgres -c "CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'Welcome@1278'"
 
 2. Create adempiere database setup:-
-	createdb  --template=template0 -E UNICODE -O adempiere -U adempiere idempiere
+	createdb --template=template0 -E UNICODE -O adempiere -U adempiere idempiere
 	psql -d idempiere -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
 	enter password :- adempiere
 

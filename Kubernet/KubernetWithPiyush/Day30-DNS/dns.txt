@@ -1,0 +1,33 @@
+Core DNS:- If we have 2 pods and 2 services, and i login one pod and run second service call its posible 
+but if only working ip (curl ip), If we have running core dns inside kube-system name-space then i also
+hit service name.
+
+Example
+frontend-pod 
+backend -pod
+
+frontend-service  - 5.6.7.8
+backend-service   - 1.2.3.4
+
+* kubectl exec -it frontend-pod -- curl 1.2.3.4 (its working)
+* kubectl exec -it frontend-pod -- curl backend-service (Its working only, if coredns pod running)
+
+How can check our coredns is running or not
+
+* kubectl get pods -n=kube-system
+* kubectl get pods -A
+
+
+If we want to show kube-dns service then run below commands:-
+* kubectl get svc -n=kube-system
+
+Ifwe want to check dns name server run below commands:-
+* kubectl exec -it <pod_name> -- bash
+* cat /etc/resolv.conf
+output:-
+search default.svc.cluster.local svc.cluster.local cluster.local
+nameserver 10.96.0.10
+options ndots:5
+
+Second file :-
+* cat /etc/hosts

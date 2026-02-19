@@ -1,0 +1,87 @@
+# If we want to app backup for kubectl then run below commands:-
+
+* kubectl get all -A -o yaml > backup-all.yaml
+(one file generate that specific location, this file we are using bot restore datas)
+
+# Inside master node if enetr below commands you get standard yaml file
+
+* docker ps
+* docker exec -it <container_id /container_name> sh
+* cd /etc/kubernetes/manifests
+* ls
+* cat etcd.yaml
+
+# First take some important file location for memorable:-
+
+--trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+--key-file=/etc/kubernetes/pki/etcd/server.key
+--cert-file=/etc/kubernetes/pki/etcd/server.crt
+--advertise-client-urls=https://172.18.0.4:2379
+--listen-client-urls=https://127.0.0.1:2379
+--data-dir=/var/lib/etcd
+
+# This below is working for kubeadm not kind:-
+# Install etcd client
+* suo apt install etcd-client
+
+# help commands:-
+* ETCDCTL_API=3 etcdctl snapshot
+
+If we don't want to pass every time this line of commands run the below commads:-
+* export ETCDCTL_API=3
+
+# run below commands:-
+
+* etcdctl --endpoint=https://127.0.0.1:2379 \
+> --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+> --key=/etc/kubernetes/pki/etcd/server.key \
+> --cert=/etc/kubernetes/pki/etcd/server.crt \
+> snapshot save /opt/etcd-backup.db
+
+# If you are using kind so follow below commands:-
+
+* kubectl exec -n kube-system etcd-cka-new-control-plane -- \
+  etcdctl snapshot save /dev/stdout \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key \
+  > etcd-backup.db
+
+then etcd-backup.db is created in our local.
+
+
+# Restore for kubeadm:-
+ 
+* etcdctl --endpoint=https://127.0.0.1:2379 \
+> --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+> --key=/etc/kubernetes/pki/etcd/server.key \
+> --cert=/etc/kubernetes/pki/etcd/server.crt \
+> snapshot restore ./etcd-backup.db --data-dir=/var/lib/etcd-restore-from-backup
+
+After this above commmand manually edit new directory on etcd.yaml file
+cd /etc/kubernetes/manifests
+sudo nano etcd.yaml
+updated new directory location
+--data-dir=/var/lib/etcd-restore-from-backup
+and volumeMounts also be changed
+- mountPath: /var/lib/etcd-restore-from-backup
+
+wait some time
+
+If you not getting any pod
+so you move all manifest file and again move same location that means restart the server and wait some time 
+every thing is working fine.
+
+After that restart the kubelet
+
+* sudo systemctl restart kubelet 
+* sudo systemctl daemon-reload
+* sudo systemctl restart kubelet 
+
+after we describe the pod our location is changed.
+
+# ./etcd-backup.db = actual file location
+# snapshot restore = restore the data
+# /var/lib/etcd-restore-from-backup = that is the new directory
+

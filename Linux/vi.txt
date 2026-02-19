@@ -1,0 +1,67 @@
+IF you want going to last line in vi editor 
+
+* Shift + g (G)
+
+If you want to go any line end with insert mode
+
+* Shift + a (A)
+
+If you want only insert
+
+* i
+
+🔹 1️⃣ Modes in vi
+Mode	Purpose
+Normal Mode	Default mode (navigation & commands)
+Insert Mode	For typing text
+Visual Mode	For selecting text
+Command Mode	For save, quit, search
+
+Press Esc anytime to return to Normal Mode.
+
+🔹 2️⃣ Insert Mode Shortcuts
+Shortcut	Meaning
+i	Insert before cursor
+I	Insert at beginning of line
+a	Insert after cursor
+A	Insert at end of line
+o	Open new line below
+O	Open new line above
+
+🔹 3️⃣ Save & Exit Commands (Very Important)
+
+Press Esc → then type:
+
+Command	Meaning
+:w	Save
+:q	Quit
+:wq	Save & Quit
+:x	Save & Quit
+:q!	Quit without saving
+ZZ	Save & Exit (shortcut)
+
+🔹 4️⃣ Navigation Shortcuts (Move Faster 🚀)
+Shortcut	Meaning
+h	Left
+l	Right
+j	Down
+k	Up
+gg	Go to top of file
+G	Go to bottom
+:50	Go to line 50
+0	Beginning of line
+^	First non-empty character
+$	End of line
+w	Next word
+b	Previous word
+
+🔹 5️⃣ Delete Shortcuts
+Shortcut	Meaning
+x	Delete character
+dd	Delete entire line
+5dd	Delete 5 lines
+dw	Delete word
+d$	Delete to end of line
+
+
+

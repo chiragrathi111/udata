@@ -1,0 +1,13 @@
+kubeadm:-
+
+If you use kubeadm means you have 2 or more instance like master and worker
+so you use thiscommands but if you use kind then this commands not gotting any response
+
+* crictl ps 
+If any permission issue runthe commands
+
+* sudo chmod 777 /run/containerd/containerd.sock
+
+* crictl ps (running pod)
+
+* crictl ps -a (all pods)

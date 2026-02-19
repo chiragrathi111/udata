@@ -1,0 +1,8 @@
+If we got any records use below commands:-
+* kgp -o=jsonpath='{.items[0].metadata.labels}'
+* kgp -o=jsonpath='{.items[0].metadata.labels}{"\n"}'  (output come on new line)
+
+If we want any json format file or get file in json format
+* kgp -o json
+* kgp -o json > newFile.json
+

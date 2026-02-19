@@ -1,0 +1,26 @@
+If we want to login our node then follow the below commands:-
+* k fet node
+* docker exec -it <node_name> bash
+* ls -lt /var/run/netns/
+output:-
+total 0
+-r--r--r-- 1 root root 0 Feb 12 10:45 cni-8f128e04-c3c0-fc1d-49c5-7b42e690efd3
+-r--r--r-- 1 root root 0 Feb 12 04:29 cni-4cc23039-052b-f2bf-4185-649e3c307274
+-r--r--r-- 1 root root 0 Feb 12 04:29 cni-d459ec22-92d7-a03d-6203-259445c254f3
+-r--r--r-- 1 root root 0 Feb 12 04:29 cni-ef9fb7d5-2923-5a8a-8114-07843af7e826
+
+That means Showing list of Conatiner Network Interface
+
+* ip netns exec cni-8f128e04-c3c0-fc1d-49c5-7b42e690efd3 ip link
+
+output:-
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+22: eth0@if23: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1376 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether a2:b8:b3:f0:78:79 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+
+* ip link show
+
+* ip addr
+
+* kubectl exec -it <pod_name> ip addr

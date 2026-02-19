@@ -1,0 +1,34 @@
+# First added two certificates on inside certs folder like tls.certs and tls.key
+* openssl req -x509 -newkey rsa:4096 -days 365 -nodes -sha256 -keyout certs/tls.key -out certs/tls.crt -subj "/CN=my-registry" -addext "subjectAltName = DNS:my-registry"
+
+# Create a container using httpd image
+* docker run --entrypoint htpasswd httpd:2 -Bbn myuser mypasswd > auth/htpasswd
+-Bbn => This is using for password encrypted mode
+httpd => image name 
+auth/htpasswd => destination file
+
+#
+* kubectl create secret tls certs-secret --cert=./registry/certs/tls.crt --key=./registry/certs/tls.key
+./registry/certs/tls.key = key file path
+
+#check secret is created or not
+* kubectl get secret
+* kubectl describe secret certs-secret
+
+#
+* kubectl create secret generic auth-secret --from-file=./registry/auth/htpasswd
+
+#
+* export REGISTRY_NAME="my-registry"
+
+#
+* kubectl get svc
+* export REGISTRY_IP="SERVICE_IP"
+
+#
+* sudo nano /etc/hosts
+added one line for service ip and REGISTRY_NAME
+SERVICE_IP my-registry
+and save it.
+
+If we are working on kubeadm so there have multiple server node so please added this line for all node server.

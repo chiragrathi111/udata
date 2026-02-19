@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pv-pod
+spec:
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: pv-claim # must match the PVC name
+  containers:
+    - name: task-pv-container
+      image: nginx
+      imagePullPolicy: "IfNotPresent"
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: task-pv-storage
+  nodeName: cka-new-worker  # must match the node name
+
+  # nodeName = enter specific node name other wise getting error
+  # First login pod and run commands:-
+  # kubectl exec -it pv-pod -- bash
+  # cd /usr/share/nginx/html
+  # ls (that list showing our node files)
+  # this is our example we use persistent volume path like /home
+  # Verify
+  # docker exec -it cka-new-worker bash
+  # pwd
+  # cd /home
+  # ls
+  # if you saw this list,we getting inside our pod
+  # means that is define this volume is node specific. 
+
+  # Drawback:-
+  # It does not work on multi node. 

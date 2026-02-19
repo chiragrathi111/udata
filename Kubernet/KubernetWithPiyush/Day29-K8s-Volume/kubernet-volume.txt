@@ -1,0 +1,9 @@
+Volume:-
+
+Kubernet have different kind of volume :-
+
+1 EmptyDir :-
+This volume created inside a pod means,that is a temperaory volume, if any reason pod is deleted then we can't
+getting data,If Container terminet and again craeted that time we not loose storage but if pod deleted that
+time facing problem, So this volume called pod specific, and that is not persistent volume.
+
