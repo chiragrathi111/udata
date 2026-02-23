@@ -98,12 +98,12 @@ Add Kubernet Repo:-
 
 * sudo mkdir -p /etc/apt/keyrings
 
-* curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | \
-* sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+* curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-* echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
-https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | \
-sudo tee /etc/apt/sources.list.d/kubernetes.list
+* echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# tf you have gotting error then first remove using below command and again run above code 
+* sudo rm /etc/apt/sources.list.d/kubernetes.list
 
 OR
 
@@ -112,8 +112,7 @@ Above two commands only change if you want move version 1.29 to 1.30
 * curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | \
 sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-* echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
-https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | \
+* echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' |
 sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 
@@ -175,6 +174,9 @@ Wait 1-2 mintues
 
 * kubectl get pods -A
 
+kubeadm join 172.31.28.143:6443 --token mus22t.njducoiilxbhtmvi \
+	--discovery-token-ca-cert-hash sha256:cfa65994013b8d635be8026e23ef348747f08004cddfe9c3586f51456e51ead2
+
 ✅ PHASE 6 — Join Worker Nodes
 
 * sudo kubeadm join <MASTER_IP>:6443 \
@@ -212,6 +214,8 @@ Master:
 
 # 179
 
+# 4789 (Calico)
+
 Workers:
 
 # 10250
@@ -219,6 +223,8 @@ Workers:
 # 30000-32767
 
 # 179
+
+# 4789 (Calico)
 
 
 🔥 If Calico Not Working

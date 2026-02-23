@@ -1,24 +1,24 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: registory-pv
+  name: registry-pv
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: "standard"
+  storageClassName: "chirag"
   hostPath:
-    path: "/home/chirag/Documents/RathiData/udata/Kubernet/KubernetWithPiyush/repos"
+    path: "/home/ubuntu"
   
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: registory-pvc
+  name: registry-pvc
 spec:
-  storageClassName: "standard"
+  storageClassName: "chirag"
   accessModes:
     - ReadWriteOnce
   resources:

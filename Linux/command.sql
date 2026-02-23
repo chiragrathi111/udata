@@ -37,9 +37,12 @@
 * sudo nano .bashrc
 enter your alias (this file added your shortcut values)
 alias 'k=kubectl'
+alias 'd=describe'
 alias kgp='kubectl get pods'
 * source .bashrc 
 * k
 # If your running terminal changes not reflected then again run this below cammand your existing terminal
 * source ~/.bashrc
 
+# Change terminal name:
+* sudo hostnamectl set-hostname Worker1 && exec bash

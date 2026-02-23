@@ -1,0 +1,213 @@
+# Helm Install Setup 
+# https://helm.sh/docs/intro/install/
+
+or follow below commands:-
+* sudo apt-get install curl gpg apt-transport-https --yes
+* curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+* echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+* sudo apt-get update
+* sudo apt-get install helm
+* helm version
+
+
+* helm create <chart_name>
+* cd <chart_name>
+* find or
+* tree
+
+# before install chart run dry run
+* helm template test-release .
+
+# Install chart
+* helm install test-release .
+
+# Checking
+* helm list
+* kubectl get all
+# You should see
+** Pod
+** Service
+** Deployment
+** Service Account
+
+# Check Value used
+* helm get value test-release
+
+This command consists of multiple subcommands which can be used to
+get extended information about the release, including:
+
+- The values used to generate the release
+- The generated manifest file
+- The notes provided by the chart of the release
+- The hooks associated with the release
+- The metadata of the release
+
+$$ Modify Configuration:-
+
+# Edit values.yml
+changes
+replicaCount: 3
+
+# Upgrade release
+* helm upgrade test-release .
+* kubectl get Pod
+
+$$ Environment Override :-
+# create a new prod file
+* vi values-prod.yml 
+edit this file
+replicaCount: 5
+
+service:
+  type: NodePort
+  save it 
+
+$$ Upgrade using prod file:-
+* helm upgrade test-release . -f values-prod.yml
+
+After that check pod and service
+* kgp
+* kubectl get service
+
+🚀 STAGE 4 — Use Conditional Logic (Intermediate)
+
+Open values.yaml file
+
+In the Starting
+autoscaling:
+    enabled: false
+
+Modify:-
+autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+
+save it
+* helm upgrade test-release .
+* kubectl get hpa
+
+Devops Skill:-
+* helm status test-release
+* helm history test-release
+
+# Rollback:-
+* helm rollback test-release 1
+Just one release back.
+
+# Clean Up
+* helm uninstall test-release
+* helm list (no list)
+
+# After Modify image versionlike tag and upgrade the helm
+* kubectl get deployment test-release-sample-chart -o yaml | grep image:
+Directly show our latest version
+
+# If we want to added new label only added template side 
+template:
+  metadata:
+    labels:
+      {{- include "sample-chart.labels" . | nindent 8 }}
+      {{- with .Values.podLabels }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      custom: mylabel # my custom label
+
+* helm upgrade test-release .
+* kubectl get pod --show-labels
+
+$$ Added Environment variable on values.yaml and deployment.yaml file
+values.yaml
+env:
+  - name: ENVIRONMENT
+    value: production
+added that line in bottom
+
+deployment.yaml
+spec:
+ template:
+  spec:
+   containers:
+   - name
+     image
+     imagePullPolicy
+     env:
+     {{- range .Values.env }}
+        - name: {{ .name }}
+          value: {{ .value }}
+     {{- end }}
+
+save it
+* helm upgrade test-release .
+* kgp
+* kubectl exec -it <pod_name> -- env | grep ENVIRONMENT
+output:-
+ENVIRONMENT=production
+
+Instead of always rendering env,
+do This
+
+{{- with .Values.env }}
+env:
+{{- range . }}
+  - name: {{ .name }}
+    value: {{ .value | quote }}
+{{- end }}
+{{- end }}
+
+spec → template → spec → containers → env
+
+# If we want enter any name 
+* helm install <release_name> .
+# . = current directry
+# If we have different location then will enter absolute path
+
+# If we want to added new dependency for any new service so follow the steps:-
+1. added dependency on Chart.yaml 
+dependencies:
+  - name: redis
+    version: 18.0.0
+    repository: https://charts.bitnami.com/bitnami
+  save it
+
+2. updated dependency
+* cd sample-chart/
+* helm dependency update
+
+I observe after run that command one zip file added on charts folder
+
+3. after that updated values.yaml file that edit on bottom
+redis:
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: latest
+  auth:
+    enabled: false
+This is a standard soevery time create 1 master and 3 replicas 
+
+If we want only single master not a replicas 
+redis:
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: latest
+  architecture: standalone
+  auth:
+    enabled: false
+
+If we want 1 master and 1 replica
+redis:
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: latest
+  architecture: replication
+  replica:
+    replicaCount: 1
+  auth:
+    enabled: false
+
+4. helm install chirag-release .
+

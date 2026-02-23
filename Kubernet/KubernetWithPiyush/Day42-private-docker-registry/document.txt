@@ -3,6 +3,8 @@
 
 # Create a container using httpd image
 * docker run --entrypoint htpasswd httpd:2 -Bbn myuser mypasswd > auth/htpasswd
+
+* docker run --entrypoint htpasswd httpd:2 -Bbn chiragrat Chiru0606@ > auth/htpasswd
 -Bbn => This is using for password encrypted mode
 httpd => image name 
 auth/htpasswd => destination file
@@ -30,5 +32,20 @@ auth/htpasswd => destination file
 added one line for service ip and REGISTRY_NAME
 SERVICE_IP my-registry
 and save it.
+
+# copy the tls.crt file
+
+# below command doing all nodes like master and worker node
+* cd /use/local/share/ca-certificates/
+* sudo nano tls.crt
+paste old data and save it.
+* sudo mkdir -p /etc/docker/certs.d/my-registry:5000
+
+* cd /usr/local/share/ca-certificates
+* sudo cp tls.crt /etc/docker/certs.d/my-registry:5000
+
+
+* docker login my-registry:5000 -u chiragrat -p Chiru0606@
+
 
 If we are working on kubeadm so there have multiple server node so please added this line for all node server.
