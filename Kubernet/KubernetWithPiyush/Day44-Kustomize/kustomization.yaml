@@ -1,0 +1,4 @@
+resources:
+  - db/
+  - message-broker/
+  - nginx/

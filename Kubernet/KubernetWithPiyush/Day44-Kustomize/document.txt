@@ -1,0 +1,28 @@
+After added test file then runbelow commads
+* kubectl kustomize . (saw thelist of allyaml file)
+
+* kubectl kustomize . | kubectl apply -f - (run all file at a same time)
+
+# I want run kustomize tool so some file creation important
+like we have 3 tier architecture
+so icreated 3 different folder like
+db
+message-broken
+nginx
+after folder created we added one more file like kustomization.yaml
+this file we define folder structure
+example:- 
+resources:
+  - db/
+  - message-broker/
+  - nginx/
+
+Every Folder have own file so that is the reason i added every folder onemore file like name is kustomization.yaml
+and this file i provide file structure
+example:-
+resources:
+  - rabbitmq-config.yaml
+  - rabbitmq-depl.yaml
+  - rabbitmq-service.yaml
+
+Running using one commands and i got allchanges

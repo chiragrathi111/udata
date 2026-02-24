@@ -1,0 +1,16 @@
+I added kustomize-nginx folder, inside this folder i added base and overlay folder
+i want multiple stage so i added dev folder and this folder i setup dev accoridng
+I also added data for base folder
+
+* kubectl apply -k .  (This is shortcut commands)
+or 
+* kubectl kustomize . | kubectl apply -f -
+
+if want to check curl is working or not run below commads:-
+* kubectl get svc -n dev
+# Look for port like 80:30XXX/TCP
+
+* kubectl get node -o wide
+
+# Then curl using node IP
+* curl <node-ip>:<nodeport>

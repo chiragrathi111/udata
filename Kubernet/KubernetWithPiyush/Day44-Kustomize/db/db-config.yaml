@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  password: example
+  username: root
+kind: ConfigMap
+metadata:
+  name: db-credentails
