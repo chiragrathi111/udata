@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-content
+  namespace: web-app
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <h1>Web Application Content</h1>
+      <p>This is the web front-end service.</p>
+    </body>
+    </html>

@@ -1,0 +1,5 @@
+1️⃣ Hazelcast is Disabled :-
+*  nano idempiere.properties
+open the file and added this line in bottom
+hazelcast.enabled=false
+and restart the idempiere server

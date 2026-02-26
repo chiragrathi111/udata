@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-app
+  labels:
+    run: frontend-app
+spec:
+  containers:
+  - name: frontend-app
+    image: kodekloud/webapp-color
+    imagePullPolicy: IfNotPresent  # Changed from Always
+    ports:
+    - containerPort: 8080

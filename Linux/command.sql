@@ -37,7 +37,7 @@
 * sudo nano .bashrc
 enter your alias (this file added your shortcut values)
 alias 'k=kubectl'
-alias 'd=describe'
+alias 'de=describe'
 alias kgp='kubectl get pods'
 * source .bashrc 
 * k
