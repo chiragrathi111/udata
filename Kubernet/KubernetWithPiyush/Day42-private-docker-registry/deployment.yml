@@ -40,7 +40,7 @@ spec:
       volumes:
       - name: repo-vol
         persistentVolumeClaim:
-          claimName: registory-pvc
+          claimName: registry-pvc
       - name: cert-vol
         secret:
           secretName: certs-secret
