@@ -1,0 +1,195 @@
+---
+# Product Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+  namespace: ecommerce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+      - name: product-service
+        image: node:18-alpine
+        ports:
+        - containerPort: 3001
+        command: ["/bin/sh"]
+        args: ["-c", "npm install express mongoose redis && node server.js"]
+        env:
+        - name: PORT
+          value: "3001"
+        - name: SERVICE_NAME
+          value: "product-service"
+        - name: MONGODB_URI
+          value: "mongodb://$(MONGODB_USERNAME):$(MONGODB_PASSWORD)@$(MONGODB_HOST):$(MONGODB_PORT)/$(MONGODB_DATABASE)?authSource=admin"
+        - name: MONGODB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MONGODB_HOST
+        - name: MONGODB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MONGODB_PORT
+        - name: MONGODB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MONGODB_DATABASE
+        - name: MONGODB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: MONGODB_USERNAME
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: MONGODB_PASSWORD
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: REDIS_PORT
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: app-code
+          mountPath: /app
+      volumes:
+      - name: app-code
+        configMap:
+          name: product-service-code
+      workingDir: /app
+
+---
+# Product Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: product-service
+  ports:
+  - port: 3001
+    targetPort: 3001
+  type: ClusterIP
+
+---
+# HorizontalPodAutoscaler for Product Service
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: product-service-hpa
+  namespace: ecommerce
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: product-service
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+---
+# Product Service Code ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-code
+  namespace: ecommerce
+data:
+  server.js: |
+    const express = require('express');
+    const app = express();
+    const PORT = process.env.PORT || 3001;
+
+    app.use(express.json());
+
+    // In-memory product store (replace with MongoDB in production)
+    let products = [
+      { id: 1, name: 'Laptop', price: 999, stock: 50 },
+      { id: 2, name: 'Phone', price: 699, stock: 100 },
+      { id: 3, name: 'Tablet', price: 499, stock: 75 }
+    ];
+
+    // Health check
+    app.get('/health', (req, res) => {
+      res.json({ status: 'healthy', service: 'product-service' });
+    });
+
+    app.get('/ready', (req, res) => {
+      res.json({ status: 'ready' });
+    });
+
+    // Get all products
+    app.get('/products', (req, res) => {
+      res.json({ products, count: products.length });
+    });
+
+    // Get product by ID
+    app.get('/products/:id', (req, res) => {
+      const product = products.find(p => p.id === parseInt(req.params.id));
+      if (!product) return res.status(404).json({ error: 'Product not found' });
+      res.json(product);
+    });
+
+    // Create product
+    app.post('/products', (req, res) => {
+      const newProduct = {
+        id: products.length + 1,
+        name: req.body.name,
+        price: req.body.price,
+        stock: req.body.stock
+      };
+      products.push(newProduct);
+      res.status(201).json(newProduct);
+    });
+
+    app.listen(PORT, () => {
+      console.log(`Product Service running on port ${PORT}`);
+    });

@@ -8,8 +8,3 @@ resource "aws_sqs_queue" "order_queue" {
         Environment = "production"
     }
 }
-
-
-output "aws_sqs_arn" {
-  value = aws_sqs_queue.order_queue.arn
-}

@@ -88,10 +88,3 @@ resource "aws_cloudwatch_log_group" "api_gateway_logs" {
 resource "aws_api_gateway_account" "api_gateway_account" {
   cloudwatch_role_arn = aws_iam_role.apigateway_order.arn
 }
-
-output "api_endpoint_url" {
-  value = "${aws_api_gateway_stage.order_stage.invoke_url}${aws_api_gateway_resource.order_api.path}"
-}
-
-
-

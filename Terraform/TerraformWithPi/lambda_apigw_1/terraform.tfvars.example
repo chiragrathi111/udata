@@ -1,0 +1,8 @@
+# AWS Configuration
+region = "us-east-1"
+
+# Project Configuration
+project_name = "lambda-api"
+
+# API Gateway Stage
+api_stage_name = "dev"  # Options: dev, staging, prod

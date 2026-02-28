@@ -7,8 +7,3 @@ resource "aws_sns_topic_subscription" "order_subscription" {
   protocol = "email"
   endpoint = var.email
 }
-
-# Output SNS Topic ARN for Lambda function to use
-output "sns_topic_arn" {
-  value = aws_sns_topic.order_topic.arn
-}

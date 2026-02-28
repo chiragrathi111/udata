@@ -1,0 +1,18 @@
+# =============================================================================
+# TERRAFORM VARIABLES - Configuration Example
+# =============================================================================
+# Copy this file to terraform.tfvars and customize with your values
+# =============================================================================
+
+# AWS Region
+region = "us-east-1"
+
+# VPC ID (Get from AWS Console or: aws ec2 describe-vpcs)
+vpc_id = "vpc-0123456789abcdef0"
+
+# Your Public IP (Get from: curl ifconfig.me)
+# IMPORTANT: Add /32 at the end for single IP
+my_ip = "203.0.113.0/32"
+
+# Cluster Name (Optional)
+cluster_name = "k8s-cluster"

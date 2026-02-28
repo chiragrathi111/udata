@@ -1,0 +1,149 @@
+---
+# Order Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: ecommerce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+      - name: order-service
+        image: node:18-alpine
+        ports:
+        - containerPort: 3003
+        command: ["/bin/sh"]
+        args: ["-c", "npm install express axios && node server.js"]
+        env:
+        - name: PORT
+          value: "3003"
+        - name: SERVICE_NAME
+          value: "order-service"
+        envFrom:
+        - configMapRef:
+            name: app-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3003
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: app-code
+          mountPath: /app
+      volumes:
+      - name: app-code
+        configMap:
+          name: order-service-code
+      workingDir: /app
+
+---
+# Order Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: order-service
+  ports:
+  - port: 3003
+    targetPort: 3003
+  type: ClusterIP
+
+---
+# Order Service Code ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service-code
+  namespace: ecommerce
+data:
+  server.js: |
+    const express = require('express');
+    const app = express();
+    const PORT = process.env.PORT || 3003;
+
+    app.use(express.json());
+
+    // In-memory order store
+    let orders = [
+      { id: 1, userId: 1, productId: 1, quantity: 2, status: 'completed', total: 1998 },
+      { id: 2, userId: 2, productId: 2, quantity: 1, status: 'pending', total: 699 }
+    ];
+
+    // Health check
+    app.get('/health', (req, res) => {
+      res.json({ status: 'healthy', service: 'order-service' });
+    });
+
+    app.get('/ready', (req, res) => {
+      res.json({ status: 'ready' });
+    });
+
+    // Get all orders
+    app.get('/orders', (req, res) => {
+      res.json({ orders, count: orders.length });
+    });
+
+    // Get order by ID
+    app.get('/orders/:id', (req, res) => {
+      const order = orders.find(o => o.id === parseInt(req.params.id));
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+      res.json(order);
+    });
+
+    // Get orders by user
+    app.get('/orders/user/:userId', (req, res) => {
+      const userOrders = orders.filter(o => o.userId === parseInt(req.params.userId));
+      res.json({ orders: userOrders, count: userOrders.length });
+    });
+
+    // Create order
+    app.post('/orders', (req, res) => {
+      const newOrder = {
+        id: orders.length + 1,
+        userId: req.body.userId,
+        productId: req.body.productId,
+        quantity: req.body.quantity,
+        status: 'pending',
+        total: req.body.total,
+        createdAt: new Date()
+      };
+      orders.push(newOrder);
+      res.status(201).json(newOrder);
+    });
+
+    // Update order status
+    app.patch('/orders/:id/status', (req, res) => {
+      const order = orders.find(o => o.id === parseInt(req.params.id));
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+      order.status = req.body.status;
+      res.json(order);
+    });
+
+    app.listen(PORT, () => {
+      console.log(`Order Service running on port ${PORT}`);
+    });

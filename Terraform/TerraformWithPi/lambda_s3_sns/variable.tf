@@ -1,11 +1,21 @@
 variable "project_name" {
-  type = string
+  description = "Project name for resource naming"
+  type        = string
+  default     = "s3-email-notifier"
 }
 
 variable "region" {
-  type = string
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "email" {
-  type = string
+  description = "Email address for SNS notifications"
+  type        = string
+  
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.email))
+    error_message = "Must be valid email address."
+  }
 }

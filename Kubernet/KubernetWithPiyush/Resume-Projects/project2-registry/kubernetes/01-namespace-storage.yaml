@@ -1,0 +1,37 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: registry
+  labels:
+    name: registry
+    project: resume-project-2
+
+---
+# PersistentVolumeClaim for Registry Data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: registry-data
+  namespace: registry
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# PersistentVolumeClaim for Backups
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: registry-backup
+  namespace: registry
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

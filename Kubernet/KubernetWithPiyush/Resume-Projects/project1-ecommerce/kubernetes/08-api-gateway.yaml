@@ -1,0 +1,208 @@
+---
+# API Gateway Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: ecommerce
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: node:18-alpine
+        ports:
+        - containerPort: 3000
+        command: ["/bin/sh"]
+        args: ["-c", "npm install express axios && node server.js"]
+        env:
+        - name: PORT
+          value: "3000"
+        - name: SERVICE_NAME
+          value: "api-gateway"
+        envFrom:
+        - configMapRef:
+            name: app-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: app-code
+          mountPath: /app
+      volumes:
+      - name: app-code
+        configMap:
+          name: api-gateway-code
+      workingDir: /app
+
+---
+# API Gateway Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: ecommerce
+spec:
+  selector:
+    app: api-gateway
+  ports:
+  - port: 3000
+    targetPort: 3000
+  type: ClusterIP
+
+---
+# API Gateway Code ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-code
+  namespace: ecommerce
+data:
+  server.js: |
+    const express = require('express');
+    const axios = require('axios');
+    const app = express();
+    const PORT = process.env.PORT || 3000;
+
+    app.use(express.json());
+
+    // Service URLs from environment
+    const PRODUCT_SERVICE = process.env.PRODUCT_SERVICE_URL || 'http://product-service:3001';
+    const USER_SERVICE = process.env.USER_SERVICE_URL || 'http://user-service:3002';
+    const ORDER_SERVICE = process.env.ORDER_SERVICE_URL || 'http://order-service:3003';
+
+    // Health check
+    app.get('/health', (req, res) => {
+      res.json({ status: 'healthy', service: 'api-gateway' });
+    });
+
+    app.get('/ready', (req, res) => {
+      res.json({ status: 'ready' });
+    });
+
+    // Root endpoint
+    app.get('/', (req, res) => {
+      res.json({
+        message: 'E-Commerce API Gateway',
+        version: '1.0.0',
+        endpoints: {
+          products: '/api/products',
+          users: '/api/users',
+          orders: '/api/orders'
+        }
+      });
+    });
+
+    // Product routes
+    app.get('/api/products', async (req, res) => {
+      try {
+        const response = await axios.get(`${PRODUCT_SERVICE}/products`);
+        res.json(response.data);
+      } catch (error) {
+        res.status(500).json({ error: 'Product service unavailable' });
+      }
+    });
+
+    app.get('/api/products/:id', async (req, res) => {
+      try {
+        const response = await axios.get(`${PRODUCT_SERVICE}/products/${req.params.id}`);
+        res.json(response.data);
+      } catch (error) {
+        res.status(error.response?.status || 500).json({ error: error.message });
+      }
+    });
+
+    app.post('/api/products', async (req, res) => {
+      try {
+        const response = await axios.post(`${PRODUCT_SERVICE}/products`, req.body);
+        res.status(201).json(response.data);
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to create product' });
+      }
+    });
+
+    // User routes
+    app.get('/api/users', async (req, res) => {
+      try {
+        const response = await axios.get(`${USER_SERVICE}/users`);
+        res.json(response.data);
+      } catch (error) {
+        res.status(500).json({ error: 'User service unavailable' });
+      }
+    });
+
+    app.post('/api/users/register', async (req, res) => {
+      try {
+        const response = await axios.post(`${USER_SERVICE}/users/register`, req.body);
+        res.status(201).json(response.data);
+      } catch (error) {
+        res.status(500).json({ error: 'Registration failed' });
+      }
+    });
+
+    app.post('/api/users/login', async (req, res) => {
+      try {
+        const response = await axios.post(`${USER_SERVICE}/users/login`, req.body);
+        res.json(response.data);
+      } catch (error) {
+        res.status(401).json({ error: 'Login failed' });
+      }
+    });
+
+    // Order routes
+    app.get('/api/orders', async (req, res) => {
+      try {
+        const response = await axios.get(`${ORDER_SERVICE}/orders`);
+        res.json(response.data);
+      } catch (error) {
+        res.status(500).json({ error: 'Order service unavailable' });
+      }
+    });
+
+    app.get('/api/orders/:id', async (req, res) => {
+      try {
+        const response = await axios.get(`${ORDER_SERVICE}/orders/${req.params.id}`);
+        res.json(response.data);
+      } catch (error) {
+        res.status(error.response?.status || 500).json({ error: error.message });
+      }
+    });
+
+    app.post('/api/orders', async (req, res) => {
+      try {
+        const response = await axios.post(`${ORDER_SERVICE}/orders`, req.body);
+        res.status(201).json(response.data);
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to create order' });
+      }
+    });
+
+    app.listen(PORT, () => {
+      console.log(`API Gateway running on port ${PORT}`);
+      console.log(`Product Service: ${PRODUCT_SERVICE}`);
+      console.log(`User Service: ${USER_SERVICE}`);
+      console.log(`Order Service: ${ORDER_SERVICE}`);
+    });

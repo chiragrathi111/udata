@@ -1,0 +1,141 @@
+---
+# User Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: ecommerce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: node:18-alpine
+        ports:
+        - containerPort: 3002
+        command: ["/bin/sh"]
+        args: ["-c", "npm install express && node server.js"]
+        env:
+        - name: PORT
+          value: "3002"
+        - name: SERVICE_NAME
+          value: "user-service"
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: app-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3002
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: app-code
+          mountPath: /app
+      volumes:
+      - name: app-code
+        configMap:
+          name: user-service-code
+      workingDir: /app
+
+---
+# User Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: user-service
+  ports:
+  - port: 3002
+    targetPort: 3002
+  type: ClusterIP
+
+---
+# User Service Code ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-code
+  namespace: ecommerce
+data:
+  server.js: |
+    const express = require('express');
+    const app = express();
+    const PORT = process.env.PORT || 3002;
+
+    app.use(express.json());
+
+    // In-memory user store
+    let users = [
+      { id: 1, username: 'john_doe', email: 'john@example.com', role: 'customer' },
+      { id: 2, username: 'jane_admin', email: 'jane@example.com', role: 'admin' }
+    ];
+
+    // Health check
+    app.get('/health', (req, res) => {
+      res.json({ status: 'healthy', service: 'user-service' });
+    });
+
+    app.get('/ready', (req, res) => {
+      res.json({ status: 'ready' });
+    });
+
+    // Get all users
+    app.get('/users', (req, res) => {
+      res.json({ users, count: users.length });
+    });
+
+    // Get user by ID
+    app.get('/users/:id', (req, res) => {
+      const user = users.find(u => u.id === parseInt(req.params.id));
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      res.json(user);
+    });
+
+    // Register user
+    app.post('/users/register', (req, res) => {
+      const newUser = {
+        id: users.length + 1,
+        username: req.body.username,
+        email: req.body.email,
+        role: 'customer'
+      };
+      users.push(newUser);
+      res.status(201).json(newUser);
+    });
+
+    // Login
+    app.post('/users/login', (req, res) => {
+      const user = users.find(u => u.email === req.body.email);
+      if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+      res.json({ token: 'mock-jwt-token', user });
+    });
+
+    app.listen(PORT, () => {
+      console.log(`User Service running on port ${PORT}`);
+    });

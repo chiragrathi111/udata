@@ -20,9 +20,3 @@ resource "aws_sns_topic_subscription" "email_notification" {
   
   # Note: After deployment, you must confirm the subscription via email
 }
-
-# Output SNS Topic ARN for Lambda function to use
-output "sns_topic_arn" {
-  description = "ARN of SNS topic for Lambda to publish messages"
-  value       = aws_sns_topic.s3_upload_notifications.arn
-}

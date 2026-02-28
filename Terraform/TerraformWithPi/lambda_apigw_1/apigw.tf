@@ -181,20 +181,3 @@ resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch_policy" {
   role       = aws_iam_role.api_gateway_cloudwatch_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
-
-# Output the complete API endpoint URL for Postman testing
-output "api_endpoint_url" {
-  description = "Complete API Gateway endpoint URL for /hello endpoint"
-  value       = "${aws_api_gateway_stage.lambda_api_stage.invoke_url}/hello"
-}
-
-# Output base API URL (without endpoint path)
-output "api_base_url" {
-  description = "Base API Gateway URL"
-  value       = aws_api_gateway_stage.lambda_api_stage.invoke_url
-}
-
-# Commands to get output data:
-# terraform output                    - Shows all outputs
-# terraform output api_endpoint_url   - Shows specific output
-# terraform output -json              - Shows outputs in JSON format
