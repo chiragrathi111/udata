@@ -1,0 +1,20 @@
+Pack Out:-
+Name of Package - enter any name
+Package Version - 10
+Export Dictionary Entity - checked  (If you not checked then you can't do that process)
+save it
+
+package Details:-
+Type - Application or Module
+menu - enter menu name (this menu all records like menu,report and process, report view and table all records come)
+save it
+
+below have Export package button press then click zip file and download zip file 
+
+Pack In:-
+Before pack in if your have any new table first added that table in db other wise gotting error on pack in 
+
+Name - enter any name
+attachment - added zip file in that place
+
+then press pack in button and you observe you got Processed=54 Un-Resolved=0 message means every thing working fine.

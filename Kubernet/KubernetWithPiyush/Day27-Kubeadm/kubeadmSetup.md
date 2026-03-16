@@ -174,14 +174,16 @@ Wait 1-2 mintues
 
 * kubectl get pods -A
 
-kubeadm join 172.31.28.143:6443 --token mus22t.njducoiilxbhtmvi \
-	--discovery-token-ca-cert-hash sha256:cfa65994013b8d635be8026e23ef348747f08004cddfe9c3586f51456e51ead2
 
 ✅ PHASE 6 — Join Worker Nodes
 
 * sudo kubeadm join <MASTER_IP>:6443 \
 --token <TOKEN> \
 --discovery-token-ca-cert-hash sha256:<HASH>
+
+example:-
+sudo kubeadm join 172.31.28.143:6443 --token mus22t.njducoiilxbhtmvi \
+	--discovery-token-ca-cert-hash sha256:cfa65994013b8d635be8026e23ef348747f08004cddfe9c3586f51456e51ead2
 
 Note:- This above commmands getting in master node side after run Initialize master node commands
         please using copy and paste, don't write because if you made any mistake then worker node not join

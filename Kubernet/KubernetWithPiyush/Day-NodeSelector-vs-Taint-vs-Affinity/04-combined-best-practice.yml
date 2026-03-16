@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-best-practice
+spec:
+  # TOLERATION: Allow this pod on tainted database node
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "database"
+    effect: "NoSchedule"
+  # AFFINITY: MUST go to SSD node in us-east zone
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+            - nvme
+          - key: zone
+            operator: In
+            values:
+            - us-east-1a
+            - us-east-1b
+  containers:
+  - name: mysql
+    image: mysql:8.0
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "rootpass"
+    ports:
+    - containerPort: 3306
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+
+# BEST PRACTICE: Taint + Toleration + Node Affinity
+#
+# Commands:-
+# Step 1: Label the database node
+# kubectl label nodes <db-node> disktype=ssd zone=us-east-1a
+#
+# Step 2: Taint the database node (block other pods)
+# kubectl taint nodes <db-node> dedicated=database:NoSchedule
+#
+# Step 3: Apply this pod
+# kubectl apply -f 04-combined-best-practice.yml
+#
+# What happens:
+# - Taint blocks ALL other pods from db-node ✅
+# - Toleration ALLOWS this pod on db-node ✅
+# - Affinity GUARANTEES this pod goes to db-node ✅
+# - PERFECT combination!
+#
+# Without Taint: Other random pods could land on db-node
+# Without Toleration: This pod can't go to tainted db-node
+# Without Affinity: This pod might go to non-SSD node

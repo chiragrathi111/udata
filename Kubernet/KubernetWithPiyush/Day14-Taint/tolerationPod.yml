@@ -22,12 +22,3 @@ spec:
 
 # First check the taints on node
 # kubectl describe node dev-cluster-worker2 | grep -i taints
-# To add toleration in pod yaml file
-# spec:
-#   nodeSelector:
-#     kubernetes.io/hostname: dev-cluster-worker2
-#   tolerations:
-#   - key: "key1"
-#     operator: "Equal"
-#     value: "value1"
-#     effect: "NoSchedule"

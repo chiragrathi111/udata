@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api-server-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      # HARD RULE: MUST match
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: zone
+            operator: In
+            values:
+            - us-east-1a
+            - us-east-1b
+          - key: instance
+            operator: NotIn
+            values:
+            - spot
+      # SOFT RULE: PREFER this (weight 1-100)
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 80
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+      - weight: 20
+        preference:
+          matchExpressions:
+          - key: zone
+            operator: In
+            values:
+            - us-east-1a
+  containers:
+  - name: api
+    image: nginx:alpine
+    ports:
+    - containerPort: 80
+
+# Commands:-
+# Step 1: Label nodes
+# kubectl label nodes <node-1> zone=us-east-1a disktype=ssd instance=ondemand
+# kubectl label nodes <node-2> zone=us-east-1b disktype=hdd instance=ondemand
+# kubectl label nodes <node-3> zone=us-west-1a disktype=ssd instance=spot
+
+# Step 2: Apply pod
+# kubectl apply -f 03-node-affinity-example.yml
+
+# Step 3: Check where pod is scheduled
+# kubectl get pods -o wide
+
+# What happens:
+# node-1: zone=us-east-1a ✅, instance!=spot ✅, ssd(+80), zone-a(+20) = Score 100
+# node-2: zone=us-east-1b ✅, instance!=spot ✅, hdd(+0), zone-b(+0) = Score 0
+# node-3: zone=us-west-1a ❌ FAIL (not in us-east)
+# → Pod goes to node-1 (highest score)
+
+# Step 4: Check scheduling events
+# kubectl describe pod api-server-affinity | grep -A 10 "Events"

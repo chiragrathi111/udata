@@ -22,9 +22,7 @@ Taint created specific node and also provide which reason created
 # how can unTaint to any node
 # kubectl taint nodes <node-name> key=value:NoSchedule-
 # kubectl taint node dev-cluster-worker2 gpu=true:NoSchedule-
-(Means if last line i use - that unTaint)
-
-
+(Means if last word/symbol i use - that unTaint)
 
 # If you want pod running specific node so added below line in yml file
 apiVersion: v1

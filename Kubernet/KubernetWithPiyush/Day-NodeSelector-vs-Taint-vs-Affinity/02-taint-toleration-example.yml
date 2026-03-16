@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ml-training-toleration
+spec:
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "ml"
+    effect: "NoSchedule"
+  containers:
+  - name: tensorflow
+    image: tensorflow/tensorflow:latest
+    ports:
+    - containerPort: 8888
+
+# Commands:-
+# Step 1: Taint the node (block all pods without toleration)
+# kubectl taint nodes <node-name> dedicated=ml:NoSchedule
+
+# Step 2: Apply this pod (has toleration, so it CAN go to tainted node)
+# kubectl apply -f 02-taint-toleration-example.yml
+
+# Step 3: Check pod placement
+# kubectl get pods -o wide
+
+# Step 4: Try creating a pod WITHOUT toleration
+# kubectl run test-pod --image=nginx
+# → This pod will NOT go to tainted node
+
+# Step 5: Check taints on node
+# kubectl describe node <node-name> | grep -i taints
+
+# Remove taint:
+# kubectl taint nodes <node-name> dedicated=ml:NoSchedule-
+
+# NoExecute example (evicts existing pods):
+# kubectl taint nodes <node-name> maintenance=true:NoExecute

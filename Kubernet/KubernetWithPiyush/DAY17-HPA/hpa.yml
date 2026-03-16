@@ -1,9 +1,4 @@
-
- 
-  
-   
-    
-# If we want run aotu-scalimg commands directly:-
+# If we want run auto-scalimg commands directly:-
 # kubectl autoscale deployment hpa --cpu-percent=50 --min=1 --max=10
 # hpa = name of deployment
 # --cpu-percent = target cpu utilization percentage
@@ -16,7 +11,7 @@
 # reason pull problem so some i enter pull manually and it is working fine. so to avoid this problem we can add below line in deployment file after define image.
 # imagePullPolicy: IfNotPresent
 
-# Thsi hpa check the cpu utilization of php-apache deployment and if it is more than 50% then it will create new
+# This hpa check the cpu utilization of php-apache deployment and if it is more than 50% then it will create new
 #  pods and if it is less than 50% then it will delete the pods. and it will maintain the minimum number of pods as 
 # 1 and maximum number of pods as 10.
 

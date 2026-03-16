@@ -1,0 +1,1012 @@
+
+
+RWPL Implementation:
+--------------------
+
+* Existing Printer Configuration with our Warepro & Label Sizes
+* Picklist: Order wise picking & BOM picking for certain products
+
+
+
+Databse Changes:
+------------------
+
+
+-- To store tokens for user & mobile for Firebase Cloud Messaging (FCM)
+
+CREATE TABLE adempiere.pi_userToken (
+    pi_userToken_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    ad_user_ID NUMERIC(10,0),   
+    deviceType varchar(50),
+    deviceToken varchar(500),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    pi_userToken_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (ad_user_ID) REFERENCES adempiere.ad_user(ad_user_ID));
+
+
+ -- Product Label and its view
+
+
+ CREATE TABLE adempiere.pi_productLabel (
+    pi_productLabel_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    qcPassed CHAR(1) not null DEFAULT 'Y'::bpchar,
+    quantity NUMERIC,
+    m_product_ID NUMERIC(10,0),
+    m_locator_ID NUMERIC(10,0),
+    c_orderline_ID NUMERIC(10,0) NULL,
+    m_inoutline_ID NUMERIC(10,0) NULL,
+    issotrx varchar(1),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    finaldispatch CHAR(1) not null DEFAULT 'N'::bpchar,
+    previouslocator Integer,
+    reserved CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+    reservedFrom TIMESTAMP WITHOUT TIME ZONE,
+    reservedTo TIMESTAMP WITHOUT TIME ZONE,
+    remark VARCHAR(255),
+    labelUUId varchar(255),
+    pi_productLabel_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (m_product_ID) REFERENCES adempiere.m_product(m_product_id),
+    FOREIGN KEY (m_locator_ID) REFERENCES adempiere.m_locator(m_locator_ID),
+    FOREIGN KEY (c_orderline_ID) REFERENCES adempiere.c_orderline(c_orderline_id),
+    FOREIGN KEY (m_inoutline_ID) REFERENCES adempiere.m_inoutline(m_inoutline_id)
+);
+
+
+CREATE TABLE adempiere.m_packline (
+    m_packline_id numeric(10,0) NOT NULL,
+    m_packline_uu character varying(50) DEFAULT NULL::character varying,
+    ad_client_id numeric(10,0) NOT NULL,
+    ad_org_id numeric(10,0) NOT NULL,
+    created timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    updatedby numeric(10,0) NOT NULL,
+    m_inoutline_id numeric(10,0) DEFAULT NULL::numeric,
+    quantity numeric,
+    isactive character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    label character varying(25) DEFAULT NULL::character varying,
+    FOREIGN KEY (m_inoutline_id) REFERENCES adempiere.m_inoutline(m_inoutline_id)
+)
+
+    CREATE TABLE adempiere.pi_email(
+    pi_email_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    pi_email_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    created TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    createdby NUMERIC(10,0) NOT NULL,
+    updated TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    updatedby NUMERIC(10,0) NOT NULL,
+    name VARCHAR(25) NOT NULL,
+    email VARCHAR(25) NOT NULL,
+    description VARCHAR(255),
+    isactive CHAR(1) NOT NULL DEFAULT 'Y'::bpchar
+    );
+
+-- Total Tons in Warehouse report
+
+   CREATE OR REPLACE VIEW adempiere.pir_totaltons AS
+SELECT w.m_warehouse_id,pp.m_locator_id,
+sum(CASE WHEN pp.issotrx::text = 'N'::text THEN pp.quantity ELSE 0::numeric END) AS availablecount,
+pr.weight AS unitweight,round(sum(pr.weight * pp.quantity) / 1000::numeric, 3) AS total_weight_ton,
+pp.ad_client_id,pp.ad_org_id,COALESCE(pri.pricestd, 0) AS unitprice,COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice,  pr.erpcode, pr.m_product_category_id FROM adempiere.pi_productlabel pp
+JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id 
+WHERE NOT (EXISTS ( SELECT 1 FROM adempiere.pi_productlabel pp_sales
+WHERE pp_sales.labeluuid::text = pp.labeluuid::text AND pp_sales.issotrx::text = 'Y'::text))
+GROUP BY w.m_warehouse_id, pp.m_locator_id, pp.ad_client_id, pp.ad_org_id, pr.weight, pri.pricestd,  pr.erpcode, pr.m_product_category_id 
+ORDER BY pp.m_locator_id DESC;
+
+
+CREATE OR REPLACE VIEW adempiere.pir_totalmaterials AS
+SELECT 
+    DATE(pl.updated) AS report_date,
+    pl.m_product_id,
+    pr.name AS product_name,pl.issotrx,
+    SUM(pl.quantity) AS total_quantity,
+    pr.weight AS unit_weight_kg,
+    ROUND(SUM(pr.weight * pl.quantity)/1000, 3) AS total_weight_ton,
+    pl.ad_client_id,
+    pl.ad_org_id
+FROM 
+    adempiere.pi_productlabel pl
+JOIN 
+    adempiere.M_InOutLine il ON il.M_InOutLine_id = pl.M_InOutLine_id
+JOIN 
+    adempiere.M_Product pr ON pr.M_Product_id = pl.M_product_id
+    
+GROUP BY 
+    DATE(pl.updated),
+    pl.m_product_id,
+    pr.name,pl.issotrx,
+    pr.weight,
+    pl.ad_client_id,
+    pl.ad_org_id
+ORDER BY 
+    DATE(pl.updated) DESC,
+    pr.name,pl.issotrx;
+
+    
+-- for login page title and image:
+
+-- Insert for ZK_BROWSER_TITLE
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000216, 0, 0, 'ZK_BROWSER_TITLE', 'WarePro', 'Custom Browser Title', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_BROWSER_TITLE'
+);
+
+-- Insert for ZK_APP_DESCRIPTION
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000217, 0, 0, 'ZK_APP_DESCRIPTION', 'WarePro is a large commercial building used for<br></br> the storage of goods materials', 'Custom Browser DESCRIPTION', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_APP_DESCRIPTION'
+);
+
+-- Insert for ZK_BROWSER_ICON
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000218, 0, 0, 'ZK_BROWSER_ICON', '~./theme/default/images/icon.png', 'Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_BROWSER_ICON'
+);
+
+-- Insert for ZK_LOGIN_ICON
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000219, 0, 0, 'ZK_LOGIN_ICON', '/images/warepro-logo.svg', 'Login Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_LOGIN_ICON'
+);
+
+-- Insert for FCM Notification
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000220, 0, 0, 'FCM_CONFIGURATION', 'FCM_CONFIGURATION', 'Login Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'FCM_CONFIGURATION'
+);
+
+-- Insert for ZK_LOGIN_ICON
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000221, 0, 0, 'LOGIN_PAGE_COLOUR', '#2563EB', 'Login Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'LOGIN_PAGE_COLOUR'
+);
+
+-- Insert for WAREHOUSE_3D_CONFIG_URL
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000222, 0, 0, 'WAREHOUSE_3D_CONFIG_URL', 'http://localhost:3000', 'WAREHOUSE_3D_CONFIG_URL', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'WAREHOUSE_3D_CONFIG_URL'
+);
+
+-- To add dashboard content
+
+-- Insert for Purchase
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000219, 0, 0, 'Purchase', 'Purchase', '/zul/rwplPurchase.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000219
+);
+
+-- Insert for Sales
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000220, 0, 0, 'Sales', 'Sales', '/zul/salesChart.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000220
+);
+
+-- Insert for Traceability
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000221, 0, 0, 'Traceability', 'Traceability', '/zul/traceability.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000221
+);
+
+-- Insert for Transactions Today
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000222, 0, 0, 'Transactions Today', 'Transactions Today', '/zul/transactions.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000222
+);
+
+-- Insert for Basic Stats
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000223, 0, 0, ' ', 'Basic Stats', '/zul/basicStats.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000223
+);
+
+-- Insert for Warehouse Selection
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000224, 0, 0, '  ', 'Warehouse selection dropdown for product and warehouse', '/zul/warehouseSelection.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000224
+);
+
+
+-- To Validate the user while login 
+-- keep TRUE for validation in login
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1001004, 0, 0, 'SUBSCRIPTION_VALIDATION', 'FALSE', 'API key secret for Razorpay', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'SUBSCRIPTION_VALIDATION'
+);
+
+
+              FCM Config:
+-------------------------------------------------------------------------------------------------------------------------------
+
+add FCM_CONFIGURATION in config
+ ** add fcm credential file as attatchment, which is added in https://docs.google.com/document/d/1Iuxw9vaa356PkqJZCCk9LD26Q1W71h7gotbXBZS-1Rg/edit
+
+ ALTER TABLE adempiere.m_product
+ADD COLUMN erpcode varchar(20);
+
+
+
+
+-- only add in client side
+-- add this columns IN client side server to store pass key which helpt in while login
+ALTER TABLE adempiere.AD_Client
+ADD COLUMN validFrom TIMESTAMP WITHOUT TIME ZONE,
+ADD COLUMN ValidTo TIMESTAMP WITHOUT TIME ZONE,
+ADD COLUMN passKey VARCHAR;
+
+-- for labelQnty and to add window and table
+
+ALTER TABLE adempiere.m_product ADD COLUMN labelQnty NUMERIC(10, 0);
+
+INSERT INTO adempiere.AD_Element ( AD_Element_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, Name, entitytype, columnname,
+printname, AD_Element_uu) SELECT  11000000,0, 0, 'Y', NOW(), 100, NOW(), 100, 'Label Qnty', 'D', 'labelqnty', 'Label Qnty', 'f47ac10b-58cc-4372-a567-0e02b2c3d479' WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_Element WHERE columnname = 'labelqnty'
+);
+
+INSERT INTO adempiere.AD_Column (AD_Column_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, Name,version, entitytype, columnname,
+ad_table_id, ad_reference_id, fieldlength, isKey, isParent, isMandatory, isupdateable, isidentifier, istranslated, isencrypted,
+isselectioncolumn, ad_element_id, issyncdatabase, isalwaysupdateable, isautocomplete,isallowlogging, isallowcopy, istoolbarbutton,
+issecure, ishtml, AD_Column_uu) SELECT 11000000, 0, 0, 'Y', NOW(), 100, NOW(), 100, 'Label Qnty', 0,'D', 'labelqnty', 208, 29, 10, 'N','N','N','Y','N',
+'N','N','N',11000000,'Y','Y','N','Y','Y','N','N','N', '9b1deb4d-30f6-4f1e-8a5c-6e2e4e5d6c6d'
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_Column WHERE columnname = 'labelqnty'
+);
+
+INSERT INTO adempiere.AD_Field (AD_Field_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, Name,iscentrallymaintained,
+ad_tab_id,ad_column_id, isdisplayed, displaylength, isreadonly, seqno, issameline, isheading, isfieldonly, isencrypted,
+entitytype, seqnogrid, isdisplayedgrid, xposition, numlines, columnspan, isquickentry, isadvancedfield, isdefaultfocus, isquickform, AD_Field_uu)
+SELECT 11000000, 0, 0, 'Y', NOW(), 100, NOW(), 100, 'Label Qnty', 'Y', 180, 11000000,'Y', 10, 'N', 660, 'N', 'N', 'N', 'N', 'D',650,
+'Y', 1, 1, 2, 'N', 'N', 'N', 'N', 'c9b1fe2f-3d8e-4c8e-bf3d-5e1b1d3e3a1f'
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_Field WHERE AD_Field_ID = 11000000
+);
+
+
+ALTER TABLE adempiere.m_product ADD COLUMN erpcode NUMERIC(10, 0);
+
+
+INSERT INTO adempiere.AD_Element ( AD_Element_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, Name, entitytype, columnname,
+printname, AD_Element_uu) SELECT  11000001,0, 0, 'Y', NOW(), 100, NOW(), 100, 'Erp Code', 'D', 'erpcode', 'Erp Code', 'f59eb9c9-1ce8-4225-8b0a-a4299a836911' WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_Element WHERE columnname = 'erpcode'
+);
+
+INSERT INTO adempiere.AD_Column (AD_Column_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, Name,version, entitytype, columnname,
+ad_table_id, ad_reference_id, fieldlength, isKey, isParent, isMandatory, isupdateable, isidentifier, istranslated, isencrypted,
+isselectioncolumn, ad_element_id, issyncdatabase, isalwaysupdateable, isautocomplete,isallowlogging, isallowcopy, istoolbarbutton,
+issecure, ishtml, AD_Column_uu) SELECT 11000001, 0, 0, 'Y', NOW(), 100, NOW(), 100, 'Erp Code', 0,'D', 'erpcode', 208, 29, 10, 'N','N','N','Y','N',
+'N','N','N',11000001,'Y','Y','N','Y','Y','N','N','N', '15042b5a-ff1f-4259-8b38-cfcb2851b282'
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_Column WHERE columnname = 'erpcode'
+);
+
+INSERT INTO adempiere.AD_Field (AD_Field_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, Name,iscentrallymaintained,
+ad_tab_id,ad_column_id, isdisplayed, displaylength, isreadonly, seqno, issameline, isheading, isfieldonly, isencrypted,
+entitytype, seqnogrid, isdisplayedgrid, xposition, numlines, columnspan, isquickentry, isadvancedfield, isdefaultfocus, isquickform,AD_Field_uu)
+SELECT 11000001, 0, 0, 'Y', NOW(), 100, NOW(), 100, 'Erp Code', 'Y', 180, 11000001,'Y', 10, 'N', 660, 'N', 'N', 'N', 'N', 'D',650,
+'Y', 1, 1, 2, 'N', 'N', 'N', 'N', 'cd11eebb-c855-4d3c-8323-f49efb7cb0ea'
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_Field WHERE AD_Field_ID = 11000001
+);
+
+
+ ALTER TABLE adempiere.c_order ADD COLUMN putstatus VARCHAR(25);
+
+-- MObile Apps config
+
+ ALTER TABLE adempiere.AD_Role ADD COLUMN purchaseOrder CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN materialReceipt CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN physicalInventory CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN saleOrder CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN shipmentCustomer CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN addInward CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN ispickbyorder CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ Alter table adempiere.ad_role add column mergeapp CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ Alter table adempiere.ad_role add column splitapp CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ Alter table adempiere.ad_role add column qcCheckApp CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+ -- Supervisor and Labour config
+ ALTER TABLE adempiere.AD_Role ADD COLUMN supervisor CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.ad_role ADD COLUMN labour CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+ ALTER TABLE adempiere.AD_Role ADD COLUMN labourPutaway CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN labourPicklist CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.ad_role ADD COLUMN labourInventorymove CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+ ALTER TABLE adempiere.AD_Role ADD COLUMN reserveLabel CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+-- locators config
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN dispatch CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN receiving CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN returns CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ALTER TABLE adempiere.M_LocatorType ADD COLUMN packing CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ALTER TABLE adempiere.M_LocatorType ADD COLUMN storage CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+
+-- status to handle material receipts/ shipments
+ALTER TABLE adempiere.m_inout ADD COLUMN pickStatus VARCHAR(255);
+
+
+
+-- Sales Plan Detail View
+CREATE OR REPLACE VIEW adempiere.sales_plan_detail_view AS
+SELECT spl.m_warehouse_id,spl.c_bpartner_id,pi.m_product_id,sp.salesplandate,
+SUM(pi.totalqnty) AS total_quantity,
+SUM(pi.completedqnty) AS completed_quantity,
+SUM(pi.totalqnty - pi.completedqnty) AS pending_quantity,
+CASE WHEN pi.totalqnty = pi.completedqnty THEN 'Completed'
+ELSE 'In Progress' END AS status,spl.ad_client_id,spl.ad_org_id,mpr.erpcode
+FROM adempiere.pi_salesplanline spl
+JOIN adempiere.pi_salesplan sp ON sp.pi_salesplan_id = spl.pi_salesplan_id
+JOIN adempiere.pi_planitem pi ON pi.pi_salesplanline_id = spl.pi_salesplanline_id
+JOIN adempiere.M_Product mpr ON mpr.M_Product_id = pi.M_product_id
+GROUP BY spl.m_warehouse_id,spl.c_bpartner_id,pi.m_product_id,sp.salesplandate,
+spl.ad_client_id,spl.ad_org_id,pi.totalqnty,pi.completedqnty,mpr.erpcode
+ORDER BY sp.salesplandate DESC,spl.m_warehouse_id,spl.c_bpartner_id,pi.m_product_id;
+
+
+
+CREATE OR REPLACE VIEW adempiere.pir_emptylocator AS
+SELECT l.m_locator_id,l.value AS locator_name,l.ad_client_id,l.ad_org_id
+FROM adempiere.m_locator l LEFT JOIN adempiere.pi_productlabel s ON l.m_locator_id = s.m_locator_id
+WHERE NOT (EXISTS ( SELECT 1 FROM adempiere.pi_productlabel pp_sales
+WHERE pp_sales.labeluuid = s.labeluuid AND pp_sales.issotrx = 'Y'))
+GROUP BY l.m_locator_id, l.value, s.ad_client_id, s.ad_org_id
+HAVING COALESCE(sum(s.quantity), 0) = 0 ORDER BY l.m_locator_id;
+
+-- to see storage detail in daily emial
+CREATE OR REPLACE VIEW adempiere.pi_inventoryviewforemail AS
+SELECT 
+    pr.m_product_category_id,
+    pp.m_product_id,
+    pr.erpcode,
+    SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availablecount,
+    pr.weight AS unitweight,
+    pr.weight * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitweight,
+    pr.value,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice
+FROM adempiere.pi_productlabel pp
+JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id 
+    AND pri.isactive = 'Y'
+WHERE NOT (EXISTS ( 
+    SELECT 1 FROM adempiere.pi_productlabel pp_sales
+    WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'
+))
+GROUP BY 
+    pp.m_product_id, pr.weight, pr.m_product_category_id, 
+    pr.erpcode, pr.value, pp.ad_client_id, pp.ad_org_id, pri.pricestd
+ORDER BY pp.m_product_id DESC;
+
+-- to see all existing labels in warehouse
+CREATE OR REPLACE VIEW adempiere.pi_productlabelviewOnlyLabel AS 
+SELECT p.m_product_id,lo.m_warehouse_id,p.m_locator_id,p.m_inoutline_id,p.c_orderline_id,o.c_order_id,p.labeluuid,
+p.quantity,p.qcpassed,p.issotrx,p.created,p.ad_client_id,p.ad_org_id
+FROM adempiere.pi_productlabel p 
+JOIN adempiere.m_locator lo ON lo.m_locator_id = p.m_locator_id
+JOIN adempiere.m_warehouse wh ON wh.m_warehouse_id = lo.m_warehouse_id 
+Left JOIN adempiere.c_orderline li ON li.c_orderline_id = p.c_orderline_id
+Left JOIN adempiere.c_order o ON o.c_order_id = li.c_order_id 
+WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = p.labeluuid AND pp_sales.issotrx = 'Y');
+
+
+-- to see empty locators
+CREATE OR REPLACE VIEW adempiere.pi_emptyLocatorView AS 
+SELECT l.m_locator_id,l.value AS locator_name,l.ad_client_id,l.ad_org_id
+FROM adempiere.m_locator l
+LEFT JOIN adempiere.pi_productlabel s ON l.m_locator_id = s.m_locator_id 
+WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = s.labeluuid AND pp_sales.issotrx = 'Y')
+GROUP BY l.m_locator_id, l.value,s.ad_client_id,s.ad_org_id
+HAVING COALESCE(SUM(s.quantity), 0) = 0 ORDER BY l.m_locator_id;
+
+
+-- Report for Hold & Release
+  CREATE OR REPLACE VIEW adempiere.pi_hold_release_report AS
+SELECT
+    pr.erpcode AS ERP_Code,
+    pr.name AS Material_Name,
+    loc.value AS Locator,
+    pl.quantity AS Quantity,
+    CASE 
+        WHEN pl.reserved = 'Y' THEN 'Hold'
+        WHEN pl.reserved = 'N' AND pl.reservedTo IS NOT NULL THEN 'Released'
+        ELSE 'Available'
+    END AS Hold_Status,
+    pl.reservedFrom AS Hold_Date,
+    pl.reservedTo AS Released_Date,
+    pl.remark AS Reason_for_Hold,
+    u.name AS Action_By,
+    org.name AS Organization,
+    wh.name AS Warehouse,
+    pl.ad_org_id,
+    wh.m_warehouse_id,
+    pl.m_product_id,
+    pr.erpcode AS filter_erpcode,
+    pl.reserved AS status_flag,
+    pl.ad_client_id
+FROM
+    adempiere.pi_productLabel pl
+JOIN
+    adempiere.m_product pr ON pl.m_product_id = pr.m_product_id
+JOIN
+    adempiere.m_locator loc ON pl.m_locator_id = loc.m_locator_id
+JOIN
+    adempiere.m_warehouse wh ON loc.m_warehouse_id = wh.m_warehouse_id
+JOIN
+    adempiere.ad_org org ON pl.ad_org_id = org.ad_org_id
+LEFT JOIN
+    adempiere.ad_user u ON pl.updatedby = u.ad_user_id
+WHERE
+    pl.isactive = 'Y'
+    AND (pl.reserved = 'Y' OR pl.reservedTo IS NOT NULL)
+ORDER BY
+    pl.reservedFrom DESC;
+    
+ -- Report for dispatch
+CREATE OR REPLACE VIEW adempiere.pi_dispatch_report_new AS
+SELECT
+    DATE(pl.updated) AS report_date,
+    pl.m_product_id,
+    pr.m_product_category_id,
+    o.c_bpartner_id,
+    SUM(pl.quantity) AS total_quantity, -- Changed to SUM to merge labels
+    pr.weight AS unit_weight_kg,
+    ROUND(SUM(pr.weight * pl.quantity)/1000, 3) AS total_weight_ton,
+    pl.ad_client_id,
+    pl.ad_org_id,
+    mi.documentno AS ReceiptNo,
+    pr.erpcode,
+    mml.value AS pickup_locator,
+    COALESCE(pri.pricestd, 0) AS unitprice, -- Added Unit Price
+    COALESCE(pri.pricestd, 0) * SUM(pl.quantity) AS totalunitprice, -- Added Total Price
+    o.description
+FROM
+    adempiere.pi_productlabel pl
+JOIN
+    adempiere.M_InOutLine il ON il.M_InOutLine_id = pl.M_InOutLine_id
+LEFT JOIN 
+    adempiere.m_locator mml ON mml.m_locator_id = pl.previouslocator
+JOIN
+    adempiere.M_InOut mi ON mi.M_InOut_id = il.M_InOut_id
+JOIN
+    adempiere.M_Product pr ON pr.M_Product_id = pl.M_product_id
+JOIN
+    adempiere.C_OrderLine ol ON ol.C_OrderLine_ID = pl.C_OrderLine_ID
+JOIN
+    adempiere.C_Order o ON o.C_Order_ID = ol.C_Order_ID
+-- Join to get a single active price per product
+LEFT JOIN (
+    SELECT DISTINCT ON (m_product_id) m_product_id, pricestd 
+    FROM adempiere.m_productprice 
+    WHERE isactive = 'Y' 
+    ORDER BY m_product_id, updated DESC
+) pri ON pri.m_product_id = pr.m_product_id
+WHERE pl.issotrx = 'Y'
+GROUP BY
+    DATE(pl.updated), -- Grouping by Date only
+    pl.m_product_id,
+    pr.m_product_category_id,
+    o.c_bpartner_id, 
+    pr.weight,
+    pl.ad_client_id,
+    pl.ad_org_id,
+    mi.documentno,
+    pr.erpcode,
+    mml.value,
+    pri.pricestd, -- Added for grouping
+    o.description
+ORDER BY
+    report_date DESC,
+    pr.m_product_category_id,
+    o.c_bpartner_id,
+    pl.m_product_id;
+
+
+
+
+-- Report for Inward
+
+CREATE OR REPLACE VIEW adempiere.pi_inward_report_new AS
+SELECT
+    DATE(mi.created) AS report_date, -- Using MovementDate for business accuracy
+    il.M_Product_ID,
+    pr.M_Product_Category_ID,
+    SUM(il.QtyEntered) AS total_quantity,
+    pr.Weight AS unit_weight_kg,
+    ROUND(SUM(pr.Weight * il.QtyEntered)/1000, 3) AS total_weight_ton,
+    il.AD_Client_ID,
+    il.AD_Org_ID,
+    mi.DocumentNo AS ReceiptNo,
+    pr.erpcode, -- In standard iDempiere, 'Value' is the Search Key/ERP Code
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * SUM(il.QtyEntered) AS totalunitprice,
+    mi.Description AS Reference_Number
+FROM
+    adempiere.M_InOutLine il
+JOIN
+    adempiere.M_InOut mi ON mi.M_InOut_ID = il.M_InOut_ID
+JOIN
+    adempiere.M_Product pr ON pr.M_Product_ID = il.M_Product_ID
+LEFT JOIN (
+    -- Subquery to fetch the latest price
+    SELECT DISTINCT ON (M_Product_ID) M_Product_ID, PriceStd 
+    FROM adempiere.M_ProductPrice 
+    WHERE IsActive = 'Y' 
+    ORDER BY M_Product_ID, Updated DESC
+) pri ON pri.M_Product_ID = il.M_Product_ID
+WHERE 
+    mi.IsSOTrx = 'N'             -- 'N' ensures this is an Inward (Material Receipt)
+    AND mi.DocStatus IN ('CO', 'CL') -- Optional: Filter for Completed or Closed documents
+GROUP BY
+    DATE(mi.created),
+    il.M_Product_ID,
+    pr.M_Product_Category_ID,
+    pr.Weight,
+    il.AD_Client_ID,
+    il.AD_Org_ID,
+    mi.DocumentNo,
+    pr.erpcode,
+    pri.pricestd,
+    mi.Description
+ORDER BY
+    report_date DESC,
+    pr.M_Product_Category_ID,
+    il.M_Product_ID;
+
+    
+-- damage report
+
+CREATE OR REPLACE VIEW adempiere.pi_damage_report AS 
+SELECT 
+    pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name AS uom,
+    pr.erpcode,
+    pbom.PP_Product_BOM_ID,
+    SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availableCount,
+    pr.weight AS unitWeight,
+    pr.weight * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalUnitWeight,
+    DATE(pp.updated) AS report_date,
+    pr.value,
+    pr.created AS m_product_created,
+    pr.createdby AS m_product_createdby,
+    pr.updated AS m_product_updated,
+    pr.updatedby AS m_product_updatedby,
+    pr.isactive AS product_isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    mml.value AS pickup_locator,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice
+FROM 
+    adempiere.pi_productlabel pp
+    JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
+    LEFT JOIN adempiere.PP_Product_BOM pbom ON pbom.m_product_id = pr.m_product_id
+    LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+    LEFT JOIN adempiere.m_locator mml ON mml.m_locator_id = pp.previouslocator
+    LEFT JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+    JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+    JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+    -- Join to Product Price
+    LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id 
+        AND pri.isactive = 'Y'
+WHERE 
+    NOT EXISTS (
+        SELECT 1 
+        FROM adempiere.pi_productlabel pp_sales 
+        WHERE pp_sales.labeluuid = pp.labeluuid 
+        AND pp_sales.issotrx = 'Y'
+    )
+    AND ltt.returns = 'Y'
+GROUP BY 
+    pp.m_product_id, pr.weight, uom.name, pp.ad_client_id, pp.ad_org_id, 
+    pr.isactive, pr.m_product_category_id, pr.erpcode, pbom.PP_Product_BOM_ID, 
+    pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pp.updated, 
+    mml.value, pri.pricestd
+ORDER BY 
+       DATE(pp.updated) DESC;
+    
+
+-- common report
+CREATE OR REPLACE VIEW adempiere.pi_common_report AS
+SELECT DATE(pl.updated) AS report_date,pr.m_product_category_id,pl.m_product_id,pl.ad_client_id,pl.ad_org_id,
+    SUM(CASE WHEN pl.issotrx = 'N' THEN pl.quantity ELSE 0 END) AS inward_qty,
+    SUM(CASE WHEN pl.issotrx = 'Y' THEN pl.quantity ELSE 0 END) AS dispatch_qty,
+    SUM(
+        CASE 
+            WHEN ltt.returns = 'Y' 
+                 AND NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel ps WHERE ps.labeluuid = pl.labeluuid AND ps.issotrx = 'Y')
+            THEN pl.quantity 
+            ELSE 0 
+        END
+    ) AS damage_qty,
+   SUM(
+        CASE 
+            WHEN ltt.returns = 'N' 
+                 AND NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel ps WHERE ps.labeluuid = pl.labeluuid AND ps.issotrx = 'Y')
+            THEN pl.quantity 
+            ELSE 0 
+        END
+    ) AS stock_qty,
+pr.weight AS unitWeight,COALESCE(mpp_purchase.pricelist, 0) AS purchase_pricelist,
+COALESCE(mpp_sales.pricelist, 0) AS sales_pricelist, pr.erpcode FROM adempiere.pi_productlabel pl 
+JOIN adempiere.m_product pr ON pr.m_product_id = pl.m_product_id
+LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pl.m_locator_id
+LEFT JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+LEFT JOIN adempiere.m_productprice mpp_purchase ON mpp_purchase.m_product_id = pr.m_product_id AND mpp_purchase.m_pricelist_version_id = 1000000
+LEFT JOIN adempiere.m_productprice mpp_sales ON mpp_sales.m_product_id = pr.m_product_id AND mpp_sales.m_pricelist_version_id = 1000001
+GROUP BY DATE(pl.updated),pr.m_product_category_id,pl.m_product_id,
+pl.ad_client_id,pl.ad_org_id,pr.weight,mpp_purchase.pricelist,mpp_sales.pricelist,pr.erpcode
+ORDER BY DATE(pl.updated) DESC,pr.m_product_category_id,pl.m_product_id;
+
+ --updating storage detail by product report, excluding returns type products from stock
+
+
+CREATE OR REPLACE VIEW adempiere.pi_productlabelViewByProduct AS 
+SELECT 
+    pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name AS uom,
+    pr.erpcode,
+    pbom.PP_Product_BOM_ID,
+    SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availableCount,
+    pr.weight AS unitWeight,
+    pr.weight * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalUnitWeight,
+    pr.value,
+    pr.created AS m_product_created,
+    pr.createdby AS m_product_createdby,
+    pr.updated AS m_product_updated,
+    pr.updatedby AS m_product_updatedby,
+    pr.isactive AS product_isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    pp.m_inoutline_id, -- New Column
+    mio.documentno AS m_inout_docno,
+    mio.movementdate AS m_inout_date,
+    COALESCE(pri.pricestd, 0) AS unitprice,COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice
+FROM adempiere.pi_productlabel pp 
+JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id 
+LEFT JOIN adempiere.PP_Product_BOM pbom ON pbom.m_product_id = pr.m_product_id
+LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id 
+LEFT JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id 
+JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+-- New Joins for Document No and Date
+LEFT JOIN adempiere.m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+LEFT JOIN adempiere.m_inout mio ON mio.m_inout_id = miol.m_inout_id
+LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id 
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.pi_productlabel pp_sales 
+    WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'
+) 
+AND ltt.returns = 'N'
+GROUP BY 
+    pp.m_product_id,
+    pr.weight,
+    uom.name,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    pr.isactive,
+    pr.m_product_category_id,
+    pr.erpcode,
+    pbom.PP_Product_BOM_ID,
+    pr.value,
+    pr.created,
+    pr.createdby,
+    pr.updated,
+    pr.updatedby,
+    pp.m_inoutline_id, -- Added to Group By
+    mio.documentno,    -- Added to Group By
+    mio.movementdate , pri.pricestd
+ORDER BY pp.m_product_id DESC;
+
+ --updating storage detail by locator report, excluding returns type products from stock
+
+
+CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS 
+SELECT 
+    w.m_warehouse_id,
+    pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name AS uom,
+    pr.erpcode,
+    pbom.PP_Product_BOM_ID,
+    l.m_locatortype_id,
+    pp.m_locator_id,
+    SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availableCount,
+    pr.weight AS unitWeight,
+    pr.weight * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalUnitWeight,
+    pr.value,
+    pr.created AS m_product_created,
+    pr.createdby AS m_product_createdby,
+    pr.updated AS m_product_updated,
+    pr.updatedby AS m_product_updatedby,
+    pr.isactive AS product_isactive,
+    l.isactive AS locator_isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    -- Added 4 New Columns
+    pp.m_inoutline_id,
+    mio.documentno AS m_inout_docno,
+    mio.movementdate AS m_inout_date,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice
+FROM adempiere.pi_productlabel pp 
+JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id 
+-- Subquery to prevent quantity multiplication from multiple BOMs
+LEFT JOIN (
+    SELECT DISTINCT ON (m_product_id) m_product_id, PP_Product_BOM_ID 
+    FROM adempiere.PP_Product_BOM 
+    WHERE isactive = 'Y'
+) pbom ON pbom.m_product_id = pr.m_product_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id 
+JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id 
+JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id 
+JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+-- New Joins for Document Details
+LEFT JOIN adempiere.m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+LEFT JOIN adempiere.m_inout mio ON mio.m_inout_id = miol.m_inout_id
+-- Subquery to prevent quantity multiplication from multiple Price Lists
+LEFT JOIN (
+    SELECT DISTINCT ON (m_product_id) m_product_id, pricestd 
+    FROM adempiere.m_productprice 
+    WHERE isactive = 'Y' 
+    ORDER BY m_product_id, updated DESC
+) pri ON pri.m_product_id = pr.m_product_id 
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.pi_productlabel pp_sales 
+    WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'
+) 
+AND ltt.returns = 'N'
+GROUP BY 
+    w.m_warehouse_id,
+    pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name,
+    pr.erpcode,
+    pbom.PP_Product_BOM_ID,
+    l.m_locatortype_id,
+    pp.m_locator_id,
+    pr.weight,
+    pr.value,
+    pr.created,
+    pr.createdby,
+    pr.updated,
+    pr.updatedby,
+    pr.isactive,
+    l.isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    pp.m_inoutline_id,
+    mio.documentno,
+    mio.movementdate,
+    pri.pricestd
+ORDER BY pp.m_locator_id DESC;
+
+
+CREATE TABLE adempiere.pi_salesplan (
+    pi_salesplan_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    salesplandate timestamp without time zone,
+    description VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    status VARCHAR(255),
+    pi_salesplan_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id));
+
+
+CREATE TABLE adempiere.pi_salesplanline (
+    pi_salesplanline_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    c_bpartner_ID NUMERIC(10, 0) NOT NULL,
+    pi_salesplan_ID Integer,
+    pi_salesplanline_UU varchar(50),
+    m_warehouse_ID NUMERIC(10, 0) NOT NULL,
+    description VARCHAR(255),
+    status VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (c_bpartner_ID) REFERENCES adempiere.c_bpartner(c_bpartner_ID),
+    FOREIGN KEY (m_warehouse_ID) REFERENCES adempiere.m_warehouse(m_warehouse_ID),
+    FOREIGN KEY (pi_salesplan_ID) REFERENCES adempiere.pi_salesplan(pi_salesplan_ID));
+
+    ALTER TABLE adempiere.pi_salesplanline ADD COLUMN m_warehouse_id NUMERIC(10,0) ;
+ALTER TABLE adempiere.pi_salesplanline
+ADD CONSTRAINT pi_salesplanline_m_warehouse_id_fkey
+FOREIGN KEY (m_warehouse_id)
+REFERENCES adempiere.m_warehouse(m_warehouse_id);
+
+  CREATE TABLE adempiere.pi_planitem (
+    pi_planitem_id numeric(10,0) NOT NULL,
+    ad_client_id numeric(10,0) NOT NULL,
+    ad_org_id numeric(10,0) NOT NULL,
+    created timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone DEFAULT adempiere.getdate() NOT NULL,
+    updatedby numeric(10,0) NOT NULL,
+    pi_salesplanline_id numeric(10,0) DEFAULT NULL::numeric,
+    m_product_id numeric(10,0) DEFAULT NULL::numeric,
+    totalqnty numeric,
+    completedqnty numeric,
+    pi_planitem_uu character varying(50) DEFAULT NULL::character varying,
+    isactive character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    description character varying(255) DEFAULT NULL::character varying,
+    FOREIGN KEY (pi_salesplanline_id) REFERENCES adempiere.pi_salesplanline(pi_salesplanline_id),
+    FOREIGN KEY (m_product_id) REFERENCES adempiere.m_product(m_product_id)
+);
+-- not included in packout
+ ALTER TABLE adempiere.M_Locator ADD COLUMN height NUMERIC(10, 0);
+ ALTER TABLE adempiere.M_Locator ADD COLUMN depth NUMERIC(10, 0);
+ ALTER TABLE adempiere.M_Locator ADD COLUMN width NUMERIC(10, 0);
+ ALTER TABLE adempiere.M_Locator ADD COLUMN weight NUMERIC(10, 0);
+
+ ALTER TABLE adempiere.M_Locator ADD COLUMN weightConstraint CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
+CREATE TABLE adempiere.pi_import (
+    pi_import_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    
+    processing character varying(2),
+
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    pi_import_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id));
+
+
+CREATE TABLE adempiere.pi_importline (
+    pi_importline_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    
+    pi_productLabel_ID Integer,
+    pi_import_ID Integer,
+
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    pi_importline_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (pi_productLabel_ID) REFERENCES adempiere.pi_productLabel(pi_productLabel_ID),
+    FOREIGN KEY (pi_import_ID) REFERENCES adempiere.pi_import(pi_import_ID));
+
+
+
+
+
+
+not using:
+
+for printer config
+
+CREATE TABLE adempiere.pi_printerconfig (
+    pi_printerconfig_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    pi_printerconfig_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    name VARCHAR(25) NOT NULL,value varchar(25) NOT NULL,
+    created TIMESTAMP without time zone DEFAULT now() not null,
+    createdby numeric(10,0) not null,
+    updated TIMESTAMP without time zone DEFAULT now() not null,
+    updatedby NUMERIC(10,0) not null,
+    description VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    height Numeric(25),
+    width Numeric(20),
+    script Text
+    );
+
+
+
+client points:
+old DB rwpl is used for packout
+
+default sizes in cms:
+
+ for bins
+  height = 120
+  width = 80
+  depth = 120
+
+for products
+  height = 3
+  width = 100
+  depth = 100
+
+
+
+
+  Dashboard Widgets:
+   1. Basic Stats
+   2. Purchase Chart & Counts for Today
+   3. Sales Chart & Counts for Today
+   4. Transactions Today
+   5. Traceability (for Product Labels)
+   6. 3D Layout
+
+  Dashboard Reports: (All reports can be downloaded as csv or pdf or html)
+   1. Product Label View (All existing labels in warehouse)
+   2. Storage Detail by product
+   3. Storage Detail by Locator
+   4. Order Detail Report works for below (filters: date range and product and business partner)
+      a. purchase order
+      b. sales order
+      c. material receipt
+      d. shipment customer
+      e. physical inventory report

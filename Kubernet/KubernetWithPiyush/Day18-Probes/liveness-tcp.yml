@@ -27,4 +27,3 @@ spec:
 # If the socket is not open, the liveness probe will fail.
 
 # If both port is different then time pod restarts
-

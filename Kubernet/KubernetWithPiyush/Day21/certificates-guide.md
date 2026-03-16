@@ -138,8 +138,8 @@ kubectl config use-context john@kubernetes --kubeconfig=john.kubeconfig
 # Complete user certificate setup
 ---
 # 1. Generate key and CSR (bash)
-# openssl genrsa -out alice.key 2048
-# openssl req -new -key alice.key -out alice.csr -subj "/CN=alice/O=admins"
+openssl genrsa -out alice.key 2048
+openssl req -new -key alice.key -out alice.csr -subj "/CN=alice/O=admins"
 
 # 2. Create CSR in Kubernetes
 apiVersion: certificates.k8s.io/v1

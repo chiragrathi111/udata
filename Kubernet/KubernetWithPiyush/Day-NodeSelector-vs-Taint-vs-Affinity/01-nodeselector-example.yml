@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-nodeselector
+spec:
+  nodeSelector:
+    disktype: ssd
+  containers:
+  - name: mysql
+    image: mysql:8.0
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: "rootpass"
+    ports:
+    - containerPort: 3306
+
+# Commands:-
+# Step 1: Label the node
+# kubectl label nodes <node-name> disktype=ssd
+
+# Step 2: Apply pod
+# kubectl apply -f 01-nodeselector-example.yml
+
+# Step 3: Check where pod is running
+# kubectl get pods -o wide
+
+# Step 4: If no node has label, pod will be PENDING
+# kubectl describe pod mysql-nodeselector
+
+# Remove label:
+# kubectl label nodes <node-name> disktype-

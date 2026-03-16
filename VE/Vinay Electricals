@@ -1,0 +1,757 @@
+Vinay Electricals
+------------------
+
+- sales return will be used as purchase
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Queries to create required tables: ----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-- for dept acess
+ 
+  CREATE TABLE adempiere.pi_deptartment (
+    pi_deptartment_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    description varchar(255),
+    deptName varchar(255),
+    packingModule CHAR(1) not null DEFAULT 'N'::bpchar,
+
+    receiptTransferDepartment Integer,
+    -- subDepartment CHAR(1) not null DEFAULT 'N'::bpchar,
+    manufacturingModule CHAR(1) not null DEFAULT 'N'::bpchar,
+    dispatch CHAR(1) not null DEFAULT 'N'::bpchar,
+    pcknginrecivn CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (receiptTransferDepartment) REFERENCES adempiere.pi_deptartment(pi_deptartment_ID));
+
+    CREATE TABLE adempiere.pi_machineconf (
+    pi_machineconf_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    pi_machineconf_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    name varchar(25) NOT NULL,value varchar(25),
+    serialNumber NUMERIC(10, 0) NOT NULL,
+    created TIMESTAMP without time zone DEFAULT now() not null,
+    createdby numeric(10,0) not null,
+    updated TIMESTAMP without time zone DEFAULT now() not null,
+    updatedby NUMERIC(10,0) not null,
+    description VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar
+);
+
+-- table for product labels
+
+   CREATE TABLE adempiere.pi_orderreceipt (
+    pi_orderreceipt_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    description varchar(255),
+    pp_order_ID NUMERIC(10, 0) NOT NULL,
+    m_product_ID NUMERIC(10, 0) NOT NULL,
+    pi_deptartment_ID Integer NOT NULL,
+    m_locator_ID NUMERIC(10,0),
+    receiptStatus VARCHAR(25),
+    quantity NUMERIC,
+    deptTransfered CHAR(1) not null DEFAULT 'N'::bpchar,
+    processed CHAR(1) not null DEFAULT 'N'::bpchar,
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (pp_order_ID) REFERENCES adempiere.pp_order(pp_order_ID),
+    FOREIGN KEY (m_product_ID) REFERENCES adempiere.m_product(m_product_ID),
+    FOREIGN KEY (m_locator_ID) REFERENCES adempiere.m_locator(m_locator_ID),
+    FOREIGN KEY (pi_deptartment_ID) REFERENCES adempiere.pi_deptartment(pi_deptartment_ID));
+
+ CREATE TABLE adempiere.pi_labeltype (
+    pi_labeltype_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    labelType varchar(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id));
+
+    CREATE TABLE adempiere.pi_productLabel (
+    pi_productLabel_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    parentLabel INTEGER,
+    pi_labeltype_ID Integer, 
+    rePacked CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+    finaldispatch CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+    qcPassed CHAR(1) not null DEFAULT 'Y'::bpchar,
+    quantity NUMERIC,
+    m_product_ID NUMERIC(10,0),
+    m_locator_ID NUMERIC(10,0),
+    c_orderline_ID NUMERIC(10,0) NULL,
+    m_inoutline_ID NUMERIC(10,0) NULL,
+    pp_order_id NUMERIC(10,0) NULL,
+    pi_paorder_ID NUMERIC(10,0) NULL,
+    pi_orderreceipt_ID Integer,
+    issotrx CHAR(1) not null DEFAULT 'N'::bpchar,
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    ismanufacturing CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+    labelUUId varchar(255),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (m_product_ID) REFERENCES adempiere.m_product(m_product_id),
+    FOREIGN KEY (m_locator_ID) REFERENCES adempiere.m_locator(m_locator_ID),
+    FOREIGN KEY (c_orderline_ID) REFERENCES adempiere.c_orderline(c_orderline_id),
+    FOREIGN KEY (m_inoutline_ID) REFERENCES adempiere.m_inoutline(m_inoutline_id),
+    FOREIGN KEY (parentLabel) REFERENCES adempiere.pi_productLabel(pi_productLabel_ID),
+    FOREIGN KEY (pp_order_id) REFERENCES adempiere.pp_order(pp_order_id),
+    FOREIGN KEY (pi_paorder_ID) REFERENCES adempiere.pi_paorder(pi_paorder_ID),
+    FOREIGN KEY (pi_orderreceipt_ID) REFERENCES adempiere.pi_orderreceipt(pi_orderreceipt_ID),
+    FOREIGN KEY (pi_labeltype_ID) REFERENCES adempiere.pi_labeltype(pi_labeltype_ID));
+
+
+  -- for creating assembly and packing order in switch and socket departmet
+     CREATE TABLE adempiere.pi_paorder (
+    pi_paorder_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    m_product_ID NUMERIC(10,0),
+    description VARCHAR(255),
+    status VARCHAR(255),
+    contractor numeric(10,0) NOT NULL,
+    quantity NUMERIC,
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    processed CHAR(1) not null DEFAULT 'N'::bpchar,
+    packingOrder CHAR(1) not null DEFAULT 'Y'::bpchar,
+    pi_deptartment_ID Integer,
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (m_product_ID) REFERENCES adempiere.m_product(m_product_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (contractor) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (pi_deptartment_ID) REFERENCES adempiere.pi_deptartment(pi_deptartment_ID));
+
+
+    CREATE TABLE adempiere.pi_return (
+    pi_return_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    description VARCHAR(255),
+    status VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    C_BPartner_ID Integer,
+    pi_return_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (C_BPartner_ID) REFERENCES adempiere.C_BPartner(C_BPartner_ID));
+
+
+    CREATE TABLE adempiere.pi_returnline (
+    pi_returnline_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    description VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    m_product_ID Integer,
+    pi_return_ID Integer,
+    qtytotal NUMERIC,
+    qtyissued NUMERIC,
+    pi_returnline_UU varchar(50),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (m_product_ID) REFERENCES adempiere.m_product(m_product_ID),
+    FOREIGN KEY (pi_return_ID) REFERENCES adempiere.pi_return(pi_return_ID));
+
+ --for mfg:
+
+-- org.idempiere.mfg:
+-- https://github.com/pshepetko/org.idempiere.mfg
+
+
+-- To run libero manufacturing plugin, these changes is required
+
+ALTER TABLE adempiere.PP_Order_BOMLine RENAME COLUMN QtyRequiered TO QtyRequired;
+UPDATE adempiere.AD_Element SET columnname = 'QtyRequired' WHERE AD_Element_id = 53288;
+UPDATE adempiere.AD_Column SET columnname = 'QtyRequired' WHERE AD_Column_id = 53584;
+
+UPDATE adempiere.ad_viewcolumn SET columnsql ='round(obl.qtyrequired, 4)' , columnname = 'QtyRequired' where ad_viewcomponent_id=200164 and columnname = 'QtyRequiered';
+
+UPDATE adempiere.ad_viewcolumn SET columnsql = 'CASE WHEN o.qtybatchs = 0 THEN 1 ELSE round(obl.qtyrequired / o.qtybatchs, 4) END' where ad_viewcolumn_id=215723 and columnname = 'QtyBatchSize';
+
+UPDATE adempiere.ad_viewcolumn SET columnsql ='obl.qtyrequired' , columnname = 'QtyRequired' where ad_viewcolumn_id=215693 and columnname = 'QtyRequiered';
+
+-- for mfg libero proces
+UPDATE adempiere.AD_Process 
+ SET classname ='org.libero'||SUBSTRING(classname,15,70)
+ WHERE SUBSTRING(classname,0,15) = 'org.eevolution';
+
+ UPDATE adempiere.AD_Form 
+ SET classname ='org.libero'||SUBSTRING(classname,15,70)
+ WHERE SUBSTRING(classname,0,15) = 'org.eevolution';
+ 
+ UPDATE adempiere.AD_Column  SET callout = null
+ WHERE SUBSTRING(callout,0,21) = 'org.eevolution.model';
+
+ DROP VIEW adempiere.RV_PP_Order_Storage CASCADE;
+
+ 
+ -- To capture machine no in manufacturing order
+
+  ALTER TABLE adempiere.pp_order ADD COLUMN pi_deptartment_ID Integer;
+ALTER TABLE adempiere.pp_order ADD CONSTRAINT pp_order_pi_deptartment_ID_fkey FOREIGN KEY (pi_deptartment_ID)
+ REFERENCES adempiere.pi_deptartment(pi_deptartment_ID);
+
+ALTER TABLE adempiere.PP_Order ADD COLUMN  machineNo NUMERIC(10,0);
+ALTER TABLE adempiere.PP_Order ADD COLUMN orderGroup VARCHAR(255);
+ALTER TABLE adempiere.PP_Order ADD COLUMN status VARCHAR(25);
+ALTER TABLE adempiere.pp_order ADD COLUMN ismanufacturing CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ALTER TABLE adempiere.PP_Order ADD COLUMN  wireLength NUMERIC(10,0);
+
+
+
+ -- To add department  for user
+ALTER TABLE adempiere.ad_user ADD COLUMN pi_deptartment_ID Integer;
+ALTER TABLE adempiere.ad_user ADD CONSTRAINT ad_user_pi_deptartment_ID_fkey FOREIGN KEY (pi_deptartment_ID)
+ REFERENCES adempiere.pi_deptartment(pi_deptartment_ID);
+
+ALTER TABLE adempiere.ad_user ADD COLUMN deptHead CHAR(1) not null DEFAULT 'N'::bpchar;
+ALTER TABLE adempiere.ad_user ADD COLUMN deptAgent CHAR(1) not null DEFAULT 'N'::bpchar;
+ 
+ALTER TABLE adempiere.c_order ADD COLUMN pi_deptartment_ID Integer;
+ALTER TABLE adempiere.c_order ADD CONSTRAINT c_order_pi_deptartment_ID_fkey FOREIGN KEY (pi_deptartment_ID)
+ REFERENCES adempiere.pi_deptartment(pi_deptartment_ID);
+ 
+ ALTER TABLE adempiere.c_order ADD COLUMN putstatus VARCHAR(25);
+
+ ALTER TABLE adempiere.m_product ADD COLUMN pi_deptartment_ID Integer;
+ALTER TABLE adempiere.m_product ADD CONSTRAINT m_product_pi_deptartment_ID_fkey FOREIGN KEY (pi_deptartment_ID)
+ REFERENCES adempiere.pi_deptartment(pi_deptartment_ID);
+
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN pi_deptartment_ID Integer;
+ALTER TABLE adempiere.M_LocatorType ADD CONSTRAINT M_LocatorType_pi_deptartment_ID_fkey FOREIGN KEY (pi_deptartment_ID)
+ REFERENCES adempiere.pi_deptartment(pi_deptartment_ID);
+
+
+ALTER TABLE adempiere.m_product
+Add COLUMN IF not EXISTS scanLabel CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN dispatch CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN receiving CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.M_LocatorType ADD COLUMN returns CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ALTER TABLE adempiere.M_LocatorType ADD COLUMN packing CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ALTER TABLE adempiere.M_LocatorType ADD COLUMN storage CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+
+ALTER TABLE adempiere.c_order
+ADD COLUMN iscourier CHAR(1) not null DEFAULT 'N'::bpchar;
+
+ ALTER TABLE adempiere.C_Order ADD COLUMN isMobileOrder CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
+ ALTER TABLE adempiere.AD_Role ADD COLUMN purchaseOrder CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN materialReceipt CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN physicalInventory CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN saleOrder CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN shipmentCustomer CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN addInward CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.ad_role ADD COLUMN ispickbyorder CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;4
+ Alter table adempiere.ad_role add column qcCheckApp CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ 
+ ALTER TABLE adempiere.AD_Role ADD COLUMN labourPutaway CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN labourPicklist CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.ad_role ADD COLUMN labourInventorymove CHAR(1) NOT NULL DEFAULT 'Y'::bpchar;
+ ALTER TABLE adempiere.ad_role ADD COLUMN finaldispatchapp CHAR(2) not null DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.ad_role ADD COLUMN supervisorPutaway CHAR(2) not null DEFAULT 'N'::bpchar;
+
+ALTER TABLE adempiere.ad_role ADD COLUMN courierapp CHAR(1) not null DEFAULT 'N'::bpchar;
+
+ALTER TABLE adempiere.ad_role
+ADD COLUMN IF NOT EXISTS productionSupervisor CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS assemblySupervisor CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS lightSupervisor CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS mouldingswitchreceiptreceiving CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS fgswitchassemblyreceiving CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS automationSupervisor CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+
+ADD COLUMN IF NOT EXISTS rmWireSupervisor CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS fgWireSupervisor CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS poReceivingApp CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+
+
+ADD COLUMN IF NOT EXISTS packagingAssembly CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS mouldingAssembly CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+
+ADD COLUMN IF NOT EXISTS packagingAgentAssembly CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN IF NOT EXISTS rmswitch CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
+ALTER TABLE adempiere.pi_paorder 
+ADD COLUMN isrmpicked CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+ADD COLUMN isautomation CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+ ALTER TABLE adempiere.AD_Role ADD COLUMN packagingJatin CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN packagingSatish CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ ALTER TABLE adempiere.AD_Role ADD COLUMN packagingPranshu CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+ 
+
+-- ADD COLUMN IF NOT EXISTS lightAgent CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS rmWireDrawing CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS rmWireTwisting CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS rmWireInsulation CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS rmWireCoiling CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS brassAssembly CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS automationAgent CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS assemblyswitchagent CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+-- ADD COLUMN IF NOT EXISTS productionswitchagent CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
+ALTER TABLE adempiere.m_product ADD COLUMN  productCount NUMERIC(10,0);
+ALTER TABLE adempiere.m_product ADD COLUMN  boxQnty NUMERIC(10,0);
+
+ALTER TABLE adempiere.m_inout ADD COLUMN pickStatus VARCHAR(255);
+ALTER TABLE adempiere.m_inout ADD COLUMN marking VARCHAR(255);
+
+ALTER TABLE adempiere.ad_user
+ADD COLUMN IF NOT EXISTS contractor CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+-----
+*Note:
+ -----
+** In ve_label table, for column parentLabel change reference Key to Table & create new reference name as parentLabel and validation type should be table validation & create new table validation, table is ve_label_ve_label , key column is ve_label__id, display column is labelUUid, now add this reference key in table.
+** In window creation for Product Label, in child label tab parent_column should be ve_label_ID and Link_Column should be parent_label
+
+
+To Validate the user while login
+-------------------------------------------------------------------------------------------------------------------------
+ 
+-- keep TRUE for validation in login
+
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1001004, 0, 0, 'SUBSCRIPTION_VALIDATION', 'FALSE', 'API key secret for Razorpay', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'SUBSCRIPTION_VALIDATION'
+);
+
+-- only add in client side
+-- add this columns IN client side server to store pass key which helpt in while login
+ALTER TABLE adempiere.AD_Client
+ADD COLUMN validFrom TIMESTAMP WITHOUT TIME ZONE,
+ADD COLUMN validUpto TIMESTAMP WITHOUT TIME ZONE,
+ADD COLUMN userPassKey VARCHAR;
+
+--------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+  For Browser Settings and logos:
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ In system_configurator
+  1. for name change in login page and browser tittle
+      name: ZK_BROWSER_TITLE
+      Configured Value: WarePro
+  
+  2. for browser icon
+      name: ZK_BROWSER_ICON
+      Configured Value: ~./theme/default/images/icon.png
+
+  3. for icon which is same as 5th one, but will used in diff locations
+      name: ZK_LOGIN_ICON
+      Configured Value: /images/warepro-logo.svg
+
+  4. for app description:
+      name: ZK_APP_DESCRIPTION
+      Configured Value: WarePro is a large commericial building used for<br></br> the storage of goods materials
+
+
+-- query:
+
+-- Insert for ZK_BROWSER_TITLE
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000216, 0, 0, 'ZK_BROWSER_TITLE', 'WarePro', 'Custom Browser Title', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_BROWSER_TITLE'
+);
+
+-- Insert for ZK_APP_DESCRIPTION
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000217, 0, 0, 'ZK_APP_DESCRIPTION', 'WarePro is a large commercial building used for<br></br> the storage of goods materials', 'Custom Browser DESCRIPTION', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_APP_DESCRIPTION'
+);
+
+-- Insert for ZK_BROWSER_ICON
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000218, 0, 0, 'ZK_BROWSER_ICON', '~./theme/default/images/icon.png', 'Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_BROWSER_ICON'
+);
+
+-- Insert for ZK_LOGIN_ICON
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000219, 0, 0, 'ZK_LOGIN_ICON', '/images/warepro-logo.svg', 'Login Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'ZK_LOGIN_ICON'
+);
+
+-- Insert for FCM Notification
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000220, 0, 0, 'FCM_CONFIGURATION', 'FCM_CONFIGURATION', 'Login Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'FCM_CONFIGURATION'
+);
+
+-- Insert for ZK_LOGIN_ICON
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000221, 0, 0, 'LOGIN_PAGE_COLOUR', '#2563EB', 'Login Icon', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'LOGIN_PAGE_COLOUR'
+);
+
+
+-- Insert for REST_TOKEN_SECRET
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000222, 0, 0, 'REST_TOKEN_SECRET', 'VinaySecret', 'REST TOKEN SECRET', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'REST_TOKEN_SECRET'
+);
+
+-- Insert for REST_TOKEN_KEY_ID
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000223, 0, 0, 'REST_TOKEN_KEY_ID', 'VinayKeyId', 'REST TOKEN KEY ID', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'REST_TOKEN_KEY_ID'
+);
+
+-- Insert for REST_TOKEN_ISSUER
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000224, 0, 0, 'REST_TOKEN_ISSUER', 'Vinay Token Issuer', 'REST TOKEN ISSUER', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'REST_TOKEN_ISSUER'
+);
+
+-- Insert for REST_TOKEN_EXPIRE_IN_MINUTES
+INSERT INTO adempiere.AD_SysConfig (AD_SysConfig_ID, AD_Client_ID, AD_Org_ID, Name, Value, Description, IsActive, Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000225, 0, 0, 'REST_TOKEN_EXPIRE_IN_MINUTES', '1440', 'REST TOKEN EXPIRE INMINUTES', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.AD_SysConfig WHERE Name = 'REST_TOKEN_EXPIRE_IN_MINUTES'
+);
+
+-- To add dashboard content
+
+-- Insert for Sales
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000220, 0, 0, 'Sales', 'Sales', '/zul/salesChart.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000220
+);
+
+-- Insert for Traceability
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000221, 0, 0, 'Traceability', 'Traceability', '/zul/traceability.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000221
+);
+
+-- Insert for Transactions Today
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000222, 0, 0, 'Transactions Today', 'Transactions Today', '/zul/transactions.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000222
+);
+
+-- Insert for Basic Stats
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000223, 0, 0, ' ', 'Basic Stats', '/zul/basicStats.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000223
+);
+
+-- Insert for Warehouse Selection
+INSERT INTO adempiere.PA_DashboardContent (PA_DashboardContent_ID, AD_Client_ID, AD_Org_ID, Name, Description, zulfilepath, IsActive,
+Created, CreatedBy, Updated, UpdatedBy)
+SELECT 1000224, 0, 0, '  ', 'Warehouse selection dropdown for product and warehouse', '/zul/warehouseSelection.zul', 'Y', NOW(), 100, NOW(), 100
+WHERE NOT EXISTS (
+    SELECT 1 FROM adempiere.PA_DashboardContent WHERE PA_DashboardContent_ID = 1000224
+);
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Add token:
+
+CREATE TABLE adempiere.pi_userToken (
+    pi_userToken_ID SERIAL PRIMARY KEY,
+    ad_client_ID NUMERIC(10, 0) NOT NULL,
+    ad_org_ID NUMERIC(10, 0) NOT NULL,
+    created timestamp without time zone NOT NULL DEFAULT now(),
+    createdby numeric(10,0) NOT NULL,
+    updated timestamp without time zone NOT NULL DEFAULT now(),
+    updatedby numeric(10,0) NOT NULL,
+    ad_user_ID NUMERIC(10,0),
+    ad_role_ID NUMERIC(10,0),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,   
+    deviceType varchar(50),
+    deviceToken varchar(500),
+    FOREIGN KEY (ad_client_iD) REFERENCES adempiere.ad_client(ad_client_id),
+    FOREIGN KEY (ad_org_iD) REFERENCES adempiere.ad_org(ad_org_id),
+    FOREIGN KEY (createdby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (updatedby) REFERENCES adempiere.ad_user(ad_user_id),
+    FOREIGN KEY (ad_user_ID) REFERENCES adempiere.ad_user(ad_user_ID),
+    FOREIGN KEY (ad_role_ID) REFERENCES adempiere.ad_role(ad_role_ID));
+
+ ALTER TABLE adempiere.M_Locator ADD COLUMN height NUMERIC(10, 0);
+ ALTER TABLE adempiere.M_Locator ADD COLUMN depth NUMERIC(10, 0);
+ ALTER TABLE adempiere.M_Locator ADD COLUMN width NUMERIC(10, 0);
+ ALTER TABLE adempiere.M_Locator ADD COLUMN weight NUMERIC(10, 0);
+
+ ALTER TABLE adempiere.M_Locator ADD COLUMN weightConstraint CHAR(1) NOT NULL DEFAULT 'N'::bpchar;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+              FCM Config:
+-------------------------------------------------------------------------------------------------------------------------------
+
+add FCM_CONFIGURATION in config
+ ** add fcm credential file as attatchment, which is added in https://docs.google.com/document/d/1Iuxw9vaa356PkqJZCCk9LD26Q1W71h7gotbXBZS-1Rg/edit
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+packingModule = true
+soDetails & solist API's
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Locators:
+ add Receiving, Dispatch, Returns named locator type for every dept
+
+ Departments and locator Types and user acess:
+------------------------------------------------
+  FG-MCB 
+   Supervisor => Vinay #FG-MCB Supervisor/ Vinay #FG-MCB Supervisor
+   Labour => Vinay #FG-MCB Labour/ Vinay #FG-MCB Labour
+
+     ==> packingModule = true
+    Locator Types
+     -> Dispatch #FG-MCB
+     -> Packing #FG-MCB
+     -> Storage #FG-MCB
+     -> Receiving #FG-MCB
+------------------------------------------------
+  RM-Light
+   Supervisor => Vinay #RM-Light Supervisor/Vinay #RM-Light Supervisor
+   Labour => Vinay #RM-Light Labour/Vinay #RM-Light Labour
+     ==> manufacturingModule = true
+     Locator Types
+      -> Receiving #RM-Light
+      -> Returns #RM-Light
+      -> Storage #RM-Light
+------------------------------------------------
+
+  FG-Light
+   Supervisor => Vinay #FG-Light Supervisor/Vinay #FG-Light Supervisor
+   Labour => Vinay #FG-Light Labour/Vinay #FG-Light Labour
+
+    ==> packing = true
+     Locator Types
+      -> Dispatch #FG-Light
+      -> Packing #FG-Light
+      -> Receiving #FG-Light
+      -> Returns #FG-Light
+      -> Storage #FG-Light
+------------------------------------------------
+  Dispatch  
+   Supervisor => Vinay #Dispatch Supervisor/ Vinay #Dispatch Supervisor
+   Labour => Vinay #Dispatch Labour/ Vinay #Dispatch Labour
+    ==> Dispatch = true
+    Locator Types
+     -> Dispatch #Dispatch
+------------------------------------------------
+  RM-Wire
+   Supervisor => Vinay #RM-Wire Supervisor/ Vinay #RM-Wire Supervisor
+   Labour => Vinay #RM-Wire Labour/ Vinay #RM-Wire Labour
+
+    ==> Manufacturing Module = true
+     Locator Types
+      -> Receiving #RM-Wire
+      -> Returns #RM-Wire
+      -> Storage #RM-Wire
+------------------------------------------------
+  FG-Wire
+  Supervisor => Vinay #FG-Wire Supervisor/ Vinay #FG-Wire Supervisor
+   Labour => Vinay #FG-Wire Labour/ Vinay #FG-Wire Labour
+
+    ==> packing = true
+     Locator Types
+     -> Dispatch #FG-Wire
+     -> Packing #FG-Wire
+     -> Receiving #FG-Wire
+     -> Returns #FG-Wire
+     -> Storage #FG-Wire
+
+------------------------------------------------
+   RM-Switch & Socket
+    Supervisor => Vinay #RM-Switch & Socket Supervisor/ Vinay #RM-Switch & Socket Supervisor
+   Labour => Vinay #RM-Switch & Socket Labour/ Vinay #RM-Switch & Socket Labour
+
+    ==> Manufacturing Module = true
+     Locator Types
+     -> Dispatch #RM-Switch & Socket
+     -> Receiving #RM-Switch & Socket
+     -> Returns #RM-Switch & Socket
+     -> Storage #RM-Switch & Socket
+------------------------------------------------
+    Moulding-Switch & Socket
+    Supervisor => Vinay #Moulding-Switch & Socket Supervisor/ Pipra@123
+   Labour => Vinay #Moulding-Switch & Socket Labour/ Pipra@123
+
+      Locator Types
+      -> Dispatch #Moulding-Switch & Socket
+      -> Receiving #Moulding-Switch & Socket
+      -> Returns #Moulding-Switch & Socket
+      -> Storage #Moulding-Switch & Socket
+------------------------------------------------
+    FG-Switch & Socket
+    Supervisor => Vinay #FG-Switch & Socket Supervisor/ Pipra@123
+   Labour => Vinay #FG-Switch & Socket Labour/ Pipra@123
+
+      Locator Types
+      -> Dispatch #FG-Switch & Socket
+      -> Receiving #FG-Switch & Socket
+      -> Storage #FG-Switch & Socket
+------------------------------------------------
+      Brass-Switch & Socket
+       Supervisor => Vinay #Brass-Switch & Socket Supervisor/ Pipra@123
+   Labour => Vinay #Brass-Switch & Socket Labour/ Pipra@123
+   
+      Locator Types
+     -> Dispatch #Brass-Switch & Socket
+     -> Receiving #Brass-Switch & Socket
+     -> Storage #Brass-Switch & Socket
+----------------------------------------------------
+ Default
+ ->No department orders will be stored here
+ --------------------------------------------------------------
+ 
+User id and pass
+
+Old name :                               -------------------------- New user login
+
+Vinay - Access for Labour and Supervisor -------------------------- Vinay/Vinay
+Vinay #Brass-Switch & Socket Supervisor  -------------------------- VinayBrass/ VinayBrass
+Vinay #Dispatch Labour                  --------------------------  VinayDispatch-L / VinayDispatch
+Vinay #Dispatch Supervisor              --------------------------  VinayDispatch-S / VinayDispatch
+Vinay #FG-Light Labour                  --------------------------  VinayFGLight-L / VinayFGLight-L
+Vinay #FG-Light Supervisor              --------------------------  VinayFGLight-S / VinayFGLight-S
+
+Vinay #FG-MCB Labour                    --------------------------  VinayFGMCB-L / VinayFGMCB-L
+Vinay #FG-MCB Supervisor                --------------------------  VinayFGMCB-S / VinayFGMCB-S
+
+Vinay #FG-Switch & Socket Labour       --------------------------   VinayFGSwitch-L / VinayFGMCB-L
+Vinay #FG-Switch & Socket Supervisor   --------------------------   VinayFGSwitch-S / VinayFGSwitch-S
+Vinay #FG-Wire Labour                  --------------------------   VinayFGWire-L / VinayFGWire-L
+Vinay #FG-Wire Supervisor              --------------------------   VinayFGWire-S / VinayFGWire-S
+Vinay #Moulding-Switch & Socket Labour  --------------------------  VinayMoulding-L / VinayMoulding-L
+Vinay #Moulding-Switch & Socket Supervisor -------------------------- VinayMoulding-S / VinayMoulding-s
+Vinay #RM-Light Labour                    --------------------------  VinayRMLight-L / VinayRMLight-L
+Vinay #RM-Light Supervisor               --------------------------   VinayRMLight-S / VinayRMLight-S
+Vinay #RM-Switch & Socket Labour         --------------------------   VinayRMSwitch-L / VinayRMSwitch-L
+Vinay #RM-Switch & Socket Supervisor     --------------------------   VinayRMSwitch-S / VinayRMSwitch-S
+Vinay #RM-Wire Labour                    --------------------------   VinayRMWire-L / VinayRMWire-L
+Vinay #RM-Wire Supervisor                --------------------------   VinayRMWire-S / VinayRMWire-S
+VinayElectricals Admin                   --------------------------   VinayElectricalsAdmin / VinayElectricalsAdmin
+VinayElectricals User                     --------------------------  VinayElectricalsUser / VinayElectricalsUser
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Production Apps 
+
+keyName             App Name
+"manufacturingList"     Production Supervisor App
+"production"                Production Pick App
+"production"          Production
+"manufacturingreceipt"    Production Receipt App
+
+
+Assembly Apps 
+
+keyName       App Name
+"assemblycreator"   Assembly Creator App
+"assembly"          Assembly Pick App
+"assembly"      Assembled App
+"assembly"      Assembly QC App
+"assembly"      Assembly Box Packing
+"assembly"      Assembly Carton App
+"assemblyreceipt"   Assembly Receipt App
+
+
+
+keyName:                    App Name
+
+production Apps:
+----------------
+"productionSupervisor" ==> Production Supervisor App
+"productionAgent" ==> Production Agent App, Production
+"productionReceipt" ==> Production Receipt App
+
+Assembly Apps:
+--------------
+
+"assemblySupervisor" ==> Assembly Creator App(Supervisor)
+"switchAndSocketAssembly" ==> Assembly Pick App, Assembled App, Assembly QC App, Assembly Carton App, Assembly Carton App (only for switthc and socket)
+"mouldingAssemblyReceving" ==> Assembly Receipt App, disintegrate app ( only for swithc and socket)
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+product count in product table shold be 0 zero default
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+   Document         Action     Notification for Role had acess to App
+-----------------------------------------------
+Material Receipt    Created     materialReceipt
+Shipment/Customer   Created     shipmentCustomer
+Sales Order         MarkTo Pick saleOrder
+Material Receipt    Completed   materialReceipt -- for supervisor
+Material Receipt    Completed   labourPutaway----  for labour
+Shipment/Customer   Completed   shipmentCustomer

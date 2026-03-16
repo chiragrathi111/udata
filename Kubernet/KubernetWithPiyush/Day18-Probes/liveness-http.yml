@@ -17,19 +17,3 @@ spec:
         port: 80
       initialDelaySeconds: 5
       periodSeconds: 5
-
-# Statement:-
-# This YAML file defines a Kubernetes Pod named "liveness1" that contains a single container running the nginx image. 
-# The container executes a command that creates a file named "/tmp/healthy", waits for 30 seconds, deletes the file, 
-# and then continues to sleep for 600 seconds. The liveness probe checks the "/healthz" endpoint on port 80 every 
-# 5 seconds, starting 5 seconds after the container has started. If the endpoint does not return
-# a successful response, the liveness probe will fail, indicating that the container is not healthy.
-
-# In simple words:-
-# The container starts and creates a file called "healthy". It then sleeps for 30 seconds
-# and removes the file. The liveness probe checks if the "/healthz" endpoint is responding every 5 seconds.
-
-# I live watch
-#  kubectl get pod -w
-# o/p
-# NAME        READY   STATUS    RESTARTS   AGE
