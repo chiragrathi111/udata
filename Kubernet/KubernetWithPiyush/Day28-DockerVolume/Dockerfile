@@ -23,7 +23,7 @@ EXPOSE 3000
 # docker exec -it <container_name/container_id> sh
 
 # If we are not using volume then i create any container through image, like image can't modify but after creation conatiner 
-# I easily modify, bvut this modification tempererory.
+# I easily modify, but this modification tempererory.
 # If we want changes permanent,so using volume
 
 # Create  a new docker volume

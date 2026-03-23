@@ -1,4 +1,4 @@
-I observer every ting is fine but docker have some problem that is the reason my container not up:-
+I observer every thing is fine but docker have some problem that is the reason my container not up:-
 
 Solutions:-
 ✅ Step 1 — Confirm DNS Problem

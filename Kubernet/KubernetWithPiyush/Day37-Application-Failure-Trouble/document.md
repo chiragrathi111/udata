@@ -18,7 +18,7 @@ App trying to connect to localhost.
 5️⃣ DNS Resolution Failure
 6️⃣ Application Config Error
 
-7 Sometime pod and service label name mismatch thatis the main reason, if we describe svc endpoint showing
+7 Sometime pod and service label name mismatch that is the main reason, if we describe svc endpoint showing
 blank.
 so that is the check 
 * kubectl get pod --show-labels 

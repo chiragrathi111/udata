@@ -1,5 +1,5 @@
 # This commands getting list of resources:-
-# This commands run for namespaced lavel,This sean Pod lavel resources
+# This commands run for namespaced lavel,This seen Pod lavel resources
 * k api-resources --namespaced=true
 
 # If we want cluster lavel,node lavel resources

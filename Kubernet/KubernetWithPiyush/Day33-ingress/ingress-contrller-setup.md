@@ -8,7 +8,7 @@
 
 * kubectl get all -n ingress-nginx
 
-* kubectl et svc -n inress-nginx
+* kubectl get svc -n inress-nginx
 
 * kubectl get svc -n ingress-nginx
 NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE

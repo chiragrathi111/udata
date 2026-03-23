@@ -1,3 +1,4 @@
+TO_CHAR(custom_timestamp,'DD/MM/YYYY HH12:MI AM') AS datetime_text
 ======================================================================================================
 Temperature Humidity Query:-
 SELECT 

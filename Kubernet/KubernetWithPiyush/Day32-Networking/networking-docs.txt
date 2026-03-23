@@ -1,5 +1,5 @@
 If we want to login our node then follow the below commands:-
-* k fet node
+* k get node
 * docker exec -it <node_name> bash
 * ls -lt /var/run/netns/
 output:-

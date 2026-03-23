@@ -1,9 +1,9 @@
 # If we want to app backup for kubectl then run below commands:-
 
 * kubectl get all -A -o yaml > backup-all.yaml
-(one file generate that specific location, this file we are using bot restore datas)
+(one file generate that specific location, this file we are using both restore datas)
 
-# Inside master node if enetr below commands you get standard yaml file
+# Inside master node if enter below commands you get standard yaml file
 
 * docker ps
 * docker exec -it <container_id /container_name> sh
@@ -22,7 +22,7 @@
 
 # This below is working for kubeadm not kind:-
 # Install etcd client
-* suo apt install etcd-client
+* sudo apt install etcd-client
 
 # help commands:-
 * ETCDCTL_API=3 etcdctl snapshot

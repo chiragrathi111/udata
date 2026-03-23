@@ -52,16 +52,16 @@ that is the not a valid archiutecture
                     +-----------------------+
 
 That is the actual flow but our architecture not full fill this flow first i check in our system this flow 
-is working or not if not theni create a network policies
+is working or not if not then i create a network policies
 
 * kubectl get pod
 * kubectl exec -it frontend -- bash (using this command login to frontend pod)
 * curl backend:80 (this command getting response)
 
-But i observe we are not directly check to db and port that is the reson we install telnet inside pod
+But i observe we are not directly check to db and port that is the reason we install telnet inside pod
 * apt update && apt install telnet -y 
 
-after install run below commands then check responceis coming or not
+after install run below commands then check responce is coming or not
 * telnet db 3306
 output:-
 Trying 10.96.62.183...
@@ -72,7 +72,6 @@ J
 
 means your frontend pod easily communicate db pod
 so that is the wrong way, this is the main reason i created network policy.
-
 
 I observation after create a network policy and apply this policy restriction is valid 
 like frontend user not directly communicate to db server
