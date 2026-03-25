@@ -46,3 +46,6 @@ alias kgp='kubectl get pods'
 
 # Change terminal name:
 * sudo hostnamectl set-hostname Worker1 && exec bash
+
+# delete list of records:-
+* find . -type f \( -name "*.tar" -o -name "*.tar.gz" \) -mtime +7 -delete	

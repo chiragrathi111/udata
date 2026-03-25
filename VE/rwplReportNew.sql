@@ -315,7 +315,7 @@ WHERE
     )
     AND ltt.returns = 'Y' 
     AND pp.sales_return = 'N' 
-    AND prl.name = 'Purchase'
+    AND prl.name = 'Sales'
 GROUP BY 
     pp.m_product_id, pr.weight, uom.name, pp.ad_client_id, pp.ad_org_id, 
     pr.isactive, pr.m_product_category_id, pr.erpcode, pbom.PP_Product_BOM_ID, 

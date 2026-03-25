@@ -369,6 +369,11 @@ ALTER TABLE adempiere.M_LocatorType ADD COLUMN storage CHAR(1) NOT NULL DEFAULT 
 ALTER TABLE adempiere.m_inout ADD COLUMN pickStatus VARCHAR(255);
 
 
+--Ad Role
+Alter table adempiere.ad_role
+Add column returnsApp character(1) NOT NULL DEFAULT 'N'::bpchar;
+
+
 
 -- Sales Plan Detail View
 CREATE OR REPLACE VIEW adempiere.sales_plan_detail_view AS
