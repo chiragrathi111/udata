@@ -235,60 +235,6 @@ SELECT
     mml.value AS pickup_locator,
     COALESCE(pri.pricestd, 0) AS unitprice,
     COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice,
-    pp.description AS comment
-FROM 
-    adempiere.pi_productlabel pp
-    JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
-    LEFT JOIN adempiere.PP_Product_BOM pbom ON pbom.m_product_id = pr.m_product_id
-    LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
-    LEFT JOIN adempiere.m_locator mml ON mml.m_locator_id = pp.previouslocator
-    LEFT JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
-    JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
-    JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
-    -- Join to Product Price
-    LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id 
-        AND pri.isactive = 'Y'
-WHERE 
-    NOT EXISTS (
-        SELECT 1 
-        FROM adempiere.pi_productlabel pp_sales 
-        WHERE pp_sales.labeluuid = pp.labeluuid 
-        AND pp_sales.issotrx = 'Y'
-    )
-    AND ltt.returns = 'Y' 
-    AND pp.sales_return = 'N'
-GROUP BY 
-    pp.m_product_id, pr.weight, uom.name, pp.ad_client_id, pp.ad_org_id, 
-    pr.isactive, pr.m_product_category_id, pr.erpcode, pbom.PP_Product_BOM_ID, 
-    pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pp.updated, 
-    mml.value, pri.pricestd,pp.description
-ORDER BY 
-       DATE(pp.updated) DESC;
-
-       **********************************************************
-
-CREATE OR REPLACE VIEW adempiere.pi_damage_report AS 
-SELECT 
-    pr.m_product_category_id,
-    pp.m_product_id,
-    uom.name AS uom,
-    pr.erpcode,
-    pbom.PP_Product_BOM_ID,
-    SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS availableCount,
-    pr.weight AS unitWeight,
-    pr.weight * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalUnitWeight,
-    DATE(pp.updated) AS report_date,
-    pr.value,
-    pr.created AS m_product_created,
-    pr.createdby AS m_product_createdby,
-    pr.updated AS m_product_updated,
-    pr.updatedby AS m_product_updatedby,
-    pr.isactive AS product_isactive,
-    pp.ad_client_id,
-    pp.ad_org_id,
-    mml.value AS pickup_locator,
-    COALESCE(pri.pricestd, 0) AS unitprice,
-    COALESCE(pri.pricestd, 0) * SUM(CASE WHEN pp.issotrx = 'N' THEN pp.quantity ELSE 0 END) AS totalunitprice,
     pp.description AS comment,u.name As action_by
 FROM 
     adempiere.pi_productlabel pp

@@ -1379,6 +1379,9 @@ ADD COLUMN IF NOT EXISTS isattachedintermediatetocollection CHAR(1) NOT NULL DEF
 
 ALTER TABLE adempiere.tc_devicedata ADD COLUMN sensonType VARCHAR(25);
 
+ALTER TABLE adempiere.tc_currentconfig ADD COLUMN alertDuration INTEGER;
+
+
 
 if(description.getValue() != null){
    if (!description.getValue().includes("@"))
@@ -1397,6 +1400,29 @@ if (description.getValue() != null) {
     result = ""; 
 }
 
+
+--------------------------
+Alert table:-
+
+CREATE TABLE adempiere.tc_alertdevices (
+    tc_alertdevices_id NUMERIC(10,0) NOT NULL PRIMARY KEY,
+    tc_alertdevices_uu VARCHAR(36) DEFAULT NULL::bpchar,
+    ad_client_id NUMERIC(10, 0) NOT NULL,
+    ad_org_id NUMERIC(10, 0) NOT NULL,
+    created TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    createdby NUMERIC(10,0) NOT NULL,
+    updated TIMESTAMP without time zone DEFAULT now() NOT NULL,
+    updatedby NUMERIC(10,0) NOT NULL,
+    description VARCHAR(255),
+    isactive CHAR(1) not null DEFAULT 'Y'::bpchar,
+    isacknowledge CHAR(1) NOT NULL DEFAULT 'N'::bpchar,
+    TC_devicedata_ID INTEGER,
+    M_LocatorType_ID INTEGER,
+    lastactivity TIMESTAMP,
+    alertTime TIMESTAMP,
+    sensortype VARCHAR(36),
+    FOREIGN KEY (TC_devicedata_ID) REFERENCES adempiere.TC_devicedata(TC_devicedata_ID),
+    FOREIGN KEY (M_LocatorType_ID) REFERENCES adempiere.M_LocatorType(M_LocatorType_ID));
 ====================================================================
 Current Config table:-
 CREATE TABLE adempiere.tc_currentconfig (

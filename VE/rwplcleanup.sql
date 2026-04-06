@@ -67,4 +67,20 @@ DELETE FROM adempiere.pi_productlabel WHERE pi_paorder_id = 1002593;
 DELETE FROM adempiere.pi_paorder WHERE pi_paorder_id = 1002593;
 
 
+RMA Records:-
+
+UPDATE adempiere.m_rma
+SET docstatus = 'DR',
+    docaction = 'CO',
+    processed = 'N'
+WHERE m_rma_id = 1000001;
+
+DELETE FROM adempiere.m_rmaline
+WHERE m_rma_id = 1000001;
+
+DELETE FROM adempiere.m_rmatax
+WHERE m_rma_id = 1000001;
+
+DELETE FROM adempiere.m_rma
+WHERE m_rma_id = 1000001;
 

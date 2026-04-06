@@ -3,6 +3,27 @@
 
 ---
 
+## Shortcut if you wany move namespaces or cluster
+
+```bash
+
+# Cluster 
+kubectx   # show all cluster name
+# If is it not install run below commands
+sudo apt  install kubectx -y
+kubectx <CLUSTER_NAME>
+
+OLD
+kubectl config use-context production-cluster
+
+# Namespace
+kubens  # show all Namespace
+kubens <NAMESPACES_NAME>
+
+OLD 
+kubectl config set-context --current --namespace=web-app
+```
+
 ## Finding apiVersion and kind :-
 
 ```bash
@@ -804,6 +825,15 @@ echo 'source <(kubectl completion zsh)' >> ~/.zshrc
 
 # With alias
 complete -o default -F __start_kubectl k
+```
+
+## Check and delete all records any specific namespace
+
+```bash
+kubectl get all -n <NAMESPACE_NAME>
+kubectl delete all --all -n <NAMESPACE_NAME>
+kubectl delete all --all -n web-app  # Pods,Service,Deployments,
+kubectl delete pod --all -n web-app
 ```
 
 ---

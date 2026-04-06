@@ -68,6 +68,21 @@ docker ps (not permission)
 	
 	curl -sSL http://bit.ly/2ysbOFE | bash -s -- 2.5.6 1.5.9 
  	(2.5.6 = Hyper Ledger version,1.5.9 = CA_VERSION)
+
+ 	above commands facing any issue, so please run below commands:-
+
+cd ~ && \
+mkdir -p fabric-samples && cd fabric-samples && \
+curl -L https://github.com/hyperledger/fabric/releases/download/v2.5.6/hyperledger-fabric-linux-amd64-2.5.6.tar.gz | tar xz && \
+curl -L https://github.com/hyperledger/fabric-ca/releases/download/v1.5.9/hyperledger-fabric-ca-linux-amd64-1.5.9.tar.gz | tar xz && \
+git clone https://github.com/hyperledger/fabric-samples.git temp && \
+mv temp/* . && rm -rf temp && \
+export PATH=$HOME/fabric-samples/bin:$PATH && \
+echo 'export PATH=$HOME/fabric-samples/bin:$PATH' >> ~/.bashrc && \
+source ~/.bashrc && \
+peer version && \
+echo "✅ Installation Complete!"
+
  	
 #
 	ls

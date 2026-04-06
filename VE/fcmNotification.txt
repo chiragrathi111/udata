@@ -1,0 +1,781 @@
+Notification
+
+package org.pipra.custom.fcm;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.codehaus.jettison.json.JSONObject;
+import org.compiere.model.MAttachment;
+import org.compiere.model.MAttachmentEntry;
+import org.compiere.model.MSysConfig;
+import org.compiere.model.Query;
+import org.compiere.util.Env;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+public class FCMServiceNew {
+
+    public static String BASE_URL;
+    public static final String CONTENT_TYPE = "application/json";
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // FIX #6 — Thread-safety lock object
+    //
+    // WHY: Your sendNotificationAsync() uses parallelStream(), meaning multiple
+    //      threads run simultaneously. All of them check `token == null` and ALL
+    //      of them would call generateOAuthToken() at the same time, causing
+    //      multiple unnecessary network calls and a race condition where one
+    //      thread's token gets overwritten by another.
+    //
+    // BENEFIT: Only ONE thread regenerates the token at a time. All others wait
+    //          and then reuse the freshly generated token — faster and correct.
+    // ─────────────────────────────────────────────────────────────────────────
+    private static final Object TOKEN_LOCK = new Object();
+
+    private static String token;
+    private static Date expTokenDate;
+    private static String projectId;
+
+
+    /**
+     * Sends an FCM push notification to a single device token.
+     *
+     * @param deviceToken  The FCM registration token of the target device.
+     * @param title        Notification title shown on the device.
+     * @param body         Notification body text shown on the device.
+     * @param serverKeyPath Not used (kept for API compatibility).
+     * @param data         Optional key-value data payload for the app.
+     * @return true if an error occurred (caller should stop), false on success.
+     */
+    /**
+     * Return codes:
+     *   0 = success
+     *   1 = credential/auth error (stop all sends)
+     *   2 = token-level error like UNREGISTERED (skip this token, continue others)
+     */
+    public static int sendFCMMessageCode(String deviceToken, String title, String body,
+            String serverKeyPath, Map<String, String> data) {
+
+        try {
+            synchronized (TOKEN_LOCK) {
+                if (token == null || expTokenDate == null || expTokenDate.before(new Date())) {
+                    System.out.println("FCM: Token is missing or expired. Regenerating...");
+                    boolean error = generateOAuthToken();
+                    if (error) {
+                        System.err.println("FCM: Failed to generate OAuth token. Aborting send.");
+                        return 1;
+                    }
+                    System.out.println("FCM: Token refreshed. Project: " + projectId);
+                }
+            }
+
+            URL url = new URL(BASE_URL);
+            HttpURLConnection conn = null;
+            try {
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", CONTENT_TYPE);
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setDoOutput(true);
+
+                JSONObject payload    = new JSONObject();
+                JSONObject message    = new JSONObject();
+                JSONObject notification = new JSONObject();
+
+                notification.put("title", title);
+                notification.put("body", body);
+
+                message.put("notification", notification);
+                message.put("token", deviceToken);
+
+                if (data != null && !data.isEmpty()) {
+                    JSONObject dataJson = new JSONObject(data);
+                    message.put("data", dataJson);
+                }
+
+                payload.put("message", message);
+
+                try (OutputStream outputStream = conn.getOutputStream()) {
+                    outputStream.write(payload.toString().getBytes(StandardCharsets.UTF_8));
+                    outputStream.flush();
+                }
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    System.out.println("FCM: Notification sent successfully to token: "
+                            + deviceToken.substring(0, Math.min(deviceToken.length(), 20)) + "...");
+                    return 0;
+                }
+
+                StringBuilder errorBody = new StringBuilder();
+                try (InputStream errorStream = conn.getErrorStream();
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(errorStream))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        errorBody.append(line);
+                    }
+                }
+                System.err.println("FCM: Send failed. HTTP " + responseCode
+                        + " — Response: " + errorBody);
+
+                // 401/403 = credential problem → stop everything
+                if (responseCode == 401 || responseCode == 403) {
+                    return 1;
+                }
+                // 404 UNREGISTERED, 400 invalid token → skip this token, continue others
+                return 2;
+
+            } finally {
+                if (conn != null) conn.disconnect();
+            }
+
+        } catch (Exception e) {
+            System.err.println("FCM: Exception in sendFCMMessage — " + e.getMessage());
+            e.printStackTrace();
+            return 1;
+        }
+    }
+
+    /** Backward-compatible wrapper: true = error, false = success */
+    public static boolean sendFCMMessage(String deviceToken, String title, String body,
+            String serverKeyPath, Map<String, String> data) {
+        return sendFCMMessageCode(deviceToken, title, body, serverKeyPath, data) != 0;
+    }
+
+
+    /**
+     * Reads the FCM service account JSON from the MSysConfig attachment,
+     * and builds a signed JWT token for Google OAuth2 exchange.
+     *
+     * @return Signed JWT string, or null if reading/parsing failed.
+     */
+    public static String generateJwtToken() {
+
+        try {
+            Query query = new Query(Env.getCtx(), MSysConfig.Table_Name,
+                    "Name= 'FCM_CONFIGURATION' AND AD_Client_ID = 0", null);
+            MSysConfig sysConfig = query.setOrderBy("AD_Client_ID Desc").first();
+
+            if (sysConfig == null) {
+                System.err.println("FCM: MSysConfig 'FCM_CONFIGURATION' not found.");
+                return null;
+            }
+
+            MAttachment attachment = sysConfig.getAttachment();
+            if (attachment == null) {
+                System.err.println("FCM: No attachment found on FCM_CONFIGURATION.");
+                return null;
+            }
+
+            MAttachmentEntry[] attachmentEntries = attachment.getEntries();
+            if (attachmentEntries == null || attachmentEntries.length == 0) {
+                System.err.println("FCM: Attachment has no entries.");
+                return null;
+            }
+
+            // ─────────────────────────────────────────────────────────────────
+            // FIX #1 — Use getData() instead of getFile()  ← THE MAIN BUG
+            //
+            // ORIGINAL BUG: firstAttachmentEntry.getFile() writes attachment data
+            //               to a temporary file on disk. On many server environments
+            //               (especially after a restart or in a container), that temp
+            //               file either doesn't persist, is null, or points to an
+            //               empty/deleted file. ObjectMapper.readTree(file) then fails
+            //               silently inside a catch block, privateKey/clientEmail/
+            //               projectId are never set, and the whole OAuth flow breaks.
+            //               This is the most likely reason your notifications stopped
+            //               working after initially working fine.
+            //
+            // FIX: Use getData() which returns the raw byte[] directly from memory —
+            //      no temp file involved, no disk dependency, no path issues.
+            //      ObjectMapper.readTree(byte[]) works perfectly with this.
+            //
+            // BENEFIT: Works reliably on every server restart and in all environments.
+            //          No more silent credential loading failures.
+            // ─────────────────────────────────────────────────────────────────
+            byte[] fileData = attachmentEntries[0].getData();
+
+            if (fileData == null || fileData.length == 0) {
+                System.err.println("FCM: Attachment data is null or empty. "
+                        + "Check that the service account JSON is properly attached to FCM_CONFIGURATION.");
+                return null;
+            }
+
+            // Parse the service account JSON from raw bytes
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(fileData);  // ← Fixed: was readTree(file)
+
+            String privateKey  = jsonNode.get("private_key").asText();
+            String clientEmail = jsonNode.get("client_email").asText();
+            projectId          = jsonNode.get("project_id").asText();
+
+            System.out.println("FCM: Loaded service account for project: " + projectId
+                    + ", client: " + clientEmail);
+
+            // Strip PEM headers and whitespace to get raw Base64 key bytes
+            String pkcs8Pem = privateKey
+                    .replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "")
+                    .replaceAll("\\s+", "");
+
+            byte[] valueDecoded    = Base64.getDecoder().decode(pkcs8Pem);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(valueDecoded);
+            KeyFactory rsaFact     = KeyFactory.getInstance("RSA");
+            RSAPrivateKey key      = (RSAPrivateKey) rsaFact.generatePrivate(keySpec);
+
+            // Build JWT claims required by Google's OAuth2 token endpoint
+            Map<String, Object> claims = new LinkedHashMap<>();
+            claims.put("scope", "https://www.googleapis.com/auth/firebase.messaging");
+            claims.put("iss", clientEmail);
+
+            String jwt = Jwts.builder()
+                    .setHeaderParam("typ", "JWT")
+                    .setClaims(claims)
+                    .setAudience("https://oauth2.googleapis.com/token")
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1)))
+                    .signWith(SignatureAlgorithm.RS256, key)
+                    .compact();
+
+            System.out.println("FCM: JWT generated successfully.");
+            return jwt;
+
+        } catch (Exception e) {
+            // ─────────────────────────────────────────────────────────────────
+            // FIX #4 — Proper error logging with null return
+            //
+            // ORIGINAL BUG: Exception was caught and printed, but the method had
+            //               no explicit null return in the catch — it fell through
+            //               and returned a partially built or null result silently.
+            //
+            // BENEFIT: Caller (generateOAuthToken) can check for null and abort
+            //          cleanly instead of sending an invalid JWT to Google.
+            // ─────────────────────────────────────────────────────────────────
+            System.err.println("FCM: Exception in generateJwtToken — " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
+     * Exchanges the JWT assertion for a Google OAuth2 Bearer access token.
+     * Stores the token and its expiry time in static fields for reuse.
+     *
+     * @return true if an error occurred, false on success.
+     */
+    public static boolean generateOAuthToken() {
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FIX #3 — Null-check the JWT before sending to Google
+        //
+        // ORIGINAL BUG: If generateJwtToken() failed (e.g. file not found, bad key),
+        //               it returned null. The null was then URL-encoded as the literal
+        //               string "null" and posted to Google, which returned a 400 error.
+        //               That error was logged but the method returned true and
+        //               projectId remained null, making BASE_URL = "...null.../messages:send".
+        //
+        // FIX: Explicitly check for null before proceeding. Log a clear message.
+        //
+        // BENEFIT: You see a useful error immediately instead of a cryptic Google 400.
+        // ─────────────────────────────────────────────────────────────────────
+        String assertion = generateJwtToken();
+
+        if (assertion == null) {
+            System.err.println("FCM: generateJwtToken() returned null — "
+                    + "check that FCM_CONFIGURATION has a valid service account JSON attached.");
+            return true; // error
+        }
+
+        String tokenEndpoint = "https://oauth2.googleapis.com/token";
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(tokenEndpoint))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(
+                            "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=" + assertion))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // ─────────────────────────────────────────────────────────────────
+            // FIX #4 — Log the full response body on failure
+            //
+            // ORIGINAL BUG: On non-200, the method just returned true with no log.
+            //               You had no idea what Google said was wrong.
+            //
+            // BENEFIT: You can now see the exact Google error (e.g. "invalid_grant",
+            //          "Permission denied", "Key expired") and fix it quickly.
+            // ─────────────────────────────────────────────────────────────────
+            if (response.statusCode() != 200) {
+                System.err.println("FCM: OAuth token request failed. HTTP "
+                        + response.statusCode() + " — Body: " + response.body());
+                return true; // error
+            }
+
+            JSONObject jsonResponse = new JSONObject(response.body());
+
+            token = jsonResponse.getString("access_token");
+
+            int expiresIn = jsonResponse.getInt("expires_in");
+            long expirationTimeMillis = System.currentTimeMillis() + expiresIn * 1000L;
+            expTokenDate = new Date(expirationTimeMillis);
+
+            BASE_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
+
+            System.out.println("FCM: OAuth token obtained. Expires in " + expiresIn + "s ("
+                    + expTokenDate + ")");
+
+        } catch (Exception e) {
+            System.err.println("FCM: Exception in generateOAuthToken — " + e.getMessage());
+            e.printStackTrace();
+            return true; // error
+        }
+
+        return false; // success
+    }
+
+}
+-------------------------------------------------------------------------
+PipraUtils
+
+public static void sendNotificationAsyncnew(String userType, int tableId, int recordId,
+            Properties ctx, String trxName, String title, String body, String tableName,
+            Map<String, String> data, int clientId, String messageTitle) {
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FIX #2 — Validate inputs before submitting to background thread
+        //
+        // ORIGINAL BUG: Null or empty inputs were passed silently to the background
+        //               thread where they caused NPEs with no useful stack trace,
+        //               because the async thread has no connection to the caller.
+        //
+        // FIX: Validate critical inputs before submitting. Log and return early.
+        //
+        // BENEFIT: You see a clear log message at the call site instead of a
+        //          mysterious NullPointerException in a background thread.
+        // ─────────────────────────────────────────────────────────────────────
+		
+		// ── Print everything about this call so you can trace it in logs ──────
+		System.out.println("[FCM] ════════════════════════════════════════");
+        System.out.println("[FCM] sendNotificationAsync() CALLED");
+        System.out.println("[FCM]   Role        : " + userType);
+        System.out.println("[FCM]   ClientID    : " + clientId);
+        System.out.println("[FCM]   Table       : " + tableName + " (ID=" + tableId + ")");
+        System.out.println("[FCM]   RecordID    : " + recordId);
+        System.out.println("[FCM]   Title       : " + title);
+        System.out.println("[FCM]   Body        : " + body);
+        System.out.println("[FCM]   MessageTitle: " + messageTitle);
+        System.out.println("[FCM]   DataKeys    : " + (data == null ? "null" : data.keySet().toString()));
+        
+        if (userType == null || userType.trim().isEmpty()) {
+            System.err.println("FCM: sendNotificationAsync called with null/empty userType. Skipping.");
+            return;
+        }
+        if (title == null || body == null) {
+            System.err.println("FCM: sendNotificationAsync called with null title or body. Skipping.");
+            return;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FIX #3 — Capture all variables for the lambda BEFORE submitting
+        //
+        // ORIGINAL BUG: The lambda inside executor.submit() closed over mutable
+        //               variables from the caller. If the caller's transaction
+        //               committed/rolled back before the background thread ran,
+        //               ctx or trxName could reference a closed/invalid state.
+        //
+        // FIX: All parameters are already passed by value (primitives) or are
+        //      effectively final references. Just make sure we don't pass `trxName`
+        //      from an active transaction — use null for the background thread
+        //      so MNote saves in its own transaction.
+        //
+        // BENEFIT: Background thread always works with valid, stable references.
+        // ─────────────────────────────────────────────────────────────────────
+        final String safeTrxName = null; // background thread must NOT use the caller's transaction
+
+        executor1.submit(() -> {
+            try {
+            	sendNotificationnew(userType, tableId, recordId, ctx, safeTrxName,
+                        title, body, tableName, data, clientId, messageTitle);
+            } catch (Exception e) {
+                // ─────────────────────────────────────────────────────────────
+                // FIX #4 — Catch top-level exception in the async task
+                //
+                // ORIGINAL BUG: Any unhandled exception in the Runnable submitted
+                //               to executor silently killed the task with no log.
+                //               You would never know the notification failed.
+                //
+                // BENEFIT: All failures are now logged, even unexpected ones.
+                // ─────────────────────────────────────────────────────────────
+                System.err.println("FCM: Unexpected error in sendNotificationAsync background task: "
+                        + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+        
+        System.out.println("[FCM] ✅ Task queued. Main thread continues normally.");
+        System.out.println("[FCM] ════════════════════════════════════════");
+    }
+
+
+    /**
+     * Core notification logic — runs in a background thread.
+     * Looks up users by role, sends FCM to each device token, and saves MNote records.
+     */
+    private static void sendNotificationnew(String userType, int tableId, int recordId,
+            Properties ctx, String trxName, String title, String body, String tableName,
+            Map<String, String> data, int clientId, String messageTitle) {
+
+        System.out.println("FCM: sendNotification started — role: " + userType
+                + ", clientId: " + clientId + ", title: " + title);
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Step 1: Find the role by name and client
+        // ─────────────────────────────────────────────────────────────────────
+        MRole mRole = getRoleByClientAndNamenew(ctx, clientId, userType);
+        if (mRole == null || mRole.getAD_Role_ID() == 0) {
+            System.err.println("FCM: Role '" + userType + "' not found for clientId=" + clientId
+                    + ". No notifications sent.");
+            return;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Step 2: Find all users assigned to this role
+        // ─────────────────────────────────────────────────────────────────────
+        List<MUserRoles> mUserRoleList = getUsersByClientAndRolenew(ctx, clientId, mRole.getAD_Role_ID());
+        if (mUserRoleList == null || mUserRoleList.isEmpty()) {
+            System.out.println("FCM: No users found for role '" + userType
+                    + "' (AD_Role_ID=" + mRole.getAD_Role_ID() + "). No notifications sent.");
+            return;
+        }
+
+        System.out.println("FCM: Found " + mUserRoleList.size() + " user(s) for role '" + userType + "'.");
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FIX #5 — Move FCMServiceNew instantiation outside the user loop
+        //
+        // ORIGINAL BUG: `new FCMService()` was created inside the for-each loop,
+        //               meaning a new instance (and potentially a new token check)
+        //               was created for every user. FCMService is stateless — its
+        //               static token is shared anyway — so this was wasteful.
+        //
+        // FIX: Create one instance before the loop.
+        //
+        // BENEFIT: Cleaner code, one token check per batch instead of per user.
+        // ─────────────────────────────────────────────────────────────────────
+        FCMServiceNew fcm = new FCMServiceNew();
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FIX #6 — Move hasError flag outside the user loop
+        //
+        // ORIGINAL BUG: `AtomicBoolean hasError` was declared INSIDE the for-each
+        //               loop, which means it was reset to false for every user.
+        //               If the first user's batch had an FCM error and set hasError=true,
+        //               the next user's iteration would create a brand new
+        //               AtomicBoolean(false) and completely ignore the previous error.
+        //               The `break` at the end of the loop then never triggered.
+        //
+        // FIX: Declare hasError ONCE before the loop so it persists across all users.
+        //
+        // BENEFIT: A token/credential error correctly stops ALL further sends,
+        //          not just the current user's batch.
+        // ─────────────────────────────────────────────────────────────────────
+        AtomicBoolean hasError = new AtomicBoolean(false);
+
+        // Step 3: Loop through each user
+        for (MUserRoles mUserRole : mUserRoleList) {
+
+            // Stop everything if a previous batch already hit a credential error
+            if (hasError.get()) {
+                System.err.println("FCM: Stopping — previous batch reported a credential error.");
+                break;
+            }
+
+            I_AD_User user = mUserRole.getAD_User();
+            if (user == null) {
+                System.err.println("FCM: AD_User is null for a UserRole record. Skipping.");
+                continue;
+            }
+
+            // ─────────────────────────────────────────────────────────────────
+            // FIX #7 — Use the correct client ID from ctx, not hardcoded Env
+            //
+            // ORIGINAL BUG: `Env.getAD_Client_ID(Env.getCtx())` reads the client
+            //               from the global static context. In a multi-tenant server,
+            //               another thread may have changed Env.getCtx() between
+            //               the async submission and this execution, causing tokens
+            //               for the WRONG client to be loaded.
+            //
+            // FIX: Use the `clientId` parameter that was explicitly passed in.
+            //
+            // BENEFIT: Always loads tokens for the correct tenant/client.
+            // ─────────────────────────────────────────────────────────────────
+            List<PO> userTokenList = PiUserToken.getTokensForUser(
+                    clientId,                  // ← Fixed: was Env.getAD_Client_ID(Env.getCtx())
+                    user.getAD_User_ID(),
+                    ctx,
+                    null);
+
+            if (userTokenList == null || userTokenList.isEmpty()) {
+                System.out.println("FCM: No device tokens for user AD_User_ID="
+                        + user.getAD_User_ID() + ". Skipping.");
+                continue;
+            }
+
+            System.out.println("FCM: Sending to " + userTokenList.size()
+                    + " token(s) for user AD_User_ID=" + user.getAD_User_ID());
+
+            // ─────────────────────────────────────────────────────────────────
+            // Step 4: Process tokens in batches of 50 using parallel stream
+            // The hasError flag is now correctly shared across all batches and users
+            // ─────────────────────────────────────────────────────────────────
+            int batchSize = 50;
+
+            IntStream.range(0, userTokenList.size())
+                    .boxed()
+                    .collect(Collectors.groupingBy(i -> i / batchSize))
+                    .values()
+                    .parallelStream()
+                    .forEach(batchIndexes -> {
+
+                        if (hasError.get()) return; // stop if credential error already occurred
+
+                        List<PO> batch = batchIndexes.stream()
+                                .map(userTokenList::get)
+                                .collect(Collectors.toList());
+
+                        for (PO uToken : batch) {
+
+                            if (hasError.get()) break; // stop mid-batch if error occurred
+
+                            PiUserToken piUserToken = new PiUserToken(ctx, uToken.get_ID(), null);
+
+                            // ─────────────────────────────────────────────────
+                            // FIX #8 — Also check for blank/empty device tokens
+                            //
+                            // ORIGINAL BUG: Only checked for null. An empty string ""
+                            //               would pass the check, be sent to FCM,
+                            //               and cause a 400 "invalid token" error.
+                            //
+                            // BENEFIT: Skip garbage tokens silently instead of
+                            //          triggering an FCM error that stops all sends.
+                            // ─────────────────────────────────────────────────
+                            String deviceToken = piUserToken.getdevicetoken();
+                            if (deviceToken == null || deviceToken.trim().isEmpty()) {
+                                System.out.println("FCM: Empty device token for PiUserToken ID="
+                                        + uToken.get_ID() + ". Skipping.");
+                                continue;
+                            }
+
+                            // Send the FCM notification
+                            int sendResult = FCMServiceNew.sendFCMMessageCode(deviceToken, title, body, null, data);
+
+                            if (sendResult == 1) {
+                                // Credential/auth error — stop everything
+                                System.err.println("FCM: Auth error for AD_User_ID="
+                                        + piUserToken.getAD_User_ID()
+                                        + ". Stopping all sends.");
+                                hasError.set(true);
+                                break;
+                            } else if (sendResult == 2) {
+                                // Token-level error (UNREGISTERED etc) — skip this token
+                                System.out.println("FCM: Stale/invalid token for AD_User_ID="
+                                        + piUserToken.getAD_User_ID()
+                                        + ", PiUserToken ID=" + uToken.get_ID()
+                                        + ". Skipping.");
+                                continue;
+                            }
+
+                            // ─────────────────────────────────────────────────
+                            // Step 5: Save MNote record for successful sends
+                            // ─────────────────────────────────────────────────
+                            try {
+                                saveMNote(ctx, tableId, recordId, title, body,
+                                        messageTitle, piUserToken.getAD_User_ID());
+                            } catch (Exception e) {
+                                // ─────────────────────────────────────────────
+                                // FIX #10 — Don't let MNote save failure stop FCM sends
+                                //
+                                // ORIGINAL BUG: mNoteS.saveEx() throws an exception on
+                                //               DB error. Inside parallelStream, that
+                                //               uncaught exception silently kills the
+                                //               entire parallel task. Other tokens in
+                                //               the batch would never get notifications.
+                                //
+                                // FIX: Catch the exception, log it, and continue.
+                                //
+                                // BENEFIT: A DB hiccup saving MNote does not block
+                                //          FCM notifications from being delivered.
+                                // ─────────────────────────────────────────────
+                                System.err.println("FCM: Failed to save MNote for AD_User_ID="
+                                        + piUserToken.getAD_User_ID() + " — " + e.getMessage());
+                                e.printStackTrace();
+                                // Do NOT set hasError — MNote failure is not an FCM failure
+                            }
+                        }
+                    });
+
+        } // end for each user
+
+        if (hasError.get()) {
+            System.err.println("FCM: sendNotification completed WITH errors. "
+                    + "Some notifications may not have been delivered.");
+        } else {
+            System.out.println("FCM: sendNotification completed successfully for role '" + userType + "'.");
+        }
+    }
+
+
+    /**
+     * Creates and saves an MNote record for a successfully delivered notification.
+     * Extracted into its own method for clarity and testability.
+     */
+    private static void saveMNote(Properties ctx, int tableId, int recordId,
+            String title, String body, String messageTitle, int adUserId) {
+
+        MNote mNote = new MNote(ctx, 0, null);
+        mNote.setRecord(tableId, recordId);
+        mNote.setTextMsg(body);
+        mNote.setDescription(title + " " + body);
+        mNote.setAD_User_ID(adUserId);
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FIX #11 — Set AD_Message_ID properly before checking its value
+        //
+        // ORIGINAL BUG: The code called setAD_Message_ID(messageTitle) where
+        //               messageTitle is a String like "MaterialReciptCreated".
+        //               But setAD_Message_ID() expects an int (the database ID),
+        //               NOT a message value string. Passing a String to an int
+        //               setter either fails to compile or silently sets 0.
+        //               Then the code checked `if (mNoteS.getAD_Message_ID() == 240)`
+        //               — 240 is the default "unknown message" ID in iDempiere.
+        //               So the check was: "if setting the ID failed, create a new message."
+        //               This is the correct intent but the wrong approach.
+        //
+        // FIX: Look up the AD_Message by its value string first.
+        //      If not found, create it. Then set the resolved integer ID.
+        //
+        // BENEFIT: MNote is always linked to a valid AD_Message record.
+        // ─────────────────────────────────────────────────────────────────────
+        int adMessageId = resolveOrCreateMessage(ctx, messageTitle);
+        mNote.setAD_Message_ID(adMessageId);
+
+        mNote.saveEx();
+
+        System.out.println("FCM: MNote saved for AD_User_ID=" + adUserId
+                + ", AD_Message_ID=" + adMessageId);
+    }
+
+
+    /**
+     * Looks up an AD_Message by its value string.
+     * If not found, creates a new one and returns its ID.
+     *
+     * @param ctx          iDempiere context.
+     * @param messageValue The message value string (e.g. "MaterialReciptCreated").
+     * @return The AD_Message_ID (always a valid positive integer).
+     */
+    private static int resolveOrCreateMessage(Properties ctx, String messageValue) {
+
+        // Try to find existing message
+        org.compiere.model.Query query = new org.compiere.model.Query(
+                ctx,
+                org.compiere.model.MMessage.Table_Name,
+                "Value = ? AND AD_Client_ID IN (0, " + Env.getAD_Client_ID(ctx) + ")",
+                null);
+        MMessage existing = query.setParameters(messageValue).first();
+
+        if (existing != null && existing.getAD_Message_ID() > 0) {
+            return existing.getAD_Message_ID();
+        }
+
+        // Not found — create a new one
+        System.out.println("FCM: AD_Message '" + messageValue + "' not found. Creating new one.");
+        MMessage newMessage = new MMessage(ctx, 0, null);
+        newMessage.setValue(messageValue);
+        newMessage.setMsgText(messageValue);
+        newMessage.setMsgType("M"); // M = Note/Message type in iDempiere
+        newMessage.saveEx();
+
+        System.out.println("FCM: Created AD_Message '" + messageValue
+                + "' with ID=" + newMessage.getAD_Message_ID());
+        return newMessage.getAD_Message_ID();
+    }
+
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helper: Find a role by client and name
+    // ─────────────────────────────────────────────────────────────────────────
+    private static MRole getRoleByClientAndNamenew(Properties ctx, int clientId, String roleName) {
+        try {
+            org.compiere.model.Query query = new org.compiere.model.Query(
+                    ctx,
+                    MRole.Table_Name,
+                    "Name = ? AND AD_Client_ID = ?",
+                    null);
+            return query.setParameters(roleName, clientId).first();
+        } catch (Exception e) {
+            System.err.println("FCM: Error looking up role '" + roleName + "': " + e.getMessage());
+            return null;
+        }
+    }
+
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helper: Find all user-role assignments for a given client and role
+    // ─────────────────────────────────────────────────────────────────────────
+    private static List<MUserRoles> getUsersByClientAndRolenew(Properties ctx, int clientId, int roleId) {
+        try {
+            org.compiere.model.Query query = new org.compiere.model.Query(
+                    ctx,
+                    MUserRoles.Table_Name,
+                    "AD_Role_ID = ? AND AD_Client_ID = ? AND IsActive = 'Y'",
+                    null);
+            return query.setParameters(roleId, clientId).list();
+        } catch (Exception e) {
+            System.err.println("FCM: Error looking up users for AD_Role_ID=" + roleId + ": " + e.getMessage());
+            return java.util.Collections.emptyList();
+        }
+    }
+
+}
+------------------------------------------------------
+PipraUtils.sendNotificationAsyncnew(
+				    "Supervisor",                                          // role name
+				    inout.get_Table_ID(),                                  // table ID for MNote
+				    inout.getM_InOut_ID(),                                 // record ID for MNote
+				    ctx, trxName,
+				    "New Inward: " + inout.getDocumentNo(),                // notification title
+				    "Inward - " + inout.getDocumentNo() + " added to process", // notification body
+				    inout.get_TableName(),
+				    data,
+				    loginReq.getClientID(),                                // client/tenant ID
+				    "MaterialReciptCreated"                                // AD_Message value
+				);
