@@ -7,3 +7,9 @@ like Content-Type,Accept
 
 Accept       - application/json
 Content-Type - application/json
+
+Token:
+
+Authorization - Bearer eyJraWQiOiJUaXNzdWUiLCJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aWxhazEiLCJBRF9DbGllbnRfSUQiOjEwMDAwMDIsIkFEX1VzZXJfSUQiOjEwMDAwMjAsIkFEX1JvbGVfSUQiOjEwMDAwMjAsIkFEX09yZ19JRCI6MTAwMDAwMiwiTV9XYXJlaG91c2VfSUQiOjEwMDAwMDIsIkFEX0xhbmd1YWdlIjoiZW5fSU4iLCJBRF9TZXNzaW9uX0lEIjoxMTgxOTE5LCJpc3MiOiJQaXByYSIsImV4cCI6MTc3NTY0MzE5OH0.rvQxqjsVDJAaBqbUf1zSZ26WlfbzNFrjRiaiK3mMenoXgXIdxIFVTF8H9mHCBnAtULi22xoq2hVKo0K52Tq7TQ
+
+means :- Bearer <token>

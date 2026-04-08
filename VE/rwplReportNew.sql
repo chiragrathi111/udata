@@ -271,3 +271,48 @@ ORDER BY
        DATE(pp.updated) DESC;
 
 ------------------------------------------------------------------------------------------
+Restricted Report:-
+
+CREATE OR REPLACE VIEW adempiere.pi_restrict_report AS
+SELECT
+    pl.quantity AS actual_qty,
+    pl.actualqty AS updated_qty,
+    CASE 
+        WHEN pl.isrestricted = 'Y' THEN 'Restricted'
+        WHEN pl.isrestricted = 'N' AND pl.releaseDate IS NOT NULL THEN 'Released'
+        ELSE 'Available'
+    END AS restrict_status,
+    pl.restricteddate AS restricted_date,
+    pl.releaseDate AS released_date,
+    pl.remark AS old_records,
+    u.name AS action_by,
+    pl.ad_org_id,
+    wh.m_warehouse_id,
+    pl.m_product_id,
+    pl.m_locator_id,
+    pl.description AS comment,
+    pr.erpcode AS erpcode,
+    pl.isrestricted AS status_flag,
+    pl.ad_client_id,
+    TO_CHAR(pl.restricteddate,'DD/MM/YYYY HH12:MI AM') AS restricted_datetime,
+    TO_CHAR(pl.releaseDate,'DD/MM/YYYY HH12:MI AM') AS released_datetime,
+    pr.m_product_category_id
+    
+FROM
+    adempiere.pi_productLabel pl
+JOIN
+    adempiere.m_product pr ON pl.m_product_id = pr.m_product_id
+JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+JOIN
+    adempiere.m_locator loc ON pl.m_locator_id = loc.m_locator_id
+JOIN
+    adempiere.m_warehouse wh ON loc.m_warehouse_id = wh.m_warehouse_id
+LEFT JOIN
+    adempiere.ad_user u ON pl.updatedby = u.ad_user_id
+WHERE
+    pl.isactive = 'Y' 
+    AND pl.reserved = 'N'
+    AND (pl.isrestricted = 'Y' OR pl.releaseDate IS NOT NULL)
+ORDER BY
+    pl.restricteddate DESC;
+------------------------------------------------------------------------------------------------

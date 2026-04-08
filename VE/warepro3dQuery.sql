@@ -29,7 +29,7 @@ SELECT
         SELECT pl2.labeluuid, MAX(pl2.quantity) AS qty
         FROM adempiere.pi_productlabel pl2
         WHERE pl2.m_locator_id = ml.m_locator_id
-          AND pl2.issotrx = 'Y'
+          AND pl2.issotrx = 'Y' AND pl2.isactive = 'Y'
         GROUP BY pl2.labeluuid
     ) x
 ), 0)
