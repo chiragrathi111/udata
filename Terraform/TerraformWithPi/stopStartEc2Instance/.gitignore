@@ -1,0 +1,19 @@
+# ============================================================
+# CRITICAL: These files contain secrets - NEVER push to GitHub
+# ============================================================
+
+# Terraform variables file (has access_key, secret_key)
+terraform.tfvars
+*.tfvars
+
+# Terraform state (has infrastructure details)
+*.tfstate
+*.tfstate.backup
+
+# Terraform working directory
+.terraform/
+.terraform.lock.hcl
+
+# OS files
+.DS_Store
+Thumbs.db

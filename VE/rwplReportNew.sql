@@ -296,13 +296,19 @@ SELECT
     pl.ad_client_id,
     TO_CHAR(pl.restricteddate,'DD/MM/YYYY HH12:MI AM') AS restricted_datetime,
     TO_CHAR(pl.releaseDate,'DD/MM/YYYY HH12:MI AM') AS released_datetime,
-    pr.m_product_category_id
+    pr.m_product_category_id,
+    date(li.movementdate) AS receipt_date,
+    to_char(li.movementdate, 'DD/MM/YYYY HH12:MI AM') AS receipt_datetime,
+    pl.restrict_comment AS restrict_comment,
+    pl.release_comment
     
 FROM
     adempiere.pi_productLabel pl
 JOIN
     adempiere.m_product pr ON pl.m_product_id = pr.m_product_id
 JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+JOIN adempiere.m_inoutline mil ON mil.m_inoutline_id = pl.m_inoutline_id
+     JOIN adempiere.m_inout li ON li.m_inout_id = mil.m_inout_id
 JOIN
     adempiere.m_locator loc ON pl.m_locator_id = loc.m_locator_id
 JOIN

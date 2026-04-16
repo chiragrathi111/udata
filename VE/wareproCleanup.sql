@@ -216,6 +216,9 @@ WHERE c_order_id IN (
 DELETE FROM adempiere.c_order 
 WHERE ad_client_id = 1000002;
 
+---------------------------------------------------------------------
+Transaction data deleted:-
+
 -- Step 1: Delete transactions
 DELETE FROM adempiere.m_transaction
 WHERE ad_client_id = 1000002;
