@@ -1,0 +1,135 @@
+server {
+
+    listen 80;
+    listen [::]:80;
+
+    server_name dev.rwpl.warepro.in;
+
+    root /var/www/html;
+    index index.html;
+
+    # ===============================
+    # GLOBAL TIMEOUT SETTINGS
+    # ===============================
+    keepalive_timeout 65;
+    client_body_timeout 60;
+    client_header_timeout 60;
+    send_timeout 600;
+
+    # ===============================
+    # STATIC ROOT
+    # ===============================
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # ===============================
+    # IDEMPIERE WEBUI
+    # ===============================
+    location /webui {
+        proxy_pass http://localhost:8080/webui;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 600;
+        proxy_send_timeout    600;
+        proxy_read_timeout    600;
+    }
+
+    # ===============================
+    # ZK COMET (VERY IMPORTANT)
+    # ===============================
+    location /webui/zkau/comet {
+        proxy_pass http://localhost:8080/webui/zkau/comet;
+
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_buffering off;
+
+        proxy_connect_timeout 600;
+        proxy_send_timeout    600;
+        proxy_read_timeout    3600;
+        send_timeout          3600;
+    }
+
+    # ===============================
+    # SOAP / RWPL
+    # ===============================
+    location /rwpl {
+        proxy_pass http://localhost:8080/ADInterface/services/rwpl;
+
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_buffering off;
+        proxy_read_timeout 600;
+    }
+
+    # ===============================
+    # REST SERVICE
+    # ===============================
+    location /ModelADService {
+        proxy_pass http://localhost:8080/ADInterface/services/rest/model_adservice;
+
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_buffering off;
+        proxy_read_timeout 600;
+    }
+
+    location /rwplrest {
+        proxy_pass http://localhost:8080/rwplrest;
+
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_buffering off;
+        proxy_read_timeout 600;
+    }
+
+    # ===============================
+    # FRONTEND (NODE)
+    # ===============================
+    location /layout {
+        proxy_pass http://localhost:3000/;
+
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+
+        proxy_read_timeout 600;
+    }
+
+    location /css {
+        proxy_pass http://localhost:3000/css;
+    }
+
+    location /js {
+        proxy_pass http://localhost:3000/js;
+    }
+
+    location /node_modules/three/build {
+        proxy_pass http://localhost:3000/node_modules/three/build;
+    }
+
+    location /node_modules/three/examples/jsm/controls {
+        proxy_pass http://localhost:3000/node_modules/three/examples/jsm/controls;
+    }
+}
