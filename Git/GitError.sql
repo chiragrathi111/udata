@@ -14,4 +14,12 @@ Solution:-  *git reset HEAD~1   (your commit and added code reverse and your cod
 			* git commit
 			*git push
 
+
+Detect changed plugins
+
+* git diff --name-only HEAD~1
+
+better
+
+* git diff --name-only HEAD~1 | awk -F'/' '{print $2}' | sort -u
   			

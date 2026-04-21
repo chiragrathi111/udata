@@ -1,0 +1,22 @@
+If any case our ram memory 80 or more then our idempiere server restart and i chek every 5 min
+
+crontab -e
+*/5 * * * * free -m | awk '/Mem:/ {if ($3/$2 > 0.80) system("/home/ubuntu/restart_idempiere.sh")}'
+
+I added restart script:-
+
+sudo nano /home/ubuntu/restart_idempiere.sh
+
+#!/bin/bash
+
+LOG_FILE="/home/ubuntu/restart_log.log"
+DATE=$(date)
+
+echo "[$DATE] High memory detected. Restarting iDempiere..." >> $LOG_FILE
+
+# Restart iDempiere service
+sudo systemctl restart idempiere
+
+echo "[$DATE] Restart completed." >> $LOG_FILE
+
+chmod +x /home/ubuntu/restart_idempiere.sh
