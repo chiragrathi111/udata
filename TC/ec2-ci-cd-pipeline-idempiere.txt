@@ -1,0 +1,186 @@
+🎯 FINAL GOAL
+Code push → auto build → auto upload → auto deploy → no manual work
+🧠 ARCHITECTURE (YOUR CASE)
+GitHub
+   ↓
+:contentReference[oaicite:0]{index=0}
+   ↓
+:contentReference[oaicite:1]{index=1}
+   ↓
+S3 (store jars)
+   ↓
+:contentReference[oaicite:2]{index=2}
+   ↓
+EC2 (iDempiere)
+
+🛠️ STEP 1️⃣ — Put your script inside repo
+
+Create file in your project:
+
+scripts/build_and_upload.sh
+
+Paste your logic (clean version 👇)
+
+#!/bin/bash
+set -e
+
+echo "Detect changed plugins..."
+
+CHANGED=$(git diff --name-only HEAD~1 | awk -F'/' '{print $2}' | sort -u)
+
+echo "Changed plugins: $CHANGED"
+
+rm -rf output
+mkdir output
+
+for plugin in $CHANGED; do
+  echo "Building $plugin"
+
+  mvn -pl $plugin -am clean package
+
+  echo "Copying jar of $plugin"
+
+  find $plugin/target -name "*.jar" ! -name "*sources.jar" -exec cp {} output/ \;
+done
+
+BUILD_ID=$(date +%s)
+
+echo "Uploading to S3..."
+
+aws s3 cp output/ s3://your-bucket/plugins/$BUILD_ID/ --recursive
+
+echo "BUILD_ID=$BUILD_ID" > build.env
+
+
+👉 🔥 Important:
+
+This script will:
+✔ Detect plugins
+✔ Build
+✔ Upload to S3
+✔ Save BUILD_ID
+🛠️ STEP 2️⃣ — Create buildspec.yml
+
+Create file:
+
+buildspec.yml
+
+Paste:
+
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies"
+      - mvn -version
+
+  build:
+    commands:
+      - chmod +x scripts/build_and_upload.sh
+      - ./scripts/build_and_upload.sh
+
+  post_build:
+    commands:
+      - echo "Reading BUILD_ID"
+      - export BUILD_ID=$(cat build.env | cut -d'=' -f2)
+      - echo "Trigger deployment"
+
+      - aws ssm send-command \
+          --instance-ids "i-xxx" \
+          --document-name "AWS-RunShellScript" \
+          --parameters "commands=['bash /home/ubuntu/deploy_plugins.sh $BUILD_ID']"
+
+artifacts:
+  files:
+    - build.env
+
+
+👉 🔥 This is the main brain of pipeline
+
+🛠️ STEP 3️⃣ — Create CodeBuild
+
+Go to:
+
+👉 AWS CodeBuild
+
+Settings:
+Environment:
+  OS: Ubuntu
+  Runtime: Java 11
+
+Service role:
+  Create new role
+Add permissions to role:
+✔ s3:* (or limited access)
+✔ ssm:SendCommand
+✔ ec2:DescribeInstances
+
+🛠️ STEP 4️⃣ — Create CodePipeline
+
+Go to:
+
+👉 AWS CodePipeline
+
+Stages:
+1️⃣ Source
+GitHub repo connect
+2️⃣ Build
+Select CodeBuild project
+
+👉 That’s it — no separate deploy stage needed (we already use SSM in build)
+
+🛠️ STEP 5️⃣ — EC2 Setup (VERY IMPORTANT)
+
+You already did:
+
+✔ SSM role attached
+✔ deploy script created
+
+Check:
+
+bash /home/ubuntu/deploy_plugins.sh test-folder
+🚀 FINAL FLOW
+You do:
+git push
+AWS does:
+CodePipeline triggered
+↓
+CodeBuild runs
+↓
+Script detects plugins
+↓
+Build jars
+↓
+Upload to S3
+↓
+SSM deploy
+↓
+iDempiere restart
+
+💣 REAL EXAMPLE
+You change:
+com.pipra.rwpl.rest
+org.idempiere.webservices
+Pipeline:
+Build both jars ✅
+Upload to S3 ✅
+Deploy both jars ✅
+Restart once ✅
+⚠️ COMMON ERRORS (IMPORTANT)
+❌ Error: mvn not found
+
+Fix:
+
+runtime-versions:
+  java: corretto11
+❌ Error: SSM permission denied
+
+Fix:
+
+Add ssm:SendCommand to CodeBuild role
+❌ Error: No EC2 found
+
+Fix:
+
+Check instance ID + region
