@@ -57,6 +57,8 @@ sudo -i -u postgres
 psql
 ALTER USER postgres WITH PASSWORD 'Welcome@1278';
 
+ALTER USER postgres WITH PASSWORD 'postgres';
+
 Adempiere Setep:-
 
 1. Create adempiere user :-
@@ -148,3 +150,7 @@ psql -U adempiere -d stonex < /home/chirag/stonex_dev13.dmp
 how can take dumb using command :-
 
 pg_dump -U adempiere -W ware03 > /home/chirag/dumb/ware03.dmp
+
+createdb --template=template0 -E UNICODE -O adempiere -U adempiere ware03
+psql -d ware03 -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+psql -U adempiere -d ware03 < /home/chirag/Chirag/dumb/ware03.dmp
