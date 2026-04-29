@@ -142,3 +142,9 @@ createdb  --template=template0 -E UNICODE -O adempiere -U adempiere stonex
 psql -d stonex -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
 
 psql -U adempiere -d stonex < /home/chirag/stonex_dev13.dmp
+
+==============================================================================================================
+
+how can take dumb using command :-
+
+pg_dump -U adempiere -W ware03 > /home/chirag/dumb/ware03.dmp
