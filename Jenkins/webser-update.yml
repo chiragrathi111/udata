@@ -1,0 +1,23 @@
+---
+- name: Upload new code and ReStart the service
+  hosts: cr
+  become: true  # sudo user access
+
+  tasks:
+
+    - name: Install Apache (if not installed)
+      package:
+        name: httpd
+        state: present
+
+    - name: Place custom HTML File
+      copy:
+        src: /var/lib/jenkins/workspace/web-server-update/index.html
+        dest: /var/www/html/index.html
+        mode: '0644'
+
+    - name: Start the service
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes

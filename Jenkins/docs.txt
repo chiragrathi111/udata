@@ -1,0 +1,6 @@
+By Default jenkins have pre define variable available but if we want to custom variable that is also posible
+
+Flow :-
+
+Manage-Jenkins -> System -> Global properties -> check the Environment variable -> add (name/value)
+

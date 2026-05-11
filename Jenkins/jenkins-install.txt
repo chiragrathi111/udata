@@ -1,0 +1,169 @@
+Ubuntu:-
+
+1. Install Git (Latest from official PPA)
+sudo add-apt-repository ppa:git-core/ppa -y
+sudo apt update
+sudo apt install git -y
+echo "Git installed: $(git --version)" Install Java 21/17
+
+2. sudo apt update
+sudo apt install fontconfig openjdk-21-jre
+java -version
+
+3. Install Maven 3 (Latest from official repo)
+sudo apt install maven -y
+echo "Maven installed: $(mvn --version)"
+
+4. Jenkins install
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install jenkins -y
+
+5. Start/enable and check status
+
+sudo systemctl daemon-reload
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+use below command for the getting admin password
+sudo su
+nano /var/lib/jenkins/secrets/initialAdminPassword
+
+click install plug in
+
+and after that fill some details
+like basic details
+
+Note :- aws side gave port 8080 access other wise browser not working
+
+sudo apt-cache search <softwere_name>
+
+===============================================================================
+For the Linux :-
+
+Jenkins Install Commands
+
+Step 1 — Install Git
+
+sudo yum update -y
+sudo yum install git -y
+git --version
+
+Step 2 — Install Java 21
+
+sudo yum install java-21-amazon-corretto -y
+java -version
+
+Amazon Linux uses Amazon Corretto (Amazon's own Java) — it is the same as Java 21, fully compatible with Jenkins.
+
+Step 3 — Install Maven
+
+sudo yum install maven -y
+mvn --version
+
+Step 4 — Install Jenkins
+
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo yum upgrade -y
+sudo yum install jenkins -y
+
+Step 5 — Start Jenkins & Check Status
+
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+Step 6 — Get Admin Password
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+Copy this password and paste it in your browser at http://YOUR_EC2_IP:8080
+
+Search for any package
+
+sudo yum search <software_name>
+sudo yum info <software_name>
+
+
+===============================================
+If you want to change jenkins port like 8080 to 9090 so not gotting any conflict so follow the below steps:-
+
+sudo systemctl stop  jenkins.service
+
+mkdir jenkins
+sudo chmod -R 775 jenkins/
+cd jenkins/
+ 
+sudo wget https://updates.jenkins-ci.org/latest/jenkins.war
+
+java -jar jenkins.war --httpPort=9090 &
+
+===================================================
+Docker install :-
+
+sudo apt update -y
+sudo apt upgrade -y
+
+sudo apt install -y ca-certificates curl gnupg lsb-release
+
+sudo install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update -y
+
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo systemctl status docker
+
+docker --version
+
+sudo usermod -aG docker $USER
+
+newgrp docker
+
+docker ps
+
+docker compose version
+
+Jenkins container:-
+
+docker run --name myjenkins \
+-p 8080:8080 \
+-p 50000:50000 \
+-d \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v jenkins_home:/var/jenkins_home \
+jenkins/jenkins:lts
+
+
+after run this commands the run below commands
+
+docker ps
+
+docker logs <container_name>   #i got the admin password
+
+ip:8080
+
+and paste the password

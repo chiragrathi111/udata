@@ -1,0 +1,31 @@
+---
+- name: Simple Ansible Playbook
+  hosts: cr
+  user: ec2-user
+  become: yes
+  connection: ssh
+
+  tasks:
+
+    - name: Check server connectivity
+      ping:
+
+    - name: Print message
+      debug:
+        msg: "Hello Chirag, Ansible is working properly!"
+
+    - name: Create test folder
+      file:
+        path: /home/ec2-user/test_ansible
+        state: directory
+
+    - name: Create sample file
+      copy:
+        dest: /home/ec2-user/test_ansible/info.txt
+        content: |
+          This file is created using Ansible Playbook.
+          Server automation is working.
+
+
+# ansible-playbook test1.yml --check     # dry run
+# ansible-playbook test1.yml  #run
