@@ -6,25 +6,16 @@ https://warepro.radheshamwellpack.com/webui/
 
 rwpl devb server url:-
 
-<<<<<<< HEAD
-
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
-
 Tissue Culture prod server url:-
 https://tissueculture.kdisc.kerala.gov.in/webui/
 
 Tissue Culture dev server url:-
 https://tc.warepro.in/webui/
 
-<<<<<<< HEAD
-
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 RWPL:-
 Scomp:-
 scomp -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
 java -cp /home/chirag/Downloads/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans.impl.tool.SchemaCompiler -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
-
-
 
 Scomp for vinay electrical:-
 scomp -javasource 11 -out lib/ve-xmlbeans.jar WEB-INF/xsd/ve.xsd
@@ -36,6 +27,13 @@ https://13.235.255.17:8443/webui/index.zul
 Terminal side:-
 ssh -i "pemFile/democ.pem" ubuntu@13.235.255.17
 
+-------------------------------------------------------------------
+Find any jar file :-
+
+/opt/idempiere-server/jettyhome/work/jetty-0_0_0_0-8443-bundleFile-_rwplrest-any-/webapp/META-INF$
+
+----------------------------------------------------------------------
+
 Note:-
 If mvn clean install is not working first go to plugin and mfg plugin mvn clean install then go to com.pipra.ve plug in and enter mvn clean install if showing any error then go to idempiere and go to webservices plug in and go to mvn clean install after mvn clean install then go to plugin and go to com.pipra.ve and mvn clean install and you see it is working fine.
 
@@ -44,8 +42,6 @@ scomp -javasource 11 -out lib/idempiere-xmlbeans.jar WEB-INF/xsd/idempiere-schem
 above getting any issue use this one
 java -cp /home/chirag/Downloads/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans.impl.tool.SchemaCompiler -javasource 11 -out lib/idempiere-xmlbeans.jar WEB-INF/xsd/idempiere-schema.xsd
 
-<<<<<<< HEAD
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 Vinay Client Server Login:
 ssh -l root 45.120.138.56
 l__3rVXT#aX-
@@ -56,84 +52,6 @@ DB - vinayERP
 
 postgres
 Dev
-
-<!-- <include src="~./theme/default/zul/desktop/warepro-chat.zul"/> --!>
-
-<div id="warepro-chat-root" apply="org.warepro.chat.ChatComposer"
-     style="position:fixed; bottom:20px; right:20px; z-index:9000;">
-
-    <!-- Toggle button - always visible -->
-    <button id="chatToggleBtn" label="💬 WareProAI"
-            style="padding:10px 16px; border-radius:24px;
-                   background:#1a56db; color:#fff; border:none; cursor:pointer;"/>
-
-    <!-- Chat drawer - hidden until toggled -->
-    <div id="chatDrawer" visible="false"
-         style="position:fixed; bottom:70px; right:20px;
-                width:420px; height:600px;
-                border-radius:12px; overflow:hidden;
-                box-shadow:0 8px 32px rgba(0,0,0,0.2);
-                background:#fff;">
-        <iframe id="chatFrame"
-                src=""
-                width="100%"
-                height="100%"
-                style="border:none;"/>
-    </div>
-</div>
-
-
-<div id="warepro-chat-root" apply="org.warepro.chat.ChatComposer"
-     style="position:fixed; bottom:20px; right:20px; z-index:9000;">
-
-    <style>
-        .chat-btn {
-            appearance: none;
-            border: none;
-            cursor: pointer;
-            position: relative;
-            background-color: #2563EB;
-            color: #ffffff;
-            font-family: sans-serif;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 16px 32px;
-            border-radius: 16px;
-            margin-bottom: 12px;
-            transition: background-color 0.2s ease;
-        }
-        .chat-btn::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            right: 15px;
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 0px solid transparent;
-            border-top: 12px solid #2563EB;
-            transition: border-top-color 0.2s ease;
-        }
-    </style>
-
-    <!-- Toggle button - always visible -->
-    <button id="chatToggleBtn" label="WarePro AI" sclass="chat-btn"/>
-
-    <!-- Chat drawer - hidden until toggled -->
-    <div id="chatDrawer" visible="false"
-         style="position:absolute; bottom:70px; right:0;
-                width:420px; height:600px;
-                border-radius:12px; overflow:hidden;
-                box-shadow:0 8px 32px rgba(0,0,0,0.2);
-                background:#fff;">
-        <iframe id="chatFrame"
-                src=""
-                width="100%"
-                height="100%"
-                style="border:none;"
-                />
-    </div>
-</div>
 
 ssh details - 
 Ip: 188.241.187.186

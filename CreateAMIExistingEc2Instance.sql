@@ -80,3 +80,17 @@ aws s3 cp s3://demobackup121/backup_2023-04-24_11:36:58.sql /home/ubuntu/downloa
 #DROP DATABASE db;
 (Capital latter and last mai semicolon dono important hai)
 
+----------------------------------------------------------------------------------
+
+Create a new bucket :-
+
+aws s3 mb s3://chirag-demo-backup-001 --region ap-south-1
+
+aws s3 ls
+
+echo "hello chirag" > test.txt
+
+aws s3 cp test.txt s3://chirag-demo-backup-001/
+
+aws s3 ls s3://chirag-demo-backup-001/
+

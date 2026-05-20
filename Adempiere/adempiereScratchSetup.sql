@@ -90,6 +90,32 @@ Fro Vinay Electricals:-
 
 	scp -i "pemFile/democ.pem" ubuntu@3.28.239.34:/home/ubuntu/stonex_template.dmp /home/chirag/
 
+	================================================================================================
+	Install Postgresql 14 :-
+
+	# Step 1: Install required packages
+sudo apt install -y curl ca-certificates
+
+# Step 2: Add PostgreSQL official repository
+sudo install -d /usr/share/postgresql-common/pgdg
+sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+    --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+# Step 3: Add the repository to sources
+sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] \
+    https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+    > /etc/apt/sources.list.d/pgdg.list'
+
+# Step 4: Update package list
+sudo apt update
+
+# Step 5: Install PostgreSQL 14 specifically
+sudo apt install -y postgresql-14
+
+# Step 6: Verify installation
+psql --version
+# Should show: psql (PostgreSQL) 14.x
+
 	===================================
 	Delete DB:-
 	DROP DATABASE idempiere2;
@@ -139,12 +165,14 @@ Minutes of Meeting detail
 =============================================================================================================
 *Stonex
 
-createdb  --template=template0 -E UNICODE -O adempiere -U adempiere stonex
+createdb --template=template0 -E UNICODE -O adempiere -U adempiere erp
 
-psql -d stonex -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+psql -d erp -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
 
-psql -U adempiere -d stonex < /home/chirag/stonex_dev13.dmp
+psql -U adempiere -d erp < /home/ubuntu/WarePro/vk12.dmp
 
+
+Welcome@1278
 ==============================================================================================================
 
 how can take dumb using command :-
@@ -154,3 +182,9 @@ pg_dump -U adempiere -W ware03 > /home/chirag/dumb/ware03.dmp
 createdb --template=template0 -E UNICODE -O adempiere -U adempiere ware03
 psql -d ware03 -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
 psql -U adempiere -d ware03 < /home/chirag/Chirag/dumb/ware03.dmp
+
+======================================================================================================
+Find idempiere jar file :-
+
+/opt/idempiere-server/jettyhome/work/jetty-0_0_0_0-8443-bundleFile-_rwplrest-any-/webapp/META-INF$
+

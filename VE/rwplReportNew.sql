@@ -322,3 +322,121 @@ WHERE
 ORDER BY
     pl.restricteddate DESC;
 ------------------------------------------------------------------------------------------------
+Ageing Report :-
+
+-- CREATE OR REPLACE VIEW adempiere.pi_ageing_report AS
+
+SELECT
+
+    pc.m_product_category_id AS m_product_category_id,
+
+    pr.erpcode AS erp_code,
+
+    pr.value AS search_key,
+
+    pr.m_product_id AS m_product_id,
+
+    il.m_locator_id AS m_locator_id,
+
+    SUM(il.qtyentered) AS total_qty_available,
+
+    (CURRENT_DATE - DATE(i.movementdate)) AS age_days,
+
+    CASE
+        WHEN (CURRENT_DATE - DATE(i.movementdate)) BETWEEN 0 AND 15
+            THEN '0-15 Days'
+
+        WHEN (CURRENT_DATE - DATE(i.movementdate)) BETWEEN 16 AND 30
+            THEN '16-30 Days'
+
+        WHEN (CURRENT_DATE - DATE(i.movementdate)) BETWEEN 31 AND 60
+            THEN '31-60 Days'
+
+        WHEN (CURRENT_DATE - DATE(i.movementdate)) BETWEEN 61 AND 90
+            THEN '61-90 Days'
+
+        WHEN (CURRENT_DATE - DATE(i.movementdate)) BETWEEN 91 AND 180
+            THEN '91-180 Days'
+
+        ELSE 'More than 181 Days'
+    END AS age_bucket,
+
+    COALESCE(pri.pricestd, 0) AS unit_rate,
+
+    pr.weight AS unit_weight,
+
+    ROUND(
+        SUM(il.qtyentered) * COALESCE(pri.pricestd, 0),
+        2
+    ) AS total_rate,
+
+    ROUND(
+        SUM(il.qtyentered) * pr.weight,
+        3
+    ) AS total_weight,
+
+    DATE(i.movementdate) AS receipt_date,
+
+    i.documentno,
+
+    il.ad_client_id,
+
+    il.ad_org_id,pr.erpcode
+
+FROM adempiere.m_inoutline il
+
+JOIN adempiere.m_inout i
+    ON i.m_inout_id = il.m_inout_id
+
+JOIN adempiere.m_product pr
+    ON pr.m_product_id = il.m_product_id
+
+JOIN adempiere.m_product_category pc
+    ON pc.m_product_category_id = pr.m_product_category_id
+
+LEFT JOIN (
+    SELECT DISTINCT ON (m_product_id)
+        m_product_id,
+        pricestd
+    FROM adempiere.m_productprice
+    WHERE isactive = 'Y'
+    ORDER BY m_product_id, updated DESC
+) pri
+ON pri.m_product_id = il.m_product_id
+
+WHERE
+    i.issotrx = 'N'
+    AND i.docstatus IN ('CO', 'CL')
+    -- AND pr.m_product_id = 1000080
+
+GROUP BY
+
+    pc.m_product_category_id,
+
+    pr.erpcode,
+
+    pr.value,
+
+    pr.m_product_id,
+
+    il.m_locator_id,
+
+    DATE(i.movementdate),
+
+    pri.pricestd,
+
+    pr.weight,
+
+    i.documentno,
+
+    il.ad_client_id,
+
+    il.ad_org_id
+
+ORDER BY
+    DATE(i.movementdate) DESC,
+    pr.m_product_id;
+
+==============================================================================================
+
+            <url>file:///home/chirag/PiERP/pi-erp/core/pi-erp-core/idempiere-release-10/org.idempiere.p2/target/repository</url>
