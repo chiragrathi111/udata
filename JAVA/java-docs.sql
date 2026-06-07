@@ -383,3 +383,205 @@ public class Main {
 }
 
 Note :- If we use Throw ,then error showing and brake work, but if i use Throws then I show manually error and this is shwoing message instead of error. 
+
+---------------------------------------------------------------
+Maven :-
+
+What is Maven?
+
+Maven is a Build Tool + Dependency Management Tool.
+
+Maven helps:
+
+✅ Download libraries automatically
+✅ Build project
+✅ Compile code
+✅ Run tests
+✅ Package JAR/WAR
+✅ Manage project structure
+
+----------------------------------------------------
+Spring Boot :-
+
+What is Spring Boot?
+
+Before Spring Boot:
+
+Create API means:
+
+Configure XML
+Configure server
+Add dependencies manually
+Configure servlet
+Tomcat setup
+Lots of configuration 😭
+
+Spring Boot solved this.
+
+Definition:
+
+Spring Boot =
+Spring + Auto Configuration + Embedded Server
+
+Benefits:
+
+✅ Fast setup
+✅ Less configuration
+✅ Embedded Tomcat
+✅ Production ready
+✅ Easy REST APIs
+
+
+Flow:
+
+Postman
+
+   ↓
+
+Controller
+"Request aaya"
+
+   ↓
+
+Service
+"Business logic"
+
+   ↓
+
+Repository
+"DB operation"
+
+   ↓
+
+MySQL
+Store data
+
+1. Controller Layer
+
+Controller = Entry Gate
+
+Request lena
+Response dena
+URL mapping
+
+Example:
+
+@RestController
+@RequestMapping("/student")
+public class StudentController {
+
+    @Autowired
+    StudentService service;
+
+    @PostMapping("/save")
+    public Student saveStudent(
+            @RequestBody Student student){
+
+        return service.saveStudent(student);
+
+    }
+}
+
+User hit:
+
+POST /student/save
+
+Controller bolta:
+
+Request aa gaya
+Service ko bhejo
+
+Controller me business logic nahi likhte.
+
+2. Service Layer
+
+Brain of application
+
+Business logic
+Validation
+Calculations
+Rules
+
+Example:
+
+@Service
+public class StudentService {
+
+    @Autowired
+    StudentRepository repo;
+
+    public Student saveStudent(
+            Student student){
+
+        if(student.getMarks()<0){
+
+            throw new RuntimeException(
+            "Invalid marks");
+
+        }
+
+        return repo.save(student);
+    }
+}
+
+Example logic:
+
+Marks > 100 ?
+
+Duplicate email ?
+
+Age > 18 ?
+
+Salary calculate ?
+
+Ye sab Service me
+
+3. Repository Layer
+
+Repository = Database se baat karna.
+
+Example:
+
+@Repository
+public interface StudentRepository
+extends JpaRepository<Student,Integer>{
+
+}
+
+Spring automatically de deta:
+
+save()
+
+findById()
+
+findAll()
+
+delete()
+
+No SQL required basic case me.
+
+Use:
+
+repo.save(student);
+
+repo.findAll();
+
+repo.deleteById(101);
+
+4. Database Layer
+
+Entity:
+
+@Entity
+@Table(name="student")
+public class Student {
+
+    @Id
+    private Integer id;
+
+    private String name;
+
+    private Integer marks;
+
+}
+---------------------------------------------------

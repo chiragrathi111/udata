@@ -324,7 +324,7 @@ ORDER BY
 ------------------------------------------------------------------------------------------------
 Ageing Report :-
 
--- CREATE OR REPLACE VIEW adempiere.pi_ageing_report AS
+CREATE OR REPLACE VIEW adempiere.pi_ageing_report AS
 
 SELECT
 
@@ -336,9 +336,9 @@ SELECT
 
     pr.m_product_id AS m_product_id,
 
-    il.m_locator_id AS m_locator_id,
+    pi.m_locator_id AS m_locator_id,
 
-    SUM(il.qtyentered) AS total_qty_available,
+    SUM(pi.quantity) AS total_qty_available,--pi.quantity
 
     (CURRENT_DATE - DATE(i.movementdate)) AS age_days,
 
@@ -366,12 +366,12 @@ SELECT
     pr.weight AS unit_weight,
 
     ROUND(
-        SUM(il.qtyentered) * COALESCE(pri.pricestd, 0),
+        SUM(pi.quantity) * COALESCE(pri.pricestd, 0),
         2
     ) AS total_rate,
 
     ROUND(
-        SUM(il.qtyentered) * pr.weight,
+        SUM(pi.quantity) * pr.weight,
         3
     ) AS total_weight,
 
@@ -383,7 +383,9 @@ SELECT
 
     il.ad_org_id,pr.erpcode
 
-FROM adempiere.m_inoutline il
+FROM adempiere.pi_productlabel pi
+
+JOIN adempiere.m_inoutline il ON il.m_inoutline_id = pi.m_inoutline_id
 
 JOIN adempiere.m_inout i
     ON i.m_inout_id = il.m_inout_id
@@ -405,10 +407,19 @@ LEFT JOIN (
 ON pri.m_product_id = il.m_product_id
 
 WHERE
-    i.issotrx = 'N'
-    AND i.docstatus IN ('CO', 'CL')
-    -- AND pr.m_product_id = 1000080
-
+    NOT EXISTS (
+        SELECT 1 
+        FROM adempiere.pi_productlabel pp_sales 
+        WHERE pp_sales.labeluuid = pi.labeluuid 
+        AND pp_sales.issotrx = 'Y'
+    ) 
+    AND i.docstatus NOT IN ('VO','RE') 
+    AND pi.isactive = 'Y' 
+    AND pi.qcpassed = 'Y'
+    AND pi.isrestricted = 'N'
+    AND pi.finaldispatch = 'N'
+    AND pi.quantity > 0
+    AND pi.labeluuid IS NOT NULL
 GROUP BY
 
     pc.m_product_category_id,
@@ -419,7 +430,7 @@ GROUP BY
 
     pr.m_product_id,
 
-    il.m_locator_id,
+    pi.m_locator_id,
 
     DATE(i.movementdate),
 
@@ -436,7 +447,6 @@ GROUP BY
 ORDER BY
     DATE(i.movementdate) DESC,
     pr.m_product_id;
-
 ==============================================================================================
 
             <url>file:///home/chirag/PiERP/pi-erp/core/pi-erp-core/idempiere-release-10/org.idempiere.p2/target/repository</url>

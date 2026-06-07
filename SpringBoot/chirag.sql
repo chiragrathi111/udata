@@ -1,0 +1,1 @@
+Hi [Name], I'm Chirag — AWS Certified Solutions Architect and Java Backend Developer based in Hyderabad. I noticed your profile and would love to connect and learn from your experience in [their field]. Happy to connect!

@@ -184,6 +184,8 @@ IDEMPIERE_JAVA_OPTIONS="
 sudo mkdir -p /opt/idempiere-server/heapdump
 sudo chown -R idempiere:idempiere /opt/idempiere-server/heapdump
 
+scp -i /home/chirag/pemFile/rwpl-warepro.pem ubuntu@13.201.124.210:/home/ubuntu/rwpl05.dmp  ubuntu@13.203.215.245:/home/ubuntu/
+
 
 ps -ef | grep java
 ======================================================================================================

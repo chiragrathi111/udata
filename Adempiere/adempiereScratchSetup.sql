@@ -179,9 +179,13 @@ how can take dumb using command :-
 
 pg_dump -U adempiere -W ware03 > /home/chirag/dumb/ware03.dmp
 
-createdb --template=template0 -E UNICODE -O adempiere -U adempiere ware03
-psql -d ware03 -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
-psql -U adempiere -d ware03 < /home/chirag/Chirag/dumb/ware03.dmp
+createdb --template=template0 -E UNICODE -O adempiere -U adempiere erp
+psql -d erp -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+psql -U adempiere -d erp < /home/chirag/Chirag/dumb/ware03.dmp
+
+createdb --template=template0 -E UNICODE -O adempiere -U adempiere erp
+psql -d erp -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+psql -U adempiere -d erp < /home/ubuntu/rwpl05.dmp
 
 ======================================================================================================
 Find idempiere jar file :-
