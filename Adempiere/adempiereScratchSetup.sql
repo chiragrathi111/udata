@@ -179,9 +179,9 @@ how can take dumb using command :-
 
 pg_dump -U adempiere -W ware03 > /home/chirag/dumb/ware03.dmp
 
-createdb --template=template0 -E UNICODE -O adempiere -U adempiere erp
-psql -d erp -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
-psql -U adempiere -d erp < /home/chirag/Chirag/dumb/ware03.dmp
+createdb --template=template0 -E UNICODE -O adempiere -U adempiere warepro
+psql -d warepro -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+psql -U adempiere -d warepro < /home/chirag/warepro.dmp
 
 createdb --template=template0 -E UNICODE -O adempiere -U adempiere erp
 psql -d erp -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
