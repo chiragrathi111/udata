@@ -5,6 +5,7 @@ rwpl prod server url:-
 https://warepro.radheshamwellpack.com/webui/
 
 rwpl devb server url:-
+https://dev.rwpl.warepro.in/webui/
 
 Tissue Culture prod server url:-
 https://tissueculture.kdisc.kerala.gov.in/webui/
@@ -13,19 +14,12 @@ Tissue Culture dev server url:-
 https://tc.warepro.in/webui/
 
 RWPL:-
-Scomp:-
 scomp -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
 java -cp /home/chirag/Downloads/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans.impl.tool.SchemaCompiler -javasource 11 -out lib/rwpl-xmlbeans.jar WEB-INF/xsd/rwpl.xsd
 
 Scomp for vinay electrical:-
 scomp -javasource 11 -out lib/ve-xmlbeans.jar WEB-INF/xsd/ve.xsd
 java -cp /home/chirag/Downloads/Jar_Files/xmlbeans-3.1.0.jar org.apache.xmlbeans.impl.tool.SchemaCompiler -javasource 11 -out lib/ve-xmlbeans.jar WEB-INF/xsd/ve.xsd
-
-Vinay Electrical side:-
-https://13.235.255.17:8443/webui/index.zul
-
-Terminal side:-
-ssh -i "pemFile/democ.pem" ubuntu@13.235.255.17
 
 -------------------------------------------------------------------
 Find any jar file :-
@@ -69,9 +63,6 @@ ssh -i VKIndustries.pem root@103.150.187.50
 
 App Domain: https://dev.warepro.vinayelectricals.com/webui
 
-<<<<<<< HEAD
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
-800990,800989,800991,800994
 ===========================================================
 New server RAM -12 GB
 Server IP: 45.120.138.56
@@ -83,18 +74,9 @@ DB - vinayERPNew
 New :-
 ssh -i VKIndustries.pem root@103.150.187.50
 ==============================================================
-pm2:-
-nvm use 14
-pm2 start "npx serve ."
-pm2 list
-
-<<<<<<< HEAD
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
-==============================================================
 RootPassword: l__3rVXT#aX-
 Main IP: 45.120.137.143
 DB - vinayERP
-<<<<<<< HEAD
 
 ===========================================================
 New server RAM -12 GB
@@ -114,7 +96,6 @@ pme delete 0
 pm2 start "npx serve ."
 pm2 list
 =======
->>>>>>> 56bcaeb8b096ec9f140e9651aa02e35cdde49697
 
 ===========================================================
 New server RAM -12 GB
@@ -124,19 +105,6 @@ Password: l__3rVXT#aX-
 ssh -l root 45.120.138.56
 DB - vinayERPNew
 ==============================================================
-pm2:-
-nvm use 14
-pm2 start "npx serve ."
-pm2 list
-
-<<<<<<< HEAD
-G1620090Wh 127 Qty
-
-Connection=xyzCConnection[name\=0.0.0.0{13.235.255.17-erpVe-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=13.235.255.17,DBport\=5432,DBname\=erpVe,BQ\=false,FW\=false,FWhost\=,FWport\=0,UID\=adempiere]
-another postgres system added 
-
-Starting see this thing:-
-Connection=xyzCConnection[name\=0.0.0.0{localhost-idempiere-adempiere},AppsHost\=0.0.0.0,WebPort\=8080,SSLPort\=8443,type\=PostgreSQL,DBhost\=localhost,DBport\=5432,DBname\=idempiere>
 
 file send vinay server
 scp /home/mahe/Downloads/serverCode/download1.deb root@45.120.137.143:/root/WarePro/
@@ -227,16 +195,7 @@ JOIN adempiere.m_warehouse wh ON wh.m_warehouse_id = lo.m_warehouse_id
 Left JOIN adempiere.c_orderline li ON li.c_orderline_id = p.c_orderline_id
 Left JOIN adempiere.c_order o ON o.c_order_id = li.c_order_id 
 WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = p.labeluuid AND pp_sales.issotrx = 'Y');	
-
-
-RWPL:-
-CREATE OR REPLACE VIEW adempiere.pi_emptyLocatorView AS 
-SELECT l.m_locator_id,l.value AS locator_name,l.ad_client_id,l.ad_org_id
-FROM adempiere.m_locator l
-LEFT JOIN adempiere.pi_productlabel s ON l.m_locator_id = s.m_locator_id 
-WHERE NOT EXISTS (SELECT 1 FROM adempiere.pi_productlabel pp_sales WHERE pp_sales.labeluuid = s.labeluuid AND pp_sales.issotrx = 'Y')
-GROUP BY l.m_locator_id, l.value,s.ad_client_id,s.ad_org_id
-HAVING COALESCE(SUM(s.quantity), 0) = 0 ORDER BY l.m_locator_id;		
+	
 
 =============================================================
 Product Label New:-
@@ -301,8 +260,6 @@ LEFT JOIN adempiere.pp_product_bomline bl
 WHERE p.ad_client_id = 1000000
   AND p.PI_Deptartment_ID <> 1000005 AND p.PI_Deptartment_ID <> 1000004
   AND p.description IS DISTINCT FROM 'crt' order by p.PI_Deptartment_ID;
-
-	
 
 can you review my api code and suggestion if need any changes
 class name is RealmedsTissueWebserviceImpl.java class
