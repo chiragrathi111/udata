@@ -1,0 +1,79 @@
+EC2 Auto Startup Script – Setup Guide
+1. Objective
+This document explains how to automatically start Docker containers.
+
+2. Prerequisites
+Ubuntu EC2 instance
+Docker installed and running
+Docker Compose installed
+
+3. Startup Script Location
+Create script file:
+/opt/start-all.sh
+
+
+4. Startup Script
+#!/bin/bash
+
+LOG_FILE="/var/log/ec2-startup.log"
+
+# Clear old log
+echo "" > $LOG_FILE
+echo "===== EC2 Startup Started at $(date) =====" >> $LOG_FILE
+
+
+# -----------------------------------
+# 1. Start Container 
+# -----------------------------------
+echo "Starting Container..." >> $LOG_FILE
+cd /home/ubuntu/fabric-samples/test-network
+
+./network.sh up -ca -s couchdb >> $LOG_FILE 2>&1
+
+sleep 30
+
+
+5. Give Permission
+chmod +x /opt/start-all.sh
+
+
+6. Create Systemd Service
+File:
+sudo nano /etc/systemd/system/ec2-startup.service
+
+Content:
+[Unit]
+Description=EC2 Full Startup Script
+After=network.target docker.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/opt/start-all.sh
+RemainAfterExit=yes
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
+
+
+7. Enable Service
+sudo systemctl daemon-reload
+sudo systemctl enable ec2-startup.service
+
+
+8. Start Service Manually (Optional)
+sudo systemctl start ec2-startup.service
+
+
+9. Check Status
+sudo systemctl status ec2-startup.service
+
+Expected output:
+Active: active (exited)
+
+
+10. Check Logs
+cat /var/log/ec2-startup.log
+
+

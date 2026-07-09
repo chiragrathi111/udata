@@ -149,6 +149,7 @@ JOIN
 JOIN
     adempiere.M_Product pr ON pr.M_Product_ID = il.M_Product_ID
 JOIN adempiere.AD_User u ON u.AD_User_ID = mi.updatedby
+LEFT JOIN adempiere.pi_productlabel pl ON pl.M_InOutLine_id = il.M_InOutLine_id
 LEFT JOIN (
     -- Subquery to fetch the latest price
     SELECT DISTINCT ON (M_Product_ID) M_Product_ID, PriceStd 
@@ -157,7 +158,7 @@ LEFT JOIN (
     ORDER BY M_Product_ID, Updated DESC
 ) pri ON pri.M_Product_ID = il.M_Product_ID
 WHERE 
-    mi.IsSOTrx = 'N'             -- 'N' ensures this is an Inward (Material Receipt)
+    mi.IsSOTrx = 'N' AND pl.isrestricted = 'N'          -- 'N' ensures this is an Inward (Material Receipt)
     AND mi.DocStatus IN ('CO', 'CL') -- Optional: Filter for Completed or Closed documents
 GROUP BY
     DATE(mi.created),
@@ -206,6 +207,7 @@ LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pl.m_locator_id
 LEFT JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
 LEFT JOIN adempiere.m_productprice mpp_purchase ON mpp_purchase.m_product_id = pr.m_product_id AND mpp_purchase.m_pricelist_version_id = 1000000
 LEFT JOIN adempiere.m_productprice mpp_sales ON mpp_sales.m_product_id = pr.m_product_id AND mpp_sales.m_pricelist_version_id = 1000001
+WHERE pl.isrestricted = 'N'
 GROUP BY DATE(pl.updated),pr.m_product_category_id,pl.m_product_id,
 pl.ad_client_id,pl.ad_org_id,pr.weight,mpp_purchase.pricelist,mpp_sales.pricelist,pr.erpcode
 ORDER BY DATE(pl.updated) DESC,pr.m_product_category_id,pl.m_product_id;
@@ -447,6 +449,203 @@ GROUP BY
 ORDER BY
     DATE(i.movementdate) DESC,
     pr.m_product_id;
+------------------------------------------------------------------------------------------
+Total Tons :-
+
+CREATE OR REPLACE VIEW adempiere.pir_totaltons AS
+ SELECT w.m_warehouse_id,
+    pp.m_locator_id,
+    sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS availablecount,
+    pr.weight AS unitweight,
+    round(sum(pr.weight * pp.quantity) / 1000, 3) AS total_weight_ton,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitprice,
+    pr.erpcode,
+    pr.m_product_category_id
+   FROM pi_productlabel pp
+     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
+     JOIN m_locator l ON l.m_locator_id = pp.m_locator_id
+     JOIN m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+     LEFT JOIN m_productprice pri ON pri.m_product_id = pr.m_product_id
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pi_productlabel pp_sales
+          WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'))
+AND pp.isrestricted = 'N'
+  GROUP BY w.m_warehouse_id, pp.m_locator_id, pp.ad_client_id, pp.ad_org_id, pr.weight, pri.pricestd, pr.erpcode, pr.m_product_category_id
+  ORDER BY pp.m_locator_id DESC;
+
+------------------------------------------------------------------------------------------
+Inventory View for Email :-
+
+CREATE OR REPLACE VIEW adempiere.pi_inventoryviewforemail AS
+ SELECT pr.m_product_category_id,
+    pp.m_product_id,
+    pr.erpcode,
+    sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS availablecount,
+    pr.weight AS unitweight,
+    pr.weight * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitweight,
+    pr.value,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitprice
+   FROM pi_productlabel pp
+     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
+     JOIN m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     LEFT JOIN m_productprice pri ON pri.m_product_id = pr.m_product_id AND pri.isactive = 'Y'
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pi_productlabel pp_sales
+          WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'))
+AND pp.isrestricted = 'N'
+  GROUP BY pp.m_product_id, pr.weight, pr.m_product_category_id, pr.erpcode, pr.value, pp.ad_client_id, pp.ad_org_id, pri.pricestd
+  ORDER BY pp.m_product_id DESC;
+
+------------------------------------------------------------------------------------------
+Storage Details By Locator :-
+
+CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS
+ SELECT w.m_warehouse_id,
+    pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name AS uom,
+    pr.erpcode,
+    pbom.pp_product_bom_id,
+    l.m_locatortype_id,
+    pp.m_locator_id,
+    sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS availablecount,
+    pr.weight AS unitweight,
+    pr.weight * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitweight,
+    pr.value,
+    pr.created AS m_product_created,
+    pr.createdby AS m_product_createdby,
+    pr.updated AS m_product_updated,
+    pr.updatedby AS m_product_updatedby,
+    pr.isactive AS product_isactive,
+    l.isactive AS locator_isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    pp.m_inoutline_id,
+    mio.documentno AS m_inout_docno,
+    mio.movementdate AS m_inout_date,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitprice
+   FROM pi_productlabel pp
+     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
+     LEFT JOIN ( SELECT DISTINCT ON (pp_product_bom.m_product_id) pp_product_bom.m_product_id,
+            pp_product_bom.pp_product_bom_id
+           FROM pp_product_bom
+          WHERE pp_product_bom.isactive = 'Y') pbom ON pbom.m_product_id = pr.m_product_id
+     JOIN m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     JOIN c_uom uom ON uom.c_uom_id = pr.c_uom_id
+     JOIN m_locator l ON l.m_locator_id = pp.m_locator_id
+     JOIN m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+     JOIN m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+     LEFT JOIN m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+     LEFT JOIN m_inout mio ON mio.m_inout_id = miol.m_inout_id
+     LEFT JOIN ( SELECT DISTINCT ON (m_productprice.m_product_id) m_productprice.m_product_id,
+            m_productprice.pricestd
+           FROM m_productprice
+          WHERE m_productprice.isactive = 'Y'
+          ORDER BY m_productprice.m_product_id, m_productprice.updated DESC) pri ON pri.m_product_id = pr.m_product_id
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pi_productlabel pp_sales
+          WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')) AND ltt.returns = 'N' AND pp.isrestricted = 'N'
+  GROUP BY w.m_warehouse_id, pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, l.m_locatortype_id, pp.m_locator_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, l.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate, pri.pricestd
+  ORDER BY pp.m_locator_id DESC;
+------------------------------------------------------------------------------------------
+Storage Details By Product :-
+
+CREATE OR REPLACE VIEW adempiere.pi_productlabelViewByProduct AS
+ SELECT pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name AS uom,
+    pr.erpcode,
+    pbom.pp_product_bom_id,
+    sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS availablecount,
+    pr.weight AS unitweight,
+    pr.weight * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitweight,
+    pr.value,
+    pr.created AS m_product_created,
+    pr.createdby AS m_product_createdby,
+    pr.updated AS m_product_updated,
+    pr.updatedby AS m_product_updatedby,
+    pr.isactive AS product_isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    pp.m_inoutline_id,
+    mio.documentno AS m_inout_docno,
+    mio.movementdate AS m_inout_date,
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitprice
+   FROM pi_productlabel pp
+     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
+     LEFT JOIN ( SELECT DISTINCT ON (pp_product_bom.m_product_id) pp_product_bom.m_product_id,
+            pp_product_bom.pp_product_bom_id
+           FROM pp_product_bom
+          WHERE pp_product_bom.isactive = 'Y') pbom ON pbom.m_product_id = pr.m_product_id
+     LEFT JOIN m_locator l ON l.m_locator_id = pp.m_locator_id
+     LEFT JOIN m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+     JOIN m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     JOIN c_uom uom ON uom.c_uom_id = pr.c_uom_id
+     LEFT JOIN m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+     LEFT JOIN m_inout mio ON mio.m_inout_id = miol.m_inout_id
+     LEFT JOIN ( SELECT DISTINCT ON (m_productprice.m_product_id) m_productprice.m_product_id,
+            m_productprice.pricestd
+           FROM m_productprice
+          WHERE m_productprice.isactive = 'Y'
+          ORDER BY m_productprice.m_product_id, m_productprice.updated DESC) pri ON pri.m_product_id = pr.m_product_id
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pi_productlabel pp_sales
+          WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')) AND ltt.returns = 'N'
+          AND pp.isrestricted = 'N'
+  GROUP BY pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate, pri.pricestd
+  ORDER BY pp.m_product_id DESC;
 ==============================================================================================
 
             <url>file:///home/chirag/PiERP/pi-erp/core/pi-erp-core/idempiere-release-10/org.idempiere.p2/target/repository</url>

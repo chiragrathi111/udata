@@ -1,0 +1,22 @@
+ * git pull
+ * ls
+ * cd iot-sync/
+ * cat > ~/playground/iot-sync/.env << EOF
+IOT_JWT_SECRET=$(openssl rand -hex 64)
+EOF
+
+ * cd ~/playground/iot-sync
+ * docker compose -f docker-compose.yml -f docker-compose.demos.yml up --build -d
+ * docker compose -f docker-compose.yml -f docker-compose.demos.yml ps
+ * cd
+ * cd /etc/nginx/sites-available/
+ * sudo cp demos demos-backup
+ * ls
+ * sudo nano demos
+ * sudo ln -sf /etc/nginx/sites-available/demos /etc/nginx/sites-enabled/demos
+ * sudo nginx -t && sudo systemctl reload nginx
+ * curl -I https://demos.pipra.solutions/iot-sync/
+ * curl https://demos.pipra.solutions/iot-sync/api/health
+ * docker ps
+
+ * docker compose -f docker-compose.yml -f docker-compose.demos.yml down

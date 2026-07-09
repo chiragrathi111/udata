@@ -1,5 +1,9 @@
 # If you want details any folder enter below commands:
 
+* JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+* curl https://ipinfo.io/ip  (git the ip)
+
 * du -h --max-depth=1    (This commands check which folder taking actual space)
 
 * ps -ef | grep idempiere | grep java  (check heap size)
