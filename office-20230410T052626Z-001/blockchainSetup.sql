@@ -70,6 +70,9 @@ vi datasources.json   (change postgresql pass and update ip and accesskey if req
 cd ~/realmeds/network/api/
 ls
 vi package.json  (remove 27,28 line)
+    "ipfs-api": "^26.1.2",
+    "ipfs-http-client": "^39.0.2",
+
 npm i
 cd ../chaincode/
 npm i

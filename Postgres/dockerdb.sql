@@ -9,3 +9,6 @@
 * \l (list of db_name)
 
 * \c <db_name> (change db)
+
+
+* psql -U postgres -d realmeds -f backup.sql  (terminal running specific sql file)

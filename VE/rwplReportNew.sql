@@ -176,6 +176,76 @@ ORDER BY
     pr.M_Product_Category_ID,
     il.M_Product_ID;
 
+    new added :-
+
+CREATE OR REPLACE VIEW adempiere.pi_inward_report_new AS
+SELECT
+    DATE(mi.created) AS report_date,
+    il.M_Product_ID,
+    pr.M_Product_Category_ID,
+    SUM(il.QtyEntered) AS total_quantity,
+    pr.Weight AS unit_weight_kg,
+    ROUND(SUM(pr.Weight * il.QtyEntered) / 1000, 3) AS total_weight_ton,
+    il.AD_Client_ID,
+    il.AD_Org_ID,
+    mi.DocumentNo AS ReceiptNo,
+    pr.erpcode,
+    COALESCE(pri.PriceStd, 0) AS unitprice,
+    COALESCE(pri.PriceStd, 0) * SUM(il.QtyEntered) AS totalunitprice,
+    mi.Description AS Reference_Number,
+    u.Name AS action_by
+FROM adempiere.M_InOutLine il
+INNER JOIN adempiere.M_InOut mi
+    ON mi.M_InOut_ID = il.M_InOut_ID
+INNER JOIN adempiere.M_Product pr
+    ON pr.M_Product_ID = il.M_Product_ID
+INNER JOIN adempiere.AD_User u
+    ON u.AD_User_ID = mi.UpdatedBy
+LEFT JOIN
+(
+    SELECT DISTINCT ON (M_Product_ID)
+           M_Product_ID,
+           PriceStd
+    FROM adempiere.M_ProductPrice
+    WHERE IsActive = 'Y'
+    ORDER BY M_Product_ID, Updated DESC
+) pri
+    ON pri.M_Product_ID = il.M_Product_ID
+WHERE
+    mi.IsSOTrx = 'N'
+    AND mi.DocStatus IN ('CO', 'CL')
+
+    -- Only include receipt lines having at least one unrestricted label
+    AND EXISTS
+    (
+        SELECT 1
+        FROM adempiere.pi_productlabel pl
+        WHERE pl.M_InOutLine_ID = il.M_InOutLine_ID
+          AND pl.IsRestricted = 'N'
+    )
+
+    -- Remove this line after testing
+    -- AND pr.M_Product_ID = 1001570
+    -- AND mi.M_InOut_ID = 1027984
+
+GROUP BY
+    DATE(mi.created),
+    il.M_Product_ID,
+    pr.M_Product_Category_ID,
+    pr.Weight,
+    il.AD_Client_ID,
+    il.AD_Org_ID,
+    mi.DocumentNo,
+    pr.erpcode,
+    pri.PriceStd,
+    mi.Description,
+    u.Name
+
+ORDER BY
+    report_date DESC,
+    pr.M_Product_Category_ID,
+    il.M_Product_ID;
+
 ------------------------------------------------------------------
 * Common Report :-
 
@@ -419,7 +489,7 @@ WHERE
     AND pi.isactive = 'Y' 
     AND pi.qcpassed = 'Y'
     AND pi.isrestricted = 'N'
-    AND pi.finaldispatch = 'N'
+    -- AND pi.finaldispatch = 'N'
     AND pi.quantity > 0
     AND pi.labeluuid IS NOT NULL
 GROUP BY
@@ -472,13 +542,13 @@ CREATE OR REPLACE VIEW adempiere.pir_totaltons AS
         END) AS totalunitprice,
     pr.erpcode,
     pr.m_product_category_id
-   FROM pi_productlabel pp
-     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
-     JOIN m_locator l ON l.m_locator_id = pp.m_locator_id
-     JOIN m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
-     LEFT JOIN m_productprice pri ON pri.m_product_id = pr.m_product_id
+   FROM adempiere.pi_productlabel pp
+     JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
+     JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+     JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+     LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id
   WHERE NOT (EXISTS ( SELECT 1
-           FROM pi_productlabel pp_sales
+           FROM adempiere.pi_productlabel pp_sales
           WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'))
 AND pp.isrestricted = 'N'
   GROUP BY w.m_warehouse_id, pp.m_locator_id, pp.ad_client_id, pp.ad_org_id, pr.weight, pri.pricestd, pr.erpcode, pr.m_product_category_id
@@ -511,12 +581,12 @@ CREATE OR REPLACE VIEW adempiere.pi_inventoryviewforemail AS
             WHEN pp.issotrx = 'N' THEN pp.quantity
             ELSE 0
         END) AS totalunitprice
-   FROM pi_productlabel pp
-     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
-     JOIN m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
-     LEFT JOIN m_productprice pri ON pri.m_product_id = pr.m_product_id AND pri.isactive = 'Y'
+   FROM adempiere.pi_productlabel pp
+     JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
+     JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     LEFT JOIN adempiere.m_productprice pri ON pri.m_product_id = pr.m_product_id AND pri.isactive = 'Y'
   WHERE NOT (EXISTS ( SELECT 1
-           FROM pi_productlabel pp_sales
+           FROM adempiere.pi_productlabel pp_sales
           WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'))
 AND pp.isrestricted = 'N'
   GROUP BY pp.m_product_id, pr.weight, pr.m_product_category_id, pr.erpcode, pr.value, pp.ad_client_id, pp.ad_org_id, pri.pricestd
@@ -563,26 +633,26 @@ CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS
             WHEN pp.issotrx = 'N' THEN pp.quantity
             ELSE 0
         END) AS totalunitprice
-   FROM pi_productlabel pp
-     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
+   FROM adempiere.pi_productlabel pp
+     JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
      LEFT JOIN ( SELECT DISTINCT ON (pp_product_bom.m_product_id) pp_product_bom.m_product_id,
             pp_product_bom.pp_product_bom_id
-           FROM pp_product_bom
+           FROM adempiere.pp_product_bom
           WHERE pp_product_bom.isactive = 'Y') pbom ON pbom.m_product_id = pr.m_product_id
-     JOIN m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
-     JOIN c_uom uom ON uom.c_uom_id = pr.c_uom_id
-     JOIN m_locator l ON l.m_locator_id = pp.m_locator_id
-     JOIN m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
-     JOIN m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
-     LEFT JOIN m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
-     LEFT JOIN m_inout mio ON mio.m_inout_id = miol.m_inout_id
+     JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+     JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+     JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+     JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+     LEFT JOIN adempiere.m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+     LEFT JOIN adempiere.m_inout mio ON mio.m_inout_id = miol.m_inout_id
      LEFT JOIN ( SELECT DISTINCT ON (m_productprice.m_product_id) m_productprice.m_product_id,
             m_productprice.pricestd
-           FROM m_productprice
+           FROM adempiere.m_productprice
           WHERE m_productprice.isactive = 'Y'
           ORDER BY m_productprice.m_product_id, m_productprice.updated DESC) pri ON pri.m_product_id = pr.m_product_id
   WHERE NOT (EXISTS ( SELECT 1
-           FROM pi_productlabel pp_sales
+           FROM adempiere.pi_productlabel pp_sales
           WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')) AND ltt.returns = 'N' AND pp.isrestricted = 'N'
   GROUP BY w.m_warehouse_id, pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, l.m_locatortype_id, pp.m_locator_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, l.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate, pri.pricestd
   ORDER BY pp.m_locator_id DESC;
@@ -623,25 +693,25 @@ CREATE OR REPLACE VIEW adempiere.pi_productlabelViewByProduct AS
             WHEN pp.issotrx = 'N' THEN pp.quantity
             ELSE 0
         END) AS totalunitprice
-   FROM pi_productlabel pp
-     JOIN m_product pr ON pr.m_product_id = pp.m_product_id
+   FROM adempiere.pi_productlabel pp
+     JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
      LEFT JOIN ( SELECT DISTINCT ON (pp_product_bom.m_product_id) pp_product_bom.m_product_id,
             pp_product_bom.pp_product_bom_id
-           FROM pp_product_bom
+           FROM adempiere.pp_product_bom
           WHERE pp_product_bom.isactive = 'Y') pbom ON pbom.m_product_id = pr.m_product_id
-     LEFT JOIN m_locator l ON l.m_locator_id = pp.m_locator_id
-     LEFT JOIN m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
-     JOIN m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
-     JOIN c_uom uom ON uom.c_uom_id = pr.c_uom_id
-     LEFT JOIN m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
-     LEFT JOIN m_inout mio ON mio.m_inout_id = miol.m_inout_id
+     LEFT JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+     LEFT JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+     JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+     LEFT JOIN adempiere.m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+     LEFT JOIN adempiere.m_inout mio ON mio.m_inout_id = miol.m_inout_id
      LEFT JOIN ( SELECT DISTINCT ON (m_productprice.m_product_id) m_productprice.m_product_id,
             m_productprice.pricestd
-           FROM m_productprice
+           FROM adempiere.m_productprice
           WHERE m_productprice.isactive = 'Y'
           ORDER BY m_productprice.m_product_id, m_productprice.updated DESC) pri ON pri.m_product_id = pr.m_product_id
   WHERE NOT (EXISTS ( SELECT 1
-           FROM pi_productlabel pp_sales
+           FROM adempiere.pi_productlabel pp_sales
           WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')) AND ltt.returns = 'N'
           AND pp.isrestricted = 'N'
   GROUP BY pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate, pri.pricestd
