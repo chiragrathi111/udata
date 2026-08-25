@@ -1,0 +1,67 @@
+# Database Schema Differences Report
+
+This report shows the differences where the local host database (`warepro`) contains modifications or additions relative to the container database (`idempiere`). Columns or tables unique to the container database are omitted.
+
+## Summary
+- **New Tables in `warepro`**: 1
+- **Existing Tables with New Columns in `warepro`**: 10
+
+## 1. New Tables in `warepro` Only
+These tables exist in the `warepro` local database but not in the container database:
+
+- `pi_locator_product`
+
+## 2. New Columns in Existing Tables (`warepro` Only)
+These columns have been added to existing base tables in the local `warepro` database:
+
+### Table `ad_client`
+- `gstno`: `character varying(20)` NULL
+- `panno`: `character varying(20)` NULL
+
+### Table `ad_form`
+- `imageurl`: `character varying(120)` NULL
+
+### Table `ad_role`
+- `addinward`: `character(1)` NOT NULL
+- `dbinc`: `character(1)` NOT NULL
+- `ispickbyorder`: `character(1)` NOT NULL
+- `item_inout`: `character(1)` NOT NULL
+- `labourputaway`: `character(1)` NOT NULL
+- `materialreceipt`: `character(1)` NOT NULL
+- `physicalinventory`: `character(1)` NOT NULL
+- `purchaseorder`: `character(1)` NOT NULL
+- `qccheckapp`: `character(1)` NOT NULL
+- `receiving_processed_app`: `character(1)` NOT NULL
+- `saleorder`: `character(1)` NOT NULL
+- `shipmentcustomer`: `character(1)` NOT NULL
+- `supervisorputaway`: `character(1)` NOT NULL
+- `unauthorised_events`: `character(1)` NOT NULL
+- `users_app`: `character(1)` NOT NULL
+
+### Table `ad_user`
+- `emailconfirmnotifdetails`: `character(1)` NULL
+
+
+### Table `c_bpartner`
+- `gstno`: `character varying(20)` NULL
+- `panno`: `character varying(20)` NULL
+
+### Table `c_invoice`
+- `m_inout_id`: `numeric` NULL
+
+### Table `c_orderline`
+- `expirydate`: `date` NULL
+
+### Table `m_inout`
+- `createreturntrx`: `character(10)` NULL
+
+### Table `m_locator`
+- `weightconstraint`: `character(1)` NOT NULL
+
+### Table `m_movement`
+- `createputawaylines`: `character(10)` NULL
+- `m_inout_id`: `numeric` NULL
+- `m_locator_id`: `numeric` NULL
+- `putawaypolicy`: `character(1)` NULL
+
+

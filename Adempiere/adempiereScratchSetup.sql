@@ -187,6 +187,13 @@ createdb --template=template0 -E UNICODE -O adempiere -U adempiere erp
 psql -d erp -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
 psql -U adempiere -d erp < /home/ubuntu/rwpl05.dmp
 
+
+createdb --template=template0 -E UNICODE -O adempiere -U adempiere tcn08
+psql -d tcn08 -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
+psql -U adempiere -d tcn08 < /home/chirag/tcn08.dmp
+
+tcn08.dmp
+
 ======================================================================================================
 Find idempiere jar file :-
 

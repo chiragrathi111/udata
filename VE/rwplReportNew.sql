@@ -632,7 +632,8 @@ CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS
         CASE
             WHEN pp.issotrx = 'N' THEN pp.quantity
             ELSE 0
-        END) AS totalunitprice
+        END) AS totalunitprice,
+        pr.description
    FROM adempiere.pi_productlabel pp
      JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
      LEFT JOIN ( SELECT DISTINCT ON (pp_product_bom.m_product_id) pp_product_bom.m_product_id,
@@ -654,7 +655,7 @@ CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS
   WHERE NOT (EXISTS ( SELECT 1
            FROM adempiere.pi_productlabel pp_sales
           WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')) AND ltt.returns = 'N' AND pp.isrestricted = 'N'
-  GROUP BY w.m_warehouse_id, pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, l.m_locatortype_id, pp.m_locator_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, l.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate, pri.pricestd
+  GROUP BY w.m_warehouse_id, pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, l.m_locatortype_id, pp.m_locator_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, l.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate,pr.description, pri.pricestd
   ORDER BY pp.m_locator_id DESC;
 ------------------------------------------------------------------------------------------
 Storage Details By Product :-
