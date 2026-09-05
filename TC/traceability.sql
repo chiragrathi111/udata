@@ -1061,13 +1061,31 @@ Its working for the pgadmin testing :-
 
 WITH RECURSIVE
 ----------------------------------------------------------------
+-- Media info resolved to ONE row per tc_order_id
+----------------------------------------------------------------
+media_info AS (
+    SELECT DISTINCT ON (ord.tc_order_id)
+           ord.tc_order_id,
+           CONCAT_WS(', ', md.name, mt.name, mu.name, mlq.personalcode) AS mediaDetails,
+           mlq.c_uuid AS mediaUUId
+    FROM adempiere.tc_order ord
+    JOIN adempiere.TC_MediaOutLine ml ON ml.tc_order_id = ord.tc_order_id
+    JOIN adempiere.TC_MediaLine m ON m.TC_MediaLine_id = ml.TC_MediaLine_id
+    JOIN adempiere.TC_MediaLabelQr mlq ON mlq.TC_MediaLine_id = m.TC_MediaLine_id
+    JOIN adempiere.tc_machinetype mt ON mt.tc_machinetype_id = mlq.tc_machinetype_id
+    JOIN adempiere.tc_mediatype md ON md.tc_mediatype_id = mlq.tc_mediatype_id
+    JOIN adempiere.ad_user mu ON mu.ad_user_id = mlq.createdby
+    ORDER BY ord.tc_order_id, mlq.created DESC   -- picks the latest media label if there are several
+),
+----------------------------------------------------------------
 -- Recursive culture chain
 ----------------------------------------------------------------
 cte AS (
     SELECT cl.parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl.personal_code,1 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM adempiere.tc_culturelabel cl
     JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id
@@ -1075,6 +1093,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
     WHERE cl.c_uuid = '5aacda73-60e7-4727-88fe-d20e2f37af0e'
       AND cl.ad_client_id = 1000000
 
@@ -1082,7 +1101,8 @@ cte AS (
     SELECT phs.cultureuuid AS parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl.personal_code,2 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM adempiere.TC_PrimaryHardeningLabel ph
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
     JOIN adempiere.tc_culturelabel cl ON phs.cultureuuid = cl.c_uuid
@@ -1092,6 +1112,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
     WHERE ph.c_uuid = '5aacda73-60e7-4727-88fe-d20e2f37af0e'
       AND ph.ad_client_id = 1000000
 
@@ -1099,7 +1120,8 @@ cte AS (
     SELECT phs.cultureuuid AS parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl.personal_code,3 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
@@ -1110,6 +1132,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
     WHERE sh.c_uuid = '5aacda73-60e7-4727-88fe-d20e2f37af0e'
       AND sh.ad_client_id = 1000000
 
@@ -1117,7 +1140,8 @@ cte AS (
     SELECT cl2.parentuuid,cl2.tc_in_id,cl2.tc_out_id,cl2.c_uuid,loc.value AS location,cl2.created,
            cl2.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl2.personal_code,cte.level + 1 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM cte
     JOIN adempiere.tc_culturelabel cl2 ON cte.parentuuid = cl2.c_uuid
     JOIN adempiere.tc_out o ON o.tc_out_id = cl2.tc_out_id
@@ -1126,6 +1150,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl2.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl2.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
 ),
 ----------------------------------------------------------------
 -- Culture stage aggregation
@@ -1134,18 +1159,21 @@ culture_result AS (
     SELECT cte.parentuuid,cte.tc_in_id,cte.tc_out_id,cte.c_uuid,cte.location,cte.created,cte.cycleno,
            cte.cropType,cte.stage,cte.variety,cte.personal_code,cte.level AS level,cte.user,
            cte.source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           cte.mediaDetails, cte.mediaUUId
     FROM cte
     GROUP BY cte.parentuuid, cte.tc_in_id, cte.tc_out_id, cte.c_uuid,cte.location,
              cte.created, cte.cycleno, cte.cropType, cte.stage, cte.variety,
-             cte.personal_code, cte.level,cte.user, cte.source_type
+             cte.personal_code, cte.level,cte.user, cte.source_type,
+             cte.mediaDetails, cte.mediaUUId
 
     UNION ALL
     SELECT DISTINCT tcc.parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,
            cte.cropType,pr.name AS stage,cte.variety,tcc.personalcode AS personal_code,
            cte.level + 1 AS level,u.name As user,
            'explant' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM cte
     LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
     JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
@@ -1161,7 +1189,8 @@ culture_result AS (
            'plant_tag' as source_type,
            pd.parentcultureline AS parentCultureName,
            CONCAT_WS(', ', f.villagename2, f.talukname, f.district) AS place,
-           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser
+           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM cte
     LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
     LEFT JOIN adempiere.tc_planttag tpt ON tcc.parentuuid = tpt.c_uuid
@@ -1179,7 +1208,8 @@ explant_result AS (
     SELECT DISTINCT tcc.parentuuid AS parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,
            ps.name AS cropType,pr.name AS stage,var.name AS variety,tcc.personalcode,1 AS level,u.name As user,
            'explant' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.tc_explantlabel tcc
     JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id
@@ -1197,7 +1227,8 @@ explant_result AS (
            'plant_tag' as source_type,
            pd.parentcultureline AS parentCultureName,
            CONCAT_WS(', ', f.villagename2, f.talukname, f.district) AS place,
-           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser
+           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.tc_planttag tpt
     JOIN adempiere.tc_explantlabel tcc ON tcc.parentuuid = tpt.c_uuid
     JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
@@ -1219,7 +1250,8 @@ plant_tag_result AS (
            'plant_tag' as source_type,
            pd.parentcultureline AS parentCultureName,
            CONCAT_WS(', ', f.villagename2, f.talukname, f.district) AS place,
-           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser
+           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.tc_planttag tpt
     JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id
@@ -1239,7 +1271,8 @@ primary_result AS (
            ps.name AS cropType,'Primary Hardening' AS stage,var.name AS variety,
            u.personalcode,1 AS level,u.name As user,
            'primary' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.TC_PrimaryHardeningLabel ph
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
     JOIN adempiere.tc_out o ON o.tc_out_id = ph.tc_out_id
@@ -1258,7 +1291,8 @@ secondary_result AS (
            ps.name AS cropType,'Secondary Hardening' AS stage,var.name AS variety,
            u.personalcode,1 AS level,u.name As user,
            'secondary' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.tc_out o ON o.tc_out_id = sh.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id
@@ -1273,7 +1307,8 @@ secondary_result AS (
            ps.name AS cropType,'Primary Hardening' AS stage,var.name AS variety,
            u.personalcode,2 AS level,u.name As user,
            'primary' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
@@ -1307,13 +1342,31 @@ New 26-08-2026 for the jasper
 
 WITH RECURSIVE
 ----------------------------------------------------------------
+-- Media info resolved to ONE row per tc_order_id
+----------------------------------------------------------------
+media_info AS (
+    SELECT DISTINCT ON (ord.tc_order_id)
+           ord.tc_order_id,
+           CONCAT_WS(', ', md.name, mt.name, mu.name, mlq.personalcode) AS mediaDetails,
+           mlq.c_uuid AS mediaUUId
+    FROM adempiere.tc_order ord
+    JOIN adempiere.TC_MediaOutLine ml ON ml.tc_order_id = ord.tc_order_id
+    JOIN adempiere.TC_MediaLine m ON m.TC_MediaLine_id = ml.TC_MediaLine_id
+    JOIN adempiere.TC_MediaLabelQr mlq ON mlq.TC_MediaLine_id = m.TC_MediaLine_id
+    JOIN adempiere.tc_machinetype mt ON mt.tc_machinetype_id = mlq.tc_machinetype_id
+    JOIN adempiere.tc_mediatype md ON md.tc_mediatype_id = mlq.tc_mediatype_id
+    JOIN adempiere.ad_user mu ON mu.ad_user_id = mlq.createdby
+    ORDER BY ord.tc_order_id, mlq.created DESC
+),
+----------------------------------------------------------------
 -- Recursive culture chain
 ----------------------------------------------------------------
 cte AS (
     SELECT cl.parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl.personal_code,1 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM adempiere.tc_culturelabel cl
     JOIN adempiere.tc_out o ON o.tc_out_id = cl.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id
@@ -1321,6 +1374,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
     WHERE TRIM(cl.c_uuid) = TRIM($P{CultureLabelUUId})
       AND cl.ad_client_id = $P{AD_CLIENT_ID}
 
@@ -1328,7 +1382,8 @@ cte AS (
     SELECT phs.cultureuuid AS parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl.personal_code,2 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM adempiere.TC_PrimaryHardeningLabel ph
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
     JOIN adempiere.tc_culturelabel cl ON phs.cultureuuid = cl.c_uuid
@@ -1338,6 +1393,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
     WHERE TRIM(ph.c_uuid) = TRIM($P{CultureLabelUUId})
       AND ph.ad_client_id = $P{AD_CLIENT_ID}
 
@@ -1345,7 +1401,8 @@ cte AS (
     SELECT phs.cultureuuid AS parentuuid,cl.tc_in_id,cl.tc_out_id,cl.c_uuid,loc.value AS location,cl.created,
            cl.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl.personal_code,3 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
@@ -1356,6 +1413,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
     WHERE TRIM(sh.c_uuid) = TRIM($P{CultureLabelUUId})
       AND sh.ad_client_id = $P{AD_CLIENT_ID}
 
@@ -1363,7 +1421,8 @@ cte AS (
     SELECT cl2.parentuuid,cl2.tc_in_id,cl2.tc_out_id,cl2.c_uuid,loc.value AS location,cl2.created,
            cl2.cycleno,ps.name AS cropType,cs.name AS stage,var.name AS variety,
            cl2.personal_code,cte.level + 1 AS level,u.name As user,
-           'culture' as source_type
+           'culture' as source_type,
+           mi.mediaDetails, mi.mediaUUId
     FROM cte
     JOIN adempiere.tc_culturelabel cl2 ON cte.parentuuid = cl2.c_uuid
     JOIN adempiere.tc_out o ON o.tc_out_id = cl2.tc_out_id
@@ -1372,6 +1431,7 @@ cte AS (
     JOIN adempiere.tc_culturestage cs ON cs.tc_culturestage_id = cl2.tc_culturestage_id
     JOIN adempiere.tc_variety var ON var.tc_variety_id = cl2.tc_variety_id
     JOIN adempiere.ad_user u ON u.ad_user_id = cl2.createdby
+    LEFT JOIN media_info mi ON mi.tc_order_id = o.tc_order_id
 ),
 ----------------------------------------------------------------
 -- Culture stage aggregation
@@ -1380,18 +1440,21 @@ culture_result AS (
     SELECT cte.parentuuid,cte.tc_in_id,cte.tc_out_id,cte.c_uuid,cte.location,cte.created,cte.cycleno,
            cte.cropType,cte.stage,cte.variety,cte.personal_code,cte.level AS level,cte.user,
            cte.source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           cte.mediaDetails, cte.mediaUUId
     FROM cte
     GROUP BY cte.parentuuid, cte.tc_in_id, cte.tc_out_id, cte.c_uuid,cte.location,
              cte.created, cte.cycleno, cte.cropType, cte.stage, cte.variety,
-             cte.personal_code, cte.level,cte.user, cte.source_type
+             cte.personal_code, cte.level,cte.user, cte.source_type,
+             cte.mediaDetails, cte.mediaUUId
 
     UNION ALL
     SELECT DISTINCT tcc.parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,
            cte.cropType,pr.name AS stage,cte.variety,tcc.personalcode AS personal_code,
            cte.level + 1 AS level,u.name As user,
            'explant' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM cte
     LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
     JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
@@ -1407,7 +1470,8 @@ culture_result AS (
            'plant_tag' as source_type,
            pd.parentcultureline AS parentCultureName,
            CONCAT_WS(', ', f.villagename2, f.talukname, f.district) AS place,
-           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser
+           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM cte
     LEFT JOIN adempiere.tc_explantlabel tcc ON cte.parentuuid = tcc.c_uuid
     LEFT JOIN adempiere.tc_planttag tpt ON tcc.parentuuid = tpt.c_uuid
@@ -1425,7 +1489,8 @@ explant_result AS (
     SELECT DISTINCT tcc.parentuuid AS parentuuid,tcc.tc_in_id,tcc.tc_out_id,tcc.c_uuid,loc.value AS location,tcc.created,0 AS cycleno,
            ps.name AS cropType,pr.name AS stage,var.name AS variety,tcc.personalcode,1 AS level,u.name As user,
            'explant' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.tc_explantlabel tcc
     JOIN adempiere.tc_out eo ON eo.tc_out_id = tcc.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = eo.m_locator_id
@@ -1443,7 +1508,8 @@ explant_result AS (
            'plant_tag' as source_type,
            pd.parentcultureline AS parentCultureName,
            CONCAT_WS(', ', f.villagename2, f.talukname, f.district) AS place,
-           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser
+           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.tc_planttag tpt
     JOIN adempiere.tc_explantlabel tcc ON tcc.parentuuid = tpt.c_uuid
     JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
@@ -1465,7 +1531,8 @@ plant_tag_result AS (
            'plant_tag' as source_type,
            pd.parentcultureline AS parentCultureName,
            CONCAT_WS(', ', f.villagename2, f.talukname, f.district) AS place,
-           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser
+           to_char(cjp.updated, 'DD/MM/YYYY') AS dateOfSourcing, uc.name AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.tc_planttag tpt
     JOIN adempiere.tc_plantdetails pd ON pd.planttaguuid = tpt.c_uuid
     JOIN adempiere.tc_plantspecies ps ON ps.tc_plantspecies_id = pd.tc_species_id
@@ -1485,7 +1552,8 @@ primary_result AS (
            ps.name AS cropType,'Primary Hardening' AS stage,var.name AS variety,
            u.personalcode,1 AS level,u.name As user,
            'primary' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.TC_PrimaryHardeningLabel ph
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id
     JOIN adempiere.tc_out o ON o.tc_out_id = ph.tc_out_id
@@ -1504,7 +1572,8 @@ secondary_result AS (
            ps.name AS cropType,'Secondary Hardening' AS stage,var.name AS variety,
            u.personalcode,1 AS level,u.name As user,
            'secondary' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.tc_out o ON o.tc_out_id = sh.tc_out_id
     JOIN adempiere.m_locator loc ON loc.m_locator_id = o.m_locator_id
@@ -1519,7 +1588,8 @@ secondary_result AS (
            ps.name AS cropType,'Primary Hardening' AS stage,var.name AS variety,
            u.personalcode,2 AS level,u.name As user,
            'primary' as source_type,
-           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser
+           NULL::text AS parentCultureName, NULL::text AS place, NULL::text AS dateOfSourcing, NULL::text AS collectionUser,
+           NULL::text AS mediaDetails, NULL::text AS mediaUUId
     FROM adempiere.TC_SecondaryHardeningLabel sh
     JOIN adempiere.TC_PrimaryHardeningLabel ph ON sh.parentuuid = ph.c_uuid
     JOIN adempiere.tc_primaryHardeningcultureS phs ON phs.TC_PrimaryHardeningLabel_id = ph.TC_PrimaryHardeningLabel_id

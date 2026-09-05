@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.19.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="userReport" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="928c2c75-71ce-4ae0-85ae-060fcdea7082">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="TC.jrdax"/>
+	<parameter name="Label" class="java.lang.String"/>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
+	<parameter name="FromDate" class="java.sql.Date"/>
+	<parameter name="ToDate" class="java.sql.Date"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+    users,
+    userId,
+    personalCode,
+    date,
+    orderId,
+    type,
+    id,
+    labelName,
+    discarded,
+    countValue,
+    countValueN,
+    counts
+FROM (
+    
+    -- =========================================================
+    -- Tissue Culture Technician
+    -- =========================================================
+    SELECT 
+        u.name AS users,
+        u.ad_user_id AS userId,
+        cl.personal_code AS personalCode,
+        DATE(cl.created) AS date,
+        o.tc_order_id AS orderID,
+        cs.name AS type,
+        cl.tc_culturelabel_id AS id,
+        'Tissue Culture Technician' AS labelName,
+        cl.isdiscarded AS discarded,
+
+        CAST(
+            COUNT(*) OVER (
+                PARTITION BY DATE(cl.created), o.tc_order_id, u.name
+            ) AS NUMERIC
+        ) AS countValue,
+
+        0::NUMERIC AS countValueN,
+
+        COUNT(*) OVER (
+            PARTITION BY cl.created, o.tc_order_id, u.name
+        ) AS counts
+
+    FROM adempiere.tc_culturelabel cl
+
+    JOIN adempiere.ad_user u 
+        ON u.personalcode = cl.personal_code 
+        AND u.ad_client_id = cl.ad_client_id
+
+    JOIN adempiere.tc_out o 
+        ON o.tc_out_id = cl.tc_out_id
+
+    JOIN adempiere.tc_culturestage cs 
+        ON cs.tc_culturestage_id = cl.tc_culturestage_id
+
+    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+      AND cl.isdiscarded = 'N'
+      AND u.personalcode IS NOT NULL
+
+
+    UNION ALL
+
+
+    -- =========================================================
+    -- Medium Technician
+    -- =========================================================
+    SELECT 
+        u.name AS users,
+        u.ad_user_id AS userId,
+        cl.personalcode AS personalCode,
+        DATE(cl.created) AS date,
+        o.tc_mediaorder_id AS orderID,
+        pr.description AS type,
+        cl.tc_medialabelQr_id AS id,
+        'Medium Technician' AS labelName,
+        cl.isdiscarded AS discarded,
+
+        CAST(
+            COUNT(*) OVER (
+                PARTITION BY DATE(cl.created), o.tc_mediaorder_id, u.name
+            ) AS NUMERIC
+        ) AS countValue,
+
+        0::NUMERIC AS countValueN,
+
+        COUNT(*) OVER (
+            PARTITION BY cl.created, o.tc_mediaorder_id, u.name
+        ) AS counts
+
+    FROM adempiere.tc_medialabelQr cl
+
+    JOIN adempiere.ad_user u 
+        ON u.personalcode = cl.personalcode 
+        AND u.ad_client_id = cl.ad_client_id
+
+    JOIN adempiere.tc_medialine o 
+        ON o.tc_medialine_id = cl.tc_medialine_id
+
+    JOIN adempiere.tc_mediaorder mo 
+        ON mo.tc_mediaorder_id = o.tc_mediaorder_id
+
+    JOIN adempiere.m_product pr 
+        ON pr.m_product_id = mo.m_product_id
+
+    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+      AND u.personalcode IS NOT NULL
+
+
+    UNION ALL
+
+
+    -- =========================================================
+    -- Quality Checker - Discarded = Y
+    -- Existing countValue
+    -- =========================================================
+    SELECT 
+        u.name AS users,
+        u.ad_user_id AS userId,
+        cl.personalCode2 AS personalCode,
+        DATE(cl.updated) AS date,
+        o.tc_order_id AS orderID,
+        cs.name AS type,
+        cl.tc_culturelabel_id AS id,
+        'Quality Checker' AS labelName,
+        cl.isdiscarded AS discarded,
+
+        CAST(
+            COUNT(*) OVER (
+                PARTITION BY DATE(cl.created), o.tc_order_id, u.name
+            ) AS NUMERIC
+        ) AS countValue,
+
+        0::NUMERIC AS countValueN,
+
+        COUNT(*) OVER (
+            PARTITION BY cl.created, o.tc_order_id, u.name
+        ) AS counts
+
+    FROM adempiere.tc_culturelabel cl
+
+    JOIN adempiere.ad_user u 
+        ON u.personalcode = cl.personalCode2 
+        AND u.ad_client_id = cl.ad_client_id
+
+    JOIN adempiere.tc_out o 
+        ON o.tc_out_id = cl.tc_out_id
+
+    JOIN adempiere.tc_culturestage cs 
+        ON cs.tc_culturestage_id = cl.tc_culturestage_id
+
+    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+      AND cl.isdiscarded = 'Y'
+      AND u.personalcode IS NOT NULL
+
+
+    UNION ALL
+
+
+    -- =========================================================
+    -- Quality Checker - Discarded = N
+    -- New countValueN
+    -- =========================================================
+    SELECT 
+        u.name AS users,
+        u.ad_user_id AS userId,
+        cl.personal_code AS personalCode,
+        DATE(cl.updated) AS date,
+        o.tc_order_id AS orderID,
+        cs.name AS type,
+        cl.tc_culturelabel_id AS id,
+        'Quality Checker' AS labelName,
+        cl.isdiscarded AS discarded,
+
+        0::NUMERIC AS countValue,
+
+        CAST(
+            COUNT(*) OVER (
+                PARTITION BY DATE(cl.updated), o.tc_order_id, u.name
+            ) AS NUMERIC
+        ) AS countValueN,
+
+        COUNT(*) OVER (
+            PARTITION BY cl.updated, o.tc_order_id, u.name
+        ) AS counts
+
+    FROM adempiere.tc_culturelabel cl
+
+    JOIN adempiere.ad_user u 
+        ON u.personalcode = cl.personal_code 
+        AND u.ad_client_id = cl.ad_client_id
+
+    JOIN adempiere.tc_out o 
+        ON o.tc_out_id = cl.tc_out_id
+
+    JOIN adempiere.tc_culturestage cs 
+        ON cs.tc_culturestage_id = cl.tc_culturestage_id
+
+    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+      AND cl.isdiscarded = 'N'
+      AND u.personalcode IS NOT NULL
+
+) AS combined
+WHERE 
+combined.date >= $P{FromDate} AND combined.date < ($P{ToDate} ::timestamp + INTERVAL '1 day') 
+AND ($P{Label} IS NULL OR combined.labelName = $P{Label}) 
+ORDER BY users,date,orderId;]]>
+	</queryString>
+	<field name="users" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="users"/>
+		<property name="com.jaspersoft.studio.field.label" value="users"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="userid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="userid"/>
+		<property name="com.jaspersoft.studio.field.label" value="userid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="personalcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="personalcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="orderid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="orderid"/>
+		<property name="com.jaspersoft.studio.field.label" value="orderid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_out"/>
+	</field>
+	<field name="type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="type"/>
+		<property name="com.jaspersoft.studio.field.label" value="type"/>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tc_culturelabel"/>
+	</field>
+	<field name="labelname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="labelname"/>
+		<property name="com.jaspersoft.studio.field.label" value="labelname"/>
+	</field>
+	<field name="discarded" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="discarded"/>
+		<property name="com.jaspersoft.studio.field.label" value="discarded"/>
+	</field>
+	<field name="countvalue" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="countvalue"/>
+		<property name="com.jaspersoft.studio.field.label" value="countvalue"/>
+	</field>
+	<field name="countvaluen" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="countvaluen"/>
+		<property name="com.jaspersoft.studio.field.label" value="countvaluen"/>
+	</field>
+	<field name="counts" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="counts"/>
+		<property name="com.jaspersoft.studio.field.label" value="counts"/>
+	</field>
+	<variable name="UserWiseCount" class="java.math.BigDecimal" resetType="Group" resetGroup="User" calculation="Sum">
+		<variableExpression><![CDATA[$F{counts}]]></variableExpression>
+	</variable>
+	<variable name="Date Wise" class="java.math.BigDecimal" resetType="Group" resetGroup="New date" calculation="Sum">
+		<variableExpression><![CDATA[$F{counts}]]></variableExpression>
+	</variable>
+	<group name="User">
+		<groupExpression><![CDATA[$F{userid}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="4" y="0" width="77" height="20" uuid="365d0997-fb06-4673-8911-2706339d7695">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{users}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="113" y="0" width="39" height="20" uuid="77a77d74-6bdc-4096-a155-8b2ce9be172c">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{personalcode}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="422" y="5" width="50" height="15" uuid="687d4c78-9d80-4d4d-9cdb-8f76c420cc2e">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{UserWiseCount}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="295" y="0" width="280" height="1" forecolor="#000000" uuid="1e6f7d51-3a03-4c1f-af0c-b210a6cef2e7">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="295" y="21" width="280" height="1" forecolor="#000000" uuid="41d27f67-1e47-41b9-994d-f7852ef6f12f">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="264" y="5" width="140" height="15" uuid="c29ed542-b135-4cd6-bd07-126eb5d0fdfa">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["User Wise Total : "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Personal Code">
+		<groupExpression><![CDATA[$F{personalcode}]]></groupExpression>
+	</group>
+	<group name="New date">
+		<groupExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="170" y="0" width="69" height="20" uuid="005727a1-dde3-4285-9d8b-93b6d0ec1290">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{date})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="28">
+				<line>
+					<reportElement x="295" y="0" width="280" height="1" forecolor="#000000" uuid="08bdb046-5c7f-47e3-8970-879815c22cfc">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="295" y="21" width="280" height="1" forecolor="#000000" uuid="e79bb233-b43c-4592-8bbc-0d7e9b5fa161">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="241" y="5" width="161" height="15" uuid="b2f82684-dfa8-4288-902f-ed6f99045898">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Date Wise Total : "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="422" y="5" width="50" height="15" uuid="4278315b-940b-454b-9bb6-7e115d2a3d63">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{Date Wise}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="ORDER ID">
+		<groupExpression><![CDATA[$F{orderid}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<textField>
+					<reportElement x="238" y="0" width="70" height="20" uuid="8cf8045b-45e2-48e3-9e86-630ef50c8f3b">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{orderid}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="420" y="0" width="50" height="20" uuid="96d2d538-b68c-4f69-a688-31e0f3967479">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$F{countvalue}.compareTo(java.math.BigDecimal.ZERO) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{countvalue}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="316" y="0" width="70" height="20" uuid="d9b69bfd-5b70-4036-bded-e59dbef8d910">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="515" y="0" width="50" height="20" uuid="e7e038d8-44a8-47df-a4ce-8991de3bd0db">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$F{countvaluen}.compareTo(java.math.BigDecimal.ZERO) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{countvaluen}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="61" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="2" width="570" height="55" forecolor="#298F60" backcolor="#298F60" uuid="d05d5b7f-7784-4d6e-b712-2e313762353f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="4" width="450" height="30" forecolor="#000000" backcolor="#000000" uuid="b51eb576-06ea-4039-ba61-82f5e1579ac1">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[User Management Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="34" width="70" height="20" forecolor="#000000" uuid="4fb70c87-68c1-42a0-ade4-cef7df2f7035">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Technician]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="34" width="30" height="20" forecolor="#000000" uuid="ac6c02cb-9d55-4c15-a122-120a8d56c4c2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="36" width="54" height="20" forecolor="#000000" uuid="57c8a08e-349b-43fd-9bdf-cb7c4d0f4a8c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Order Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="75" y="35" width="90" height="20" forecolor="#000000" uuid="5228ac49-38de-4702-b1f5-63178e9453cb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personnel Code]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="375" y="34" width="117" height="20" forecolor="#000000" uuid="df09f87c-b23f-42b3-a2b2-394c3a2cabca">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{Label} != null && $P{Label}.equals("Quality Checker")) ? "Discarded Count" : "Approved Count"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="313" y="36" width="55" height="20" forecolor="#000000" uuid="3f66027e-55f2-4fb6-90a4-0c506273002d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="500" y="34" width="70" height="20" forecolor="#000000" uuid="f625958a-af7c-47c0-b19e-37fc894f8ad3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Label} != null && $P{Label}.equals("Quality Checker")
+    ? "Approved Count"
+    : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<noData>
+		<band height="44">
+			<textField>
+				<reportElement x="79" y="2" width="398" height="40" uuid="5a88783b-5309-4863-9d2f-92c9be15757b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Records Found"]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>
+	
