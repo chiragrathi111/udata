@@ -1,5 +1,25 @@
 Latest Hyper ledger Fabric:-
 
+Active MQ Install :-
+
+cd /opt
+
+sudo wget https://archive.apache.org/dist/activemq/6.1.7/apache-activemq-6.1.7-bin.tar.gz
+
+sudo tar -xzf apache-activemq-6.1.7-bin.tar.gz
+
+sudo mv apache-activemq-6.1.7 activemq
+
+cd /opt/activemq/bin
+
+sudo chmod +x activemq
+
+sudo ./activemq start
+
+./activemq status
+
+---------------------------------------------------------------
+
 Hyper ledger curl latest version
 
 #

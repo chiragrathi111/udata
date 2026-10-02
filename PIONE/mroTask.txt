@@ -1,0 +1,33 @@
+## 13. Real-world example, in Hindi (ताकि पूरी picture समझ आ जाए)
+
+सोचो तुम **Deccan Heavy Engineering** के machine shop में काम करते हो। वहाँ एक CNC मशीन है
+— **DHE-MC-01** — जिसकी हर 3 महीने में scheduled service होती है।
+
+1. **Maintenance Request बनाना** — Technician (`DHETechnician`) system में login करके एक
+   request डालता है: "DHE-MC-01 की quarterly service due है।" यह request अभी सिर्फ
+   **Draft** है, अभी तक किसी supervisor ने नहीं देखा।
+2. **Supervisor approve करता है** — Plant Supervisor (`DHEPlantSupervisor`) उस request को
+   खोलता है, ठीक लगती है तो **Approve** कर देता है। जैसे ही approve होता है, system खुद-ब-खुद
+   एक **Work Order** बना देता है — यानी "अब असली काम शुरू करने का आदेश।"
+3. **Planner technician को assign करता है** — Planner (`DHEPlanner`) उसी Work Order को खोलता
+   है, ज़रूरी tasks जोड़ता है (जैसे "Oil Level Check" — इसे mandatory मार्क करता है), और
+   technician को assign कर देता है।
+4. **Technician काम शुरू करता है** — Technician जाकर असली काम करता है: मशीन खोलता है, oil
+   check करता है, filter बदलता है। हर mandatory task को system में **Complete** मार्क करता
+   है। अगर कोई part इस्तेमाल हुआ, वो भी log करता है।
+5. **Technician पूरा काम खत्म करके submit करता है** — यहीं system चेक करता है: "क्या सारे
+   mandatory tasks complete हैं?" अगर एक भी task बाकी रह गया, system आगे बढ़ने ही नहीं देगा,
+   साफ़ error देगा — जैसे कोई supervisor कहे "बिना checklist पूरी किए sign-off नहीं मिलेगा।"
+6. **Supervisor review करता है** — Supervisor देखता है काम ठीक हुआ या नहीं। गड़बड़ लगे तो वापस
+   technician को भेज सकता है, वरना आगे बढ़ा देता है।
+7. **Close होता है** — चूंकि यह एक **routine (Preventive)** service थी, कोई emergency नहीं —
+   supervisor की मंज़ूरी के बाद यह सीधे **Closed** हो जाता है, बिना extra "Safety Approval"
+   step के। लेकिन अगर यही मशीन में अचानक कोई खतरनाक खराबी (Emergency) आ जाती, तो सिस्टम सीधे
+   close नहीं होने देता — पहले एक अलग **Safety Officer की सख़्त मंज़ूरी** चाहिए ही होगी। यही
+   इस पूरे feature का मक़सद है: **routine काम जल्दी निबटे, पर risky/emergency काम में कोई
+   shortcut ना ले सके।**
+
+बस यही flow है जो आज test करना है — request से closure तक, एक बार सीधा, फिर जान-बूझकर 3 जगह
+तोड़ के देखना है कि system सही से रोक रहा है या नहीं। **घबराने की बात नहीं** — सिर्फ एक ही
+flow है, 7 सीधे steps में, हर step का window name और field ऊपर लिखा है, बस उसी क्रम में
+match करते जाओ।

@@ -34,6 +34,8 @@ echo "[${DATE}] Backup completed successfully: ${BACKUP_FILE}" >> "${LOG_FILE}"
 # Retention Policy: Delete backups older than 7 days (uncomment line below to enable)
 # find "${BACKUP_DIR}" -type f -name "database_backup_*.sql.gz" -mtime +7 -delete
 
+=====================================================================================
+
 nano /home/kuyiluser/backup.sh
 
 
@@ -54,3 +56,51 @@ echo "[${DATE}] Weekly backup finished successfully." >> "${LOG_FILE}"
 find "${BACKUP_DIR}" -type f -name "database_backup_*.sql.gz" -mtime +30 -delete
 
 0 1 * * 0 /home/kuyiluser/backup.sh > /dev/null 2>&1
+
+======================================================================================
+**************************************************************************************
+======================================================================================
+
+Restore script :-
+
+#!/bin/bash
+set -e
+
+# Configuration
+DB_CONTAINER="kuyil-db-1"
+DB_NAME="beyondboard"
+DB_USERNAME="postgres"
+DB_PASSWORD="576adb62832ff296c02c10ea2078f2b1"
+BACKUP_DIR="/home/kuyiluser/backup"
+
+# Store recent 5 backups sorted by newest first
+mapfile -t BACKUPS < <(ls -1t "${BACKUP_DIR}"/database_backup_*.sql.gz 2>/dev/null | head -n 5)
+
+if [ ${#BACKUPS[@]} -eq 0 ]; then
+    echo "No backup files found in ${BACKUP_DIR}"
+    exit 1
+fi
+
+echo "Select a backup file to restore:"
+for i in "${!BACKUPS[@]}"; do
+    printf "  [%d] %s\n" "$((i+1))" "$(basename "${BACKUPS[$i]}")"
+done
+
+read -p "Enter number (1-${#BACKUPS[@]}): " CHOICE
+
+if [[ "$CHOICE" -ge 1 && "$CHOICE" -le "${#BACKUPS[@]}" ]]; then
+    SELECTED_FILE="${BACKUPS[$((CHOICE-1))]}"
+    echo "Restoring: ${SELECTED_FILE}"
+    
+    # Passing PGPASSWORD ensures authentication succeeds regardless of container auth mode
+    gunzip -c "${SELECTED_FILE}" | docker exec -i -e PGPASSWORD="${DB_PASSWORD}" "${DB_CONTAINER}" psql -U "${DB_USERNAME}" -d "${DB_NAME}"
+    
+    echo "Database restored successfully."
+else
+    echo "Invalid selection."
+    exit 1
+fi
+
+echo "=================================================="
+echo "SUCCESS: Database '$DB_NAME' restored successfully!"
+echo "=================================================="

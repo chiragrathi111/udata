@@ -1,0 +1,40 @@
+python3 tools/provision_tenant.py \
+  --client "Sanjeevani Pharma Ltd" \
+  --org "Unit-II" \
+  --warehouse "FG" \
+  --admin "SPLAdmin" \
+  --user "SPLUser" \
+  --country "IN" \
+  --currency "INR" \
+  --address "Hyderabad"
+
+  Process Order_C_Order Process
+  Process Shipment _M_InOut Process
+
+
+Dumb :-
+
+docker exec -t pi-erp-db-v10 pg_dump -U postgres -F c -d idempiere -f /tmp/pione3.dump
+docker cp pi-erp-db-v10:/tmp/pione3.dump /home/chirag/pione3.dump
+docker exec pi-erp-db-v10 rm /tmp/pione3.dump
+
+
+Restore : 
+
+docker cp /home/chirag/pione1.dump pi-erp-db-v10:/tmp/pione1.dump
+docker exec -t pi-erp-db-v10 pg_restore -U postgres -d idempiere --clean --if-exists /tmp/pione1.dump
+docker exec pi-erp-db-v10 rm /tmp/pione1.dump
+
+scp -i ~/.ssh/pione.pem /home/chirag/pione3.dump ubuntu@40.192.50.49:/home/ubuntu/pione3.dump
+
+Server :-
+
+docker cp /home/ubuntu/pione3.dump pi-erp-db-v10:/tmp/pione3.dump
+docker exec -t pi-erp-db-v10 pg_restore -U postgres -d idempiere --clean --if-exists /tmp/pione3.dump
+docker exec pi-erp-db-v10 rm /tmp/pione3.dump
+
+
+
+docker exec -t pi-erp-db-v10 pg_dump -U postgres -F c -d idempiere -f /tmp/pione4.dump
+docker cp pi-erp-db-v10:/tmp/pione4.dump /home/ubuntu/pione4.dump
+docker exec pi-erp-db-v10 rm /tmp/pione4.dump

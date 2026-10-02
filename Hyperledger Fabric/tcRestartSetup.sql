@@ -6,6 +6,12 @@ String run  then ActiveMQ Start:-
 
 * ./activemq start
 
+# if we got access issue then run below commands
+
+* sudo chown -R chirag:chirag /opt/activemq
+
+* sudo ./activemq start
+
 * ./activemq status
 
 (If have doubt port 61613 is working or not so run this commands:-
@@ -37,6 +43,9 @@ export CORE_PEER_ADDRESS=localhost:7051
 
 * cd ~/fabric-samples/asset-transfer-basic/chaincode-typescript/src	
 
+## local
+* cd ~/fabric-samples/asset-transfer-basic/chaincode-typescript/src	
+
 * nvm use 18 
 
 * node -v
@@ -45,11 +54,19 @@ export CORE_PEER_ADDRESS=localhost:7051
 
 * cd ~/fabric-samples/asset-transfer-basic/application-gateway-typescript/src
 
+## local
+
+* cd ~/fabric-samples-TC/asset-transfer-basic/application-gateway-typescript/src
+
 * nvm use 18
 
 * npm run build
 
 * cd ~/fabric-samples/asset-transfer-basic/application-gateway-typescript/
+
+## local
+
+* cd ~/fabric-samples-TC/asset-transfer-basic/application-gateway-typescript
 
 * nvm use 18
 

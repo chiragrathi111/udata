@@ -655,7 +655,84 @@ CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS
   WHERE NOT (EXISTS ( SELECT 1
            FROM adempiere.pi_productlabel pp_sales
           WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y')) AND ltt.returns = 'N' AND pp.isrestricted = 'N'
+  AND ltt.name != 'Dispatch'
   GROUP BY w.m_warehouse_id, pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, l.m_locatortype_id, pp.m_locator_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, l.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate,pr.description, pri.pricestd
+  ORDER BY pp.m_locator_id DESC;
+
+  ===================================================================
+
+  CREATE OR REPLACE VIEW adempiere.pi_productlabelViews AS
+ SELECT w.m_warehouse_id,
+    pr.m_product_category_id,
+    pp.m_product_id,
+    uom.name AS uom,
+    pr.erpcode,
+    pbom.pp_product_bom_id,
+    l.m_locatortype_id,
+    pp.m_locator_id,
+    sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS availablecount,
+    pr.weight AS unitweight,
+    pr.weight * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitweight,
+    pr.value,
+    pr.created AS m_product_created,
+    pr.createdby AS m_product_createdby,
+    pr.updated AS m_product_updated,
+    pr.updatedby AS m_product_updatedby,
+    pr.isactive AS product_isactive,
+    l.isactive AS locator_isactive,
+    pp.ad_client_id,
+    pp.ad_org_id,
+    pp.m_inoutline_id,
+    mio.documentno AS m_inout_docno,
+    mio.movementdate AS m_inout_date,
+
+    COALESCE(pri.pricestd, 0) AS unitprice,
+    COALESCE(pri.pricestd, 0) * sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) AS totalunitprice,
+    pr.description
+   FROM adempiere.pi_productlabel pp
+     JOIN adempiere.m_product pr ON pr.m_product_id = pp.m_product_id
+     LEFT JOIN ( SELECT DISTINCT ON (pp_product_bom.m_product_id) pp_product_bom.m_product_id,
+            pp_product_bom.pp_product_bom_id
+           FROM adempiere.pp_product_bom
+          WHERE pp_product_bom.isactive = 'Y') pbom ON pbom.m_product_id = pr.m_product_id
+     JOIN adempiere.m_product_category pc ON pc.m_product_category_id = pr.m_product_category_id
+     JOIN adempiere.c_uom uom ON uom.c_uom_id = pr.c_uom_id
+     JOIN adempiere.m_locator l ON l.m_locator_id = pp.m_locator_id
+     JOIN adempiere.m_locatortype ltt ON ltt.m_locatortype_id = l.m_locatortype_id
+     JOIN adempiere.m_warehouse w ON w.m_warehouse_id = l.m_warehouse_id
+     LEFT JOIN adempiere.m_inoutline miol ON miol.m_inoutline_id = pp.m_inoutline_id
+     LEFT JOIN adempiere.m_inout mio ON mio.m_inout_id = miol.m_inout_id
+     LEFT JOIN ( SELECT DISTINCT ON (m_productprice.m_product_id) m_productprice.m_product_id,
+            m_productprice.pricestd
+           FROM adempiere.m_productprice
+          WHERE m_productprice.isactive = 'Y'
+          ORDER BY m_productprice.m_product_id, m_productprice.updated DESC) pri ON pri.m_product_id = pr.m_product_id
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM adempiere.pi_productlabel pp_sales
+          WHERE pp_sales.labeluuid = pp.labeluuid AND pp_sales.issotrx = 'Y'))
+    AND ltt.returns = 'N'
+    AND pp.isrestricted = 'N'
+    -- AND pr.m_product_id = 1000654
+    AND ltt.name != 'Dispatch'
+  GROUP BY w.m_warehouse_id, pr.m_product_category_id, pp.m_product_id, uom.name, pr.erpcode, pbom.pp_product_bom_id, l.m_locatortype_id, pp.m_locator_id, pr.weight, pr.value, pr.created, pr.createdby, pr.updated, pr.updatedby, pr.isactive, l.isactive, pp.ad_client_id, pp.ad_org_id, pp.m_inoutline_id, mio.documentno, mio.movementdate, pr.description, pri.pricestd
+
+  HAVING sum(
+        CASE
+            WHEN pp.issotrx = 'N' THEN pp.quantity
+            ELSE 0
+        END) > 0
   ORDER BY pp.m_locator_id DESC;
 ------------------------------------------------------------------------------------------
 Storage Details By Product :-

@@ -22,4 +22,16 @@ Detect changed plugins
 better
 
 * git diff --name-only HEAD~1 | awk -F'/' '{print $2}' | sort -u
+
+## Setup username and email
+
+* git config --global user.name "Your Name"
+
+* git config --global user.email "your-email@example.com"
+
+* git config --global user.name
+
+* git config --global user.email
+
+* git config --list
   			

@@ -10,7 +10,7 @@ sudo systemctl status nginx
 
 ⚙️ 2. Create Nginx config
 
-sudo nano /etc/nginx/sites-available/pierp.pipra.solutions
+sudo nano /etc/nginx/sites-available/pione.pipra.solutions
 
 server {
 
@@ -22,7 +22,7 @@ server {
         # Add index.php to the list if you are using PHP
 	index index.html;
 	
-	server_name pierp.pipra.solutions;
+	server_name pione.pipra.solutions;
 
 	location / {
         	# First attempt to serve request as file, then
@@ -33,7 +33,7 @@ server {
 
 🔗 3. Enable config
 
-sudo ln -s /etc/nginx/sites-available/pierp.pipra.solutions /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/pione.pipra.solutions /etc/nginx/sites-enabled/
 
 sudo nginx -t   (test)
 
@@ -45,7 +45,7 @@ sudo apt install certbot python3-certbot-nginx -y
 
 🔐 5. Generate SSL
 
-sudo certbot --nginx -d pierp.pipra.solutions
+sudo certbot --nginx -d pione.pipra.solutions
 
 👉 It will ask:
 
@@ -55,9 +55,9 @@ Redirect HTTP → HTTPS → Choose YES
 
 ✅ 6. Verify SSL
 
-ping pierp.pipra.solutions
+ping pione.pipra.solutions
 
-https://pierp.pipra.solutions
+https://pione.pipra.solutions
 
 🔄 7. Auto-renew SSL
 
