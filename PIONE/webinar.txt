@@ -35,6 +35,6 @@ docker exec pi-erp-db-v10 rm /tmp/pione3.dump
 
 
 
-docker exec -t pi-erp-db-v10 pg_dump -U postgres -F c -d idempiere -f /tmp/pione4.dump
-docker cp pi-erp-db-v10:/tmp/pione4.dump /home/ubuntu/pione4.dump
-docker exec pi-erp-db-v10 rm /tmp/pione4.dump
+docker exec -t pi-erp-db-v10 pg_dump -U postgres -F c -d idempiere -f /tmp/pione5.dump
+docker cp pi-erp-db-v10:/tmp/pione5.dump /home/ubuntu/pione5.dump
+docker exec pi-erp-db-v10 rm /tmp/pione5.dump

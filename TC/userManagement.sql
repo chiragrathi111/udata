@@ -15,7 +15,8 @@ SELECT
 FROM (
 
     -- =========================================================
-    -- Tissue Culture Technician
+    -- Tissue Culture Technician - Approved (discarded = N)
+    -- quantity -> countValue / counts
     -- =========================================================
     SELECT 
         u.name AS users,
@@ -36,25 +37,6 @@ FROM (
 
         0::NUMERIC AS countValueN,
 
-        -- =========================================================
-        -- FIX 2 (footer total mismatch): previously this was
-        --   COUNT(*) OVER (PARTITION BY cl.created, o.tc_order_id, u.name)
-        -- which partitions by the RAW timestamp instead of the date.
-        -- If two or more labels in the same order share the exact
-        -- same "created" timestamp (common with bulk inserts / fast
-        -- scanning in production), that window returns k for each of
-        -- the k matching rows, and Jasper's group-footer SUM() then
-        -- adds k copies of k = k^2 instead of k, inflating the
-        -- "User Wise Total" / "Date Wise Total" beyond what the
-        -- printed per-order lines actually add up to.
-        --
-        -- Fix: attribute the order's full countValue to exactly ONE
-        -- row per (date, order, user) via ROW_NUMBER(), and 0 to
-        -- every other row in that same group. SUM() over this field
-        -- is then mathematically guaranteed to equal the sum of the
-        -- values printed on the order lines, regardless of how many
-        -- physical label rows exist or whether timestamps collide.
-        -- =========================================================
         CASE WHEN ROW_NUMBER() OVER (
                     PARTITION BY DATE(cl.created), o.tc_order_id, u.name
                     ORDER BY cl.tc_culturelabel_id
@@ -74,6 +56,8 @@ FROM (
     JOIN adempiere.ad_user u 
         ON u.ad_user_id = cl.createdby 
         AND u.ad_client_id = cl.ad_client_id
+    JOIN adempiere.AD_User_Roles ur ON ur.ad_user_id = u.ad_user_id
+    JOIN adempiere.AD_Role r ON ur.AD_Role_id = r.AD_Role_id
 
     JOIN adempiere.tc_out o 
         ON o.tc_out_id = cl.tc_out_id
@@ -81,10 +65,70 @@ FROM (
     JOIN adempiere.tc_culturestage cs 
         ON cs.tc_culturestage_id = cl.tc_culturestage_id
 
-    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+    WHERE cl.AD_CLIENT_ID = 1000000
       AND cl.isdiscarded = 'N'
       AND u.personalcode IS NOT NULL
+      AND r.name = 'TCT'
 
+    UNION ALL
+
+
+    -- =========================================================
+    -- Tissue Culture Technician - Discarded (discarded = Y)   [NEW]
+    -- quantity -> countValueN / countsN
+    -- (same as QA second section: N-columns carry the quantity)
+    -- =========================================================
+    SELECT 
+        u.name AS users,
+        u.ad_user_id AS userId,
+        u.personalcode AS personalCode,
+        DATE(cl.updated) AS date,
+        o.tc_order_id AS orderID,
+        cs.name AS type,
+        cl.tc_culturelabel_id AS id,
+        'Tissue Culture Technician' AS labelName,
+        cl.isdiscarded AS discarded,
+
+        0::NUMERIC AS countValue,
+
+        CAST(
+            COUNT(*) OVER (
+                PARTITION BY DATE(cl.updated), o.tc_order_id, u.name
+            ) AS NUMERIC
+        ) AS countValueN,
+
+        0::NUMERIC AS counts,
+
+        CASE WHEN ROW_NUMBER() OVER (
+                    PARTITION BY DATE(cl.updated), o.tc_order_id, u.name
+                    ORDER BY cl.tc_culturelabel_id
+                 ) = 1
+             THEN CAST(
+                    COUNT(*) OVER (
+                        PARTITION BY DATE(cl.updated), o.tc_order_id, u.name
+                    ) AS NUMERIC
+                  )
+             ELSE 0::NUMERIC
+        END AS countsN
+
+    FROM adempiere.tc_culturelabel cl
+
+    JOIN adempiere.ad_user u 
+        ON u.ad_user_id = cl.updatedby 
+        AND u.ad_client_id = cl.ad_client_id
+    JOIN adempiere.AD_User_Roles ur ON ur.ad_user_id = u.ad_user_id
+    JOIN adempiere.AD_Role r ON ur.AD_Role_id = r.AD_Role_id
+
+    JOIN adempiere.tc_out o 
+        ON o.tc_out_id = cl.tc_out_id
+
+    JOIN adempiere.tc_culturestage cs 
+        ON cs.tc_culturestage_id = cl.tc_culturestage_id
+
+    WHERE cl.AD_CLIENT_ID = 1000000
+      AND cl.isdiscarded = 'Y'
+      AND u.personalcode IS NOT NULL
+      AND r.name = 'TCT'
 
     UNION ALL
 
@@ -111,7 +155,6 @@ FROM (
 
         0::NUMERIC AS countValueN,
 
-        -- FIX 2, same reasoning as above, applied to the media branch.
         CASE WHEN ROW_NUMBER() OVER (
                     PARTITION BY DATE(cl.created), o.tc_mediaorder_id, u.name
                     ORDER BY cl.tc_medialabelQr_id
@@ -141,7 +184,7 @@ FROM (
     JOIN adempiere.m_product pr 
         ON pr.m_product_id = mo.m_product_id
 
-    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+    WHERE cl.AD_CLIENT_ID = 1000000
       AND u.personalcode IS NOT NULL
 
 
@@ -149,10 +192,7 @@ FROM (
 
 
     -- =========================================================
-    -- Quality Checker - Discarded = Y
-    -- (Fix 1 preserved: displayed date and window partition both
-    -- use DATE(cl.updated), so the Discarded Count shown for a
-    -- given printed date matches what actually happened that day.)
+    -- Quality Checker - Discarded = Y  (countValue / counts)
     -- =========================================================
     SELECT 
         u.name AS users,
@@ -173,7 +213,6 @@ FROM (
 
         0::NUMERIC AS countValueN,
 
-        -- FIX 2, same reasoning, applied to the QC-discarded branch.
         CASE WHEN ROW_NUMBER() OVER (
                     PARTITION BY DATE(cl.updated), o.tc_order_id, u.name
                     ORDER BY cl.tc_culturelabel_id
@@ -193,6 +232,8 @@ FROM (
     JOIN adempiere.ad_user u 
         ON u.ad_user_id = cl.updatedby 
         AND u.ad_client_id = cl.ad_client_id
+    JOIN adempiere.AD_User_Roles ur ON u.ad_user_id = ur.ad_user_id
+    JOIN adempiere.AD_Role r ON r.AD_Role_id = ur.AD_Role_id
 
     JOIN adempiere.tc_out o 
         ON o.tc_out_id = cl.tc_out_id
@@ -200,16 +241,16 @@ FROM (
     JOIN adempiere.tc_culturestage cs 
         ON cs.tc_culturestage_id = cl.tc_culturestage_id
 
-    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+    WHERE cl.AD_CLIENT_ID = 1000000
       AND cl.isdiscarded = 'Y'
       AND u.personalcode IS NOT NULL
-
+      AND r.name = 'QA'
 
     UNION ALL
 
 
     -- =========================================================
-    -- Quality Checker - Discarded = N
+    -- Quality Checker - Discarded = N  (countValueN / countsN)
     -- =========================================================
     SELECT 
         u.name AS users,
@@ -232,7 +273,6 @@ FROM (
 
         0::NUMERIC AS counts,
 
-        -- FIX 2, mirrored for the countValueN / countsN pair.
         CASE WHEN ROW_NUMBER() OVER (
                     PARTITION BY DATE(cl.updated), o.tc_order_id, u.name
                     ORDER BY cl.tc_culturelabel_id
@@ -250,6 +290,8 @@ FROM (
     JOIN adempiere.ad_user u 
         ON u.ad_user_id = cl.updatedby 
         AND u.ad_client_id = cl.ad_client_id
+    JOIN adempiere.AD_User_Roles ur ON ur.ad_user_id = u.ad_user_id
+    JOIN adempiere.AD_Role r ON ur.AD_Role_id = r.AD_Role_id
 
     JOIN adempiere.tc_out o 
         ON o.tc_out_id = cl.tc_out_id
@@ -257,12 +299,15 @@ FROM (
     JOIN adempiere.tc_culturestage cs 
         ON cs.tc_culturestage_id = cl.tc_culturestage_id
 
-    WHERE cl.AD_CLIENT_ID = $P{AD_CLIENT_ID}
+    WHERE cl.AD_CLIENT_ID = 1000000
       AND cl.isdiscarded = 'N'
       AND u.personalcode IS NOT NULL
+      AND r.name = 'QA'
 
 ) AS combined
 WHERE 
-combined.date >= $P{FromDate} AND combined.date < ($P{ToDate} ::timestamp + INTERVAL '1 day') 
-AND ($P{Label} IS NULL OR combined.labelName = $P{Label}) 
-ORDER BY users,date,orderId;
+-- combined.date >= $P{FromDate} AND combined.date < ($P{ToDate} ::timestamp + INTERVAL '1 day') 
+-- AND 
+-- ($P{Label} IS NULL OR combined.labelName = $P{Label}) 
+('Tissue Culture Technician' IS NULL OR combined.labelName = 'Tissue Culture Technician') 
+ORDER BY users, date, orderId;
